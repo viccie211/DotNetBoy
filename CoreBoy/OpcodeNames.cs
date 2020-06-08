@@ -107,5 +107,38 @@ namespace CoreBoy
         public const string LD_HL_D8 = "LD_HL_D8";
         #endregion
         #endregion
+
+        #region PUSH
+        public const string PUSH_AF = "PUSH_AF";
+        public const string PUSH_BC = "PUSH_BC";
+        public const string PUSH_DE = "PUSH_DE";
+        public const string PUSH_HL = "PUSH_HL";
+        #endregion
+
+        #region POP
+        public const string POP_AF = "POP_AF";
+        public const string POP_BC = "POP_BC";
+        public const string POP_DE = "POP_DE";
+        public const string POP_HL = "POP_HL";
+        #endregion
+
+        #region CALL
+        public const string CALL = "CALL";
+        public const string CALL_Z = "CALL_Z";
+        public const string CALL_NZ = "CALL_NZ";
+        public const string CALL_C = "CALL_C";
+        public const string CALL_NC = "CALL_NC";
+        #endregion
+
+        #region RET
+        public const string RET = "RET";
+        public const string RET_Z = "RET_Z";
+        public const string RET_NZ = "RET_NZ";
+        public const string RET_C = "RET_C";
+        public const string RET_NC = "RET_NC";
+        #endregion
+
+        public const string NOP = "NOP";
+        public const string HALT = "HALT";
     }
 }

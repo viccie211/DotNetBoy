@@ -9,6 +9,12 @@ namespace CoreBoy
 
         public Dictionary<byte, string> NonPrefixedInstructions = new Dictionary<byte, string>()
         {
+            {
+                0x00, OpcodeNames.NOP
+            },
+            {
+                0x76,OpcodeNames.HALT
+            },
             #region LD
             #region LD_D8
             {
@@ -284,8 +290,76 @@ namespace CoreBoy
             },
             {
                 0xDA, OpcodeNames.JP_C
-            }
+            },
             #endregion
+
+            #region POP
+            {
+                0xC1,OpcodeNames.POP_BC
+            },
+            {
+                0xD1,OpcodeNames.POP_DE
+            },
+            {
+                0xE1,OpcodeNames.POP_HL
+            },
+            {
+                0xF1,OpcodeNames.POP_AF
+            },
+            #endregion
+
+            #region PUSH
+            {
+                0xC5,OpcodeNames.PUSH_BC
+            },
+            {
+                0xD5,OpcodeNames.PUSH_DE
+            },
+            {
+                0xE5,OpcodeNames.PUSH_HL
+            },
+            {
+                0xF5,OpcodeNames.PUSH_AF
+            },
+            #endregion
+
+            #region CALL
+            {
+                0xC4, OpcodeNames.CALL_NZ
+            },
+            {
+                0xCC, OpcodeNames.CALL_Z
+            },
+            {
+                0xCD, OpcodeNames.CALL
+            },
+            {
+                0xD4, OpcodeNames.CALL_NC
+            },
+            {
+                0xDC, OpcodeNames.CALL_C
+            },
+            #endregion
+
+            #region RET
+            {
+                0xC0, OpcodeNames.RET_NZ
+            },
+            {
+                0xC8, OpcodeNames.RET_Z
+            },
+            {
+                0xC9, OpcodeNames.RET
+            },
+            {
+                0xD0, OpcodeNames.RET_NC
+            },
+            {
+                0xD8, OpcodeNames.RET_C
+            },
+            #endregion
+
+            
         };
 
         public Dictionary<byte, string> PrefixedInstructions = new Dictionary<byte, string>()
@@ -294,6 +368,12 @@ namespace CoreBoy
         };
         public Dictionary<string, Action<CPU>> InstructionSet = new Dictionary<string, Action<CPU>>()
         {
+            {
+                OpcodeNames.NOP,NOP
+            },
+            {
+                OpcodeNames.HALT,HALT
+            }
             #region LD_D8
             {
                 OpcodeNames.LD_B_D8,LD_B_D8
@@ -534,6 +614,69 @@ namespace CoreBoy
             },
             {
                 OpcodeNames.JP_C,JP_C
+            },
+            #endregion
+            #region POP
+            {
+                OpcodeNames.POP_AF,POP_AF
+            },
+            {
+                OpcodeNames.POP_BC,POP_BC
+            },
+            {
+                OpcodeNames.POP_DE,POP_DE
+            },
+            {
+                OpcodeNames.POP_HL,POP_HL
+            },
+            #endregion
+
+            #region PUSH
+            {
+                OpcodeNames.PUSH_AF,PUSH_AF
+            },
+            {
+                OpcodeNames.PUSH_BC,PUSH_BC
+            },
+            {
+                OpcodeNames.PUSH_DE,PUSH_DE
+            },
+            {
+                OpcodeNames.PUSH_HL,PUSH_HL
+            },
+            #endregion
+            #region CALL
+            {
+                OpcodeNames.CALL,CALL_ALWAYS
+            },
+            {
+                OpcodeNames.CALL_C,CALL_C
+            },
+            {
+                OpcodeNames.CALL_NC,CALL_NC
+            },
+            {
+                OpcodeNames.CALL_Z,CALL_Z
+            },
+            {
+                OpcodeNames.CALL_NZ,CALL_NZ
+            },
+            #endregion
+            #region RET
+            {
+                OpcodeNames.RET,RET_ALWAYS
+            },
+            {
+                OpcodeNames.RET_C,RET_C
+            },
+            {
+                OpcodeNames.RET_NC,RET_NC
+            },
+            {
+                OpcodeNames.RET_Z,RET_Z
+            },
+            {
+                OpcodeNames.RET_NZ,RET_NZ
             },
             #endregion
         };

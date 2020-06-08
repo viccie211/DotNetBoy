@@ -82,6 +82,7 @@ namespace CoreBoy
         #endregion
 
         public MMU _MMU = new MMU();
+        private bool Halted = false;
 
         #region Public Methods
 
@@ -115,7 +116,7 @@ namespace CoreBoy
 
         public void Loop()
         {
-            while (true)
+            while (!Halted)
             {
                 byte instruction = _MMU.ReadByte(_RegPC);
                 bool prefixed = false;

@@ -507,8 +507,126 @@ namespace CoreBoy
         #endregion
 
         #region PUSH
-        public static void PUSH_
+        public static void PUSH_AF(CPU cpu)
+        {
+            Push(cpu._RegAF, cpu);
+        }
+
+        public static void PUSH_BC(CPU cpu)
+        {
+            Push(cpu._RegBC, cpu);
+        }
+
+        public static void PUSH_DE(CPU cpu)
+        {
+            Push(cpu._RegDE, cpu);
+        }
+
+        public static void PUSH_HL(CPU cpu)
+        {
+            Push(cpu._RegHL, cpu);
+        }
         #endregion
+
+        #region POP
+        public static void POP_AF(CPU cpu)
+        {
+            ushort result = 0;
+            Pop(ref result, cpu);
+            cpu._RegAF = result;
+            cpu._RegPC++;
+        }
+
+        public static void POP_BC(CPU cpu)
+        {
+            ushort result = 0;
+            Pop(ref result, cpu);
+            cpu._RegBC = result;
+            cpu._RegPC++;
+        }
+
+        public static void POP_DE(CPU cpu)
+        {
+            ushort result = 0;
+            Pop(ref result, cpu);
+            cpu._RegDE = result;
+            cpu._RegPC++;
+        }
+
+        public static void POP_HL(CPU cpu)
+        {
+            ushort result = 0;
+            Pop(ref result, cpu);
+            cpu._RegHL = result;
+            cpu._RegPC++;
+        }
+        #endregion
+
+        #region CALL
+        public static void CALL_ALWAYS(CPU cpu)
+        {
+            Call(cpu, true);
+        }
+
+        public static void CALL_Z(CPU cpu)
+        {
+            Call(cpu, cpu._RegF.Zero);
+        }
+
+        public static void CALL_NZ(CPU cpu)
+        {
+            Call(cpu, !cpu._RegF.Zero);
+        }
+
+
+        public static void CALL_C(CPU cpu)
+        {
+            Call(cpu, cpu._RegF.Carry);
+        }
+
+        public static void CALL_NC(CPU cpu)
+        {
+            Call(cpu, !cpu._RegF.Carry);
+        }
+        #endregion
+
+        #region RET
+        public static void RET_ALWAYS(CPU cpu)
+        {
+            Ret(cpu, true);
+        }
+
+        public static void RET_Z(CPU cpu)
+        {
+            Ret(cpu, cpu._RegF.Zero);
+        }
+
+        public static void RET_NZ(CPU cpu)
+        {
+            Ret(cpu, !cpu._RegF.Zero);
+        }
+
+
+        public static void RET_C(CPU cpu)
+        {
+            Ret(cpu, cpu._RegF.Carry);
+        }
+
+        public static void RET_NC(CPU cpu)
+        {
+            Ret(cpu, !cpu._RegF.Carry);
+        }
+        #endregion
+
+        public static void NOP(CPU cpu)
+        {
+            cpu._RegPC++;
+        }
+
+        public static void HALT(CPU cpu)
+        {
+            cpu._Halted = true;
+        }
 
         #endregion
 
@@ -562,6 +680,42 @@ namespace CoreBoy
             LoadByteToAddress(cpu._RegSP, ByteUshortHelper.UpperByteOfSixteenBits(value), cpu._MMU);
             cpu._RegSP--;
             LoadByteToAddress(cpu._RegSP, ByteUshortHelper.LowerByteOfSixteenBits(value), cpu._MMU);
+            cpu._RegPC++;
+        }
+
+        private static void Pop(ref ushort target, CPU cpu)
+        {
+            byte leastSignificant = 0;
+            byte mostSignificant = 0; ;
+            LoadFromAddress(ref leastSignificant, cpu._RegSP, cpu._MMU);
+            cpu._RegSP++;
+            LoadFromAddress(ref mostSignificant, cpu._RegSP, cpu._MMU);
+            cpu._RegSP++;
+            target = ByteUshortHelper.CombineBytes(mostSignificant, leastSignificant);
+        }
+
+        private static void Call(CPU cpu, bool conditionMet)
+        {
+            ushort nextPC = (ushort)(cpu._RegPC + 3);
+
+            if (conditionMet)
+            {
+                Push(nextPC, cpu);
+                Jump(ref cpu._RegPC, cpu._MMU, conditionMet);
+                return;
+            }
+
+            cpu._RegPC = nextPC;
+        }
+
+        private static void Ret(CPU cpu, bool conditionMet)
+        {
+            if (conditionMet)
+            {
+                Pop(ref cpu._RegPC, cpu);
+                return;
+            }
+
             cpu._RegPC++;
         }
         #endregion
