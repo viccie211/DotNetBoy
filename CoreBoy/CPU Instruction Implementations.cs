@@ -97,6 +97,12 @@ namespace CoreBoy
             cpu._RegPC++;
         }
 
+        public static void LD_A_L(CPU cpu)
+        {
+            LoadByte(ref cpu._RegA, cpu._RegL);
+            cpu._RegPC++;
+        }
+
         public static void LD_A_HL(CPU cpu)
         {
             LoadFromAddress(ref cpu._RegA, cpu._RegHL, cpu._MMU);
@@ -147,6 +153,12 @@ namespace CoreBoy
             cpu._RegPC++;
         }
 
+        public static void LD_B_L(CPU cpu)
+        {
+            LoadByte(ref cpu._RegA, cpu._RegL);
+            cpu._RegPC++;
+        }
+
         public static void LD_B_HL(CPU cpu)
         {
             LoadFromAddress(ref cpu._RegB, cpu._RegHL, cpu._MMU);
@@ -193,6 +205,12 @@ namespace CoreBoy
         public static void LD_C_H(CPU cpu)
         {
             LoadByte(ref cpu._RegC, cpu._RegH);
+            cpu._RegPC++;
+        }
+
+        public static void LD_C_L(CPU cpu)
+        {
+            LoadByte(ref cpu._RegC, cpu._RegL);
             cpu._RegPC++;
         }
 
@@ -246,11 +264,19 @@ namespace CoreBoy
             cpu._RegPC++;
         }
 
+        public static void LD_D_L(CPU cpu)
+        {
+            LoadByte(ref cpu._RegD, cpu._RegL);
+            cpu._RegPC++;
+        }
+
         public static void LD_D_HL(CPU cpu)
         {
             LoadFromAddress(ref cpu._RegD, cpu._RegHL, cpu._MMU);
             cpu._RegPC++;
         }
+
+
         public static void LD_D_D8(CPU cpu)
         {
             LoadFromAddress(ref cpu._RegD, (ushort)(cpu._RegPC + 1), cpu._MMU);
@@ -292,6 +318,12 @@ namespace CoreBoy
         public static void LD_E_H(CPU cpu)
         {
             LoadByte(ref cpu._RegE, cpu._RegH);
+            cpu._RegPC++;
+        }
+
+        public static void LD_E_L(CPU cpu)
+        {
+            LoadByte(ref cpu._RegE, cpu._RegL);
             cpu._RegPC++;
         }
 
@@ -345,6 +377,12 @@ namespace CoreBoy
             cpu._RegPC++;
         }
 
+        public static void LD_H_L(CPU cpu)
+        {
+            LoadByte(ref cpu._RegH, cpu._RegL);
+            cpu._RegPC++;
+        }
+
         public static void LD_H_HL(CPU cpu)
         {
             LoadFromAddress(ref cpu._RegH, cpu._RegHL, cpu._MMU);
@@ -392,6 +430,12 @@ namespace CoreBoy
         public static void LD_L_H(CPU cpu)
         {
             LoadByte(ref cpu._RegL, cpu._RegH);
+            cpu._RegPC++;
+        }
+
+        public static void LD_L_L(CPU cpu)
+        {
+            LoadByte(ref cpu._RegL, cpu._RegL);
             cpu._RegPC++;
         }
 
@@ -444,9 +488,28 @@ namespace CoreBoy
             LoadByteToAddress(cpu._RegHL, cpu._RegH, cpu._MMU);
             cpu._RegPC++;
         }
-        #endregion
+
+        public static void LD_HL_L(CPU cpu)
+        {
+            LoadByteToAddress(cpu._RegHL, cpu._RegL, cpu._MMU);
+            cpu._RegPC++;
+        }
+
+        public static void LD_HL_D8(CPU cpu)
+        {
+            byte value = 0;
+            LoadFromAddress(ref value, (ushort)(cpu._RegPC + 1), cpu._MMU);
+            LoadByteToAddress(cpu._RegHL, value, cpu._MMU);
+            cpu._RegPC += 2;
+        }
 
         #endregion
+        #endregion
+
+        #region PUSH
+        public static void PUSH_
+        #endregion
+
         #endregion
 
         #region SubInstructions
@@ -491,6 +554,15 @@ namespace CoreBoy
         private static void LoadByteToAddress(ushort targetAddress, byte source, MMU mmu)
         {
             mmu.WriteByte(targetAddress, source);
+        }
+
+        private static void Push(ushort value, CPU cpu)
+        {
+            cpu._RegSP--;
+            LoadByteToAddress(cpu._RegSP, ByteUshortHelper.UpperByteOfSixteenBits(value), cpu._MMU);
+            cpu._RegSP--;
+            LoadByteToAddress(cpu._RegSP, ByteUshortHelper.LowerByteOfSixteenBits(value), cpu._MMU);
+            cpu._RegPC++;
         }
         #endregion
     }

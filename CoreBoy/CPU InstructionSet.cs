@@ -294,7 +294,7 @@ namespace CoreBoy
         };
         public Dictionary<string, Action<CPU>> InstructionSet = new Dictionary<string, Action<CPU>>()
         {
-#region LD_D8
+            #region LD_D8
             {
                 OpcodeNames.LD_B_D8,LD_B_D8
             },
@@ -398,7 +398,7 @@ namespace CoreBoy
                 OpcodeNames.LD_D_A,LD_D_A
             },
             #endregion
-#region LD_E
+    	    #region LD_E
             {
                 OpcodeNames.LD_E_B,LD_E_B
             },
@@ -477,7 +477,7 @@ namespace CoreBoy
             },
             #endregion
 
-            #region LD_L
+            #region LD_HL
             {
                 OpcodeNames.LD_HL_B,LD_HL_B
             },
