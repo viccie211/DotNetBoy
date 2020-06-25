@@ -49,6 +49,18 @@ namespace CoreBoy.Emulator
         public const string ADD_A_H = "ADD_A_H";
         #endregion
 
+        #region CP
+        public const string CP_D8 = "CP_D8";
+        public const string CP_A = "CP_A";
+        public const string CP_B = "CP_B";
+        public const string CP_C = "CP_C";
+        public const string CP_D = "CP_D";
+        public const string CP_E = "CP_E";
+        public const string CP_H = "CP_H";
+        public const string CP_L = "CP_L";
+        public const string CP_HL = "CP_HL";
+        #endregion
+
         #region JP
         public const string JP = "JP";
         public const string JP_NZ = "JP_NZ";
@@ -191,6 +203,19 @@ namespace CoreBoy.Emulator
         public const string RET_C = "RET_C";
         public const string RET_NC = "RET_NC";
         #endregion
+
+        #region RST
+        public const string RST_00 = "RST_00";
+        public const string RST_08 = "RST_08";
+        public const string RST_10 = "RST_10";
+        public const string RST_18 = "RST_18";
+        public const string RST_20 = "RST_20";
+        public const string RST_28 = "RST_28";
+        public const string RST_30 = "RST_30";
+        public const string RST_38 = "RST_38";
+
+        #endregion
+
 
         #region Bitwise Logic
 

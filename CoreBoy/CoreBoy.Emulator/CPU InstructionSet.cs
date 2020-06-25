@@ -20,7 +20,7 @@ namespace CoreBoy.Emulator
             },
             {
                 0xF3,OpcodeNames.CCF
-                },
+            },
 
 
             #region INC
@@ -389,6 +389,36 @@ namespace CoreBoy.Emulator
             },
             #endregion
 
+            #region CP
+            {
+                0xBF, OpcodeNames.CP_A
+            },
+            {
+                0xB8, OpcodeNames.CP_B
+            },
+            {
+                0xB9, OpcodeNames.CP_C
+            },
+            {
+                0xBA, OpcodeNames.CP_D
+            },
+            {
+                0xBB, OpcodeNames.CP_E
+            },
+            {
+                0xBC, OpcodeNames.CP_H
+            },
+            {
+                0xBD, OpcodeNames.CP_H
+            },
+            {
+                0xBE, OpcodeNames.CP_HL
+            },
+            {
+                0xFE, OpcodeNames.CP_D8
+            },
+            #endregion
+
             #region JP
             {
                 0xC2, OpcodeNames.JP_NZ
@@ -473,6 +503,33 @@ namespace CoreBoy.Emulator
             },
             {
                 0xD8, OpcodeNames.RET_C
+            },
+            #endregion
+
+            #region RST
+            {
+                0xC7,OpcodeNames.RST_00
+            },
+            {
+                0xCF,OpcodeNames.RST_08
+            },
+            {
+                0xD7,OpcodeNames.RST_10
+            },
+            {
+                0xDF,OpcodeNames.RST_18
+            },
+            {
+                0xE7,OpcodeNames.RST_20
+            },
+            {
+                0xEF,OpcodeNames.RST_28
+            },
+            {
+                0xF7,OpcodeNames.RST_30
+            },
+            {
+                0xFF,OpcodeNames.RST_38
             },
             #endregion
 
@@ -833,6 +890,37 @@ namespace CoreBoy.Emulator
             },
             #endregion
             
+            #region CP
+            {
+                OpcodeNames.CP_A,CP_A
+            },
+            {
+                OpcodeNames.CP_B,CP_B
+            },
+            {
+                OpcodeNames.CP_C,CP_C
+            },
+            {
+                OpcodeNames.CP_D,CP_D
+            },
+            {
+                OpcodeNames.CP_E,CP_E
+            },
+            {
+                OpcodeNames.CP_H,CP_H
+            },
+            {
+                OpcodeNames.CP_L,CP_L
+            },
+            {
+                OpcodeNames.CP_HL,CP_HL
+            },
+            {
+                OpcodeNames.CP_D8,CP_D8
+            },
+            #endregion
+
+
             #region JP
             {
                 OpcodeNames.JP,JP
@@ -917,6 +1005,33 @@ namespace CoreBoy.Emulator
             },
             #endregion
         
+            #region RST
+            {
+                OpcodeNames.RST_00,RST_00
+            },
+            {
+                OpcodeNames.RST_08,RST_08
+            },
+            {
+                OpcodeNames.RST_10,RST_10
+            },
+            {
+                OpcodeNames.RST_18,RST_18
+            },
+            {
+                OpcodeNames.RST_20,RST_20
+            },
+            {
+                OpcodeNames.RST_28,RST_28
+            },
+            {
+                OpcodeNames.RST_30,RST_30
+            },
+            {
+                OpcodeNames.RST_38,RST_38
+            },
+            #endregion
+
             #region Bitwise logic
             {
                 OpcodeNames.RRCA,RRCA

@@ -176,6 +176,64 @@ namespace CoreBoy.Emulator
         }
         #endregion
 
+
+        #region CP
+
+        public static void CP_A(CPU cpu)
+        {
+            Compare(cpu._RegA, cpu._RegA, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void CP_B(CPU cpu)
+        {
+            Compare(cpu._RegA, cpu._RegB, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void CP_C(CPU cpu)
+        {
+            Compare(cpu._RegA, cpu._RegC, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void CP_D(CPU cpu)
+        {
+            Compare(cpu._RegA, cpu._RegD, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+        public static void CP_E(CPU cpu)
+        {
+            Compare(cpu._RegA, cpu._RegE, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void CP_H(CPU cpu)
+        {
+            Compare(cpu._RegA, cpu._RegH, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void CP_L(CPU cpu)
+        {
+            Compare(cpu._RegA, cpu._RegL, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void CP_HL(CPU cpu)
+        {
+            Compare(cpu._RegA, cpu._MMU.ReadByte(cpu._RegHL), ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void CP_D8(CPU cpu)
+        {
+            Compare(cpu._RegA, cpu._MMU.ReadByte(((ushort)(cpu._RegPC + 1))), ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        #endregion
+
+
         #region JP
         private static void JP(CPU cpu)
         {
@@ -815,7 +873,41 @@ namespace CoreBoy.Emulator
         }
         #endregion
 
+        #region RST
+        public static void RST_00(CPU cpu)
+        {
+            Rst(cpu, 0x00);
+        }
+        public static void RST_08(CPU cpu)
+        {
+            Rst(cpu, 0x08);
+        }
+        public static void RST_10(CPU cpu)
+        {
+            Rst(cpu, 0x10);
+        }
+        public static void RST_18(CPU cpu)
+        {
+            Rst(cpu, 0x18);
+        }
 
+        public static void RST_20(CPU cpu)
+        {
+            Rst(cpu, 0x20);
+        }
+        public static void RST_28(CPU cpu)
+        {
+            Rst(cpu, 0x28);
+        }
+        public static void RST_30(CPU cpu)
+        {
+            Rst(cpu, 0x30);
+        }
+        public static void RST_38(CPU cpu)
+        {
+            Rst(cpu, 0x38);
+        }
+        #endregion
 
         public static void NOP(CPU cpu)
         {
@@ -837,6 +929,7 @@ namespace CoreBoy.Emulator
             cpu._RegF.Carry = !cpu._RegF.Carry;
             cpu._RegPC++;
         }
+
 
         #region Bitwise Logic
         public static void RRCA(CPU cpu)
@@ -878,6 +971,14 @@ namespace CoreBoy.Emulator
             flagsRegister.Subtract = true;
             flagsRegister.HalfCarry = (target & 0xF) + (1 & 0xF) > 0xF;
             target = result;
+        }
+
+        private static void Compare(byte target, byte source, ref FlagsRegister flagsRegister)
+        {
+            flagsRegister.Zero = target == source;
+            flagsRegister.Subtract = true;
+            flagsRegister.HalfCarry = (((target & 0xF) - (source & 0xF)) < 0);
+            flagsRegister.Carry = target < source;
         }
 
         private static void Add(ref byte target, byte source, ref FlagsRegister flagsRegister, ref ushort programCounter)
@@ -965,6 +1066,12 @@ namespace CoreBoy.Emulator
             }
 
             cpu._RegPC = nextPC;
+        }
+
+        private static void Rst(CPU cpu, ushort address)
+        {
+            Push((ushort)(cpu._RegPC + 1), cpu);
+            cpu._RegPC = address;
         }
 
         private static void Ret(CPU cpu, bool conditionMet)
