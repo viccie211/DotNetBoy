@@ -6,10 +6,6 @@ namespace CoreBoy.Emulator
     {
         public MMU()
         {
-            _MappedMemory[0] = 0x80;
-            _MappedMemory[1] = 0xDA;
-            _MappedMemory[2] = 0x00;
-            _MappedMemory[3] = 0x00;
         }
 
         private byte[] _MappedMemory = new byte[0xFFFF];
@@ -36,7 +32,20 @@ namespace CoreBoy.Emulator
 
         public byte[] GetTileSet0()
         {
-            return _MappedMemory.Skip(0x8000).Take(1024).ToArray();
+            return _MappedMemory.Skip(0x7FFF).Take(4096).ToArray();
+        }
+
+        public byte[] GetTileMap0()
+        {
+            return _MappedMemory.Skip(0x97FF).Take(1024).ToArray();
+        }
+
+        public void LoadRom(byte[] rom)
+        {
+            for (int i = 0; i < rom.Length && i < 32768; i++)
+            {
+                _MappedMemory[i] = rom[i];
+            }
         }
     }
 }

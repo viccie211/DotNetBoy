@@ -2,6 +2,25 @@ namespace CoreBoy.Emulator
 {
     public static class OpcodeNames
     {
+
+        #region INC
+        #region INC_R16
+        public const string INC_BC = "INC_BC";
+        public const string INC_DE = "INC_DE";
+        public const string INC_HL = "INC_HL";
+        public const string INC_SP = "INC_SP";
+        #endregion
+
+        #region INC_R8
+        public const string INC_A = "INC_A";
+        public const string INC_B = "INC_B";
+        public const string INC_C = "INC_C";
+        public const string INC_D = "INC_D";
+        public const string INC_E = "INC_E";
+        public const string INC_H = "INC_H";
+        public const string INC_L = "INC_L";
+        #endregion
+        #endregion
         #region ADD
         public const string ADD_A_B = "ADD_A_B";
         public const string ADD_A_C = "ADD_A_C";
@@ -106,6 +125,20 @@ namespace CoreBoy.Emulator
         public const string LD_HL_A = "LD_HL_A";
         public const string LD_HL_D8 = "LD_HL_D8";
         #endregion
+
+        #region LD_R16_D16
+        public const string LD_BC_D16 = "LD_BC_D16";
+        public const string LD_DE_D16 = "LD_DE_D16";
+        public const string LD_HL_D16 = "LD_HL_D16";
+        public const string LD_SP_D16 = "LD_SP_D16";
+        #endregion
+
+        #region LD_(R16)_A
+        public const string LD_BC_A = "LD_BC_A";
+        public const string LD_DE_A = "LD_DE_A";
+
+        #endregion
+
         #endregion
 
         #region PUSH

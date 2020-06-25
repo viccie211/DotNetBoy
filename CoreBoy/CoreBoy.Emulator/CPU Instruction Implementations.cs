@@ -7,30 +7,101 @@ namespace CoreBoy.Emulator
     {
 
         #region Instructions
+        #region INC
+        #region INC_R16
+        public static void INC_BC(CPU cpu)
+        {
+            cpu._RegBC++;
+            cpu._RegPC++;
+        }
+
+        public static void INC_DE(CPU cpu)
+        {
+            cpu._RegDE++;
+            cpu._RegPC++;
+        }
+
+        public static void INC_HL(CPU cpu)
+        {
+            cpu._RegHL++;
+            cpu._RegPC++;
+        }
+
+        public static void INC_SP(CPU cpu)
+        {
+            cpu._RegSP++;
+            cpu._RegPC++;
+        }
+        #endregion
+
+        #region INC_R8
+        public static void INC_B(CPU cpu)
+        {
+            IncWithFlags(ref cpu._RegB, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void INC_C(CPU cpu)
+        {
+            IncWithFlags(ref cpu._RegC, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void INC_D(CPU cpu)
+        {
+            IncWithFlags(ref cpu._RegD, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+        public static void INC_E(CPU cpu)
+        {
+            IncWithFlags(ref cpu._RegE, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void INC_H(CPU cpu)
+        {
+            IncWithFlags(ref cpu._RegH, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void INC_L(CPU cpu)
+        {
+            IncWithFlags(ref cpu._RegL, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void INC_A(CPU cpu)
+        {
+            IncWithFlags(ref cpu._RegA, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+        #endregion
+        #endregion
+
         #region ADD
         private static void ADD_A_B(CPU cpu)
         {
-            Add(ref cpu._RegA, ref cpu._RegB, ref cpu._RegF, ref cpu._RegPC);
+            Add(ref cpu._RegA, cpu._RegB, ref cpu._RegF, ref cpu._RegPC);
         }
 
         private static void ADD_A_C(CPU cpu)
         {
-            Add(ref cpu._RegA, ref cpu._RegC, ref cpu._RegF, ref cpu._RegPC);
+            Add(ref cpu._RegA, cpu._RegC, ref cpu._RegF, ref cpu._RegPC);
         }
 
         private static void ADD_A_D(CPU cpu)
         {
-            Add(ref cpu._RegA, ref cpu._RegD, ref cpu._RegF, ref cpu._RegPC);
+            Add(ref cpu._RegA, cpu._RegD, ref cpu._RegF, ref cpu._RegPC);
         }
 
         private static void ADD_A_E(CPU cpu)
         {
-            Add(ref cpu._RegA, ref cpu._RegE, ref cpu._RegF, ref cpu._RegPC);
+            Add(ref cpu._RegA, cpu._RegE, ref cpu._RegF, ref cpu._RegPC);
         }
 
         private static void ADD_A_H(CPU cpu)
         {
-            Add(ref cpu._RegA, ref cpu._RegH, ref cpu._RegF, ref cpu._RegPC);
+            Add(ref cpu._RegA, cpu._RegH, ref cpu._RegF, ref cpu._RegPC);
         }
         #endregion
 
@@ -505,6 +576,54 @@ namespace CoreBoy.Emulator
         }
 
         #endregion
+
+        #region LD_D16
+        public static void LD_BC_D16(CPU cpu)
+        {
+            ushort target = 0;
+            LoadWordFromAddress(ref target, (ushort)(cpu._RegPC + 1), cpu._MMU);
+            cpu._RegBC = target;
+            cpu._RegPC += 3;
+        }
+
+        public static void LD_DE_D16(CPU cpu)
+        {
+            ushort target = 0;
+            LoadWordFromAddress(ref target, (ushort)(cpu._RegPC + 1), cpu._MMU);
+            cpu._RegDE = target;
+            cpu._RegPC += 3;
+        }
+
+        public static void LD_HL_D16(CPU cpu)
+        {
+            ushort target = 0;
+            LoadWordFromAddress(ref target, (ushort)(cpu._RegPC + 1), cpu._MMU);
+            cpu._RegHL = target;
+            cpu._RegPC += 3;
+        }
+
+        public static void LD_SP_D16(CPU cpu)
+        {
+            ushort target = 0;
+            LoadWordFromAddress(ref target, (ushort)(cpu._RegPC + 1), cpu._MMU);
+            cpu._RegSP = target;
+            cpu._RegPC += 3;
+        }
+        #endregion
+
+        #region LD_R16_A
+        public static void LD_BC_A(CPU cpu)
+        {
+            LoadByteToAddress(cpu._RegBC, cpu._RegA, cpu._MMU);
+            cpu._RegPC++;
+        }
+        public static void LD_DE_A(CPU cpu)
+        {
+            LoadByteToAddress(cpu._RegDE, cpu._RegA, cpu._MMU);
+            cpu._RegPC++;
+        }
+        #endregion
+
         #endregion
 
         #region PUSH
@@ -619,6 +738,8 @@ namespace CoreBoy.Emulator
         }
         #endregion
 
+
+
         public static void NOP(CPU cpu)
         {
             cpu._RegPC++;
@@ -629,10 +750,28 @@ namespace CoreBoy.Emulator
             cpu._Halted = true;
         }
 
+
+
         #endregion
 
         #region SubInstructions
-        private static void Add(ref byte target, ref byte source, ref FlagsRegister flagsRegister, ref ushort programCounter)
+
+        private static void IncWithFlags(ref byte target, ref FlagsRegister flagsRegister)
+        {
+            int newValue = target + 1;
+            byte result = (byte)(newValue % 256);
+
+            if (result == 0)
+            {
+                flagsRegister.Zero = true;
+            }
+
+            flagsRegister.Subtract = false;
+            flagsRegister.HalfCarry = (target & 0xF) + (1 & 0xF) > 0xF;
+            target = result;
+        }
+
+        private static void Add(ref byte target, byte source, ref FlagsRegister flagsRegister, ref ushort programCounter)
         {
             int newValue = target + source;
             byte result = (byte)(newValue % 256);
@@ -666,6 +805,16 @@ namespace CoreBoy.Emulator
             LoadByte(ref target, mmu.ReadByte(address));
         }
         private static void LoadByte(ref byte target, byte source)
+        {
+            target = source;
+        }
+
+        private static void LoadWordFromAddress(ref ushort target, ushort address, MMU mmu)
+        {
+            LoadWord(ref target, mmu.ReadWord(address));
+        }
+
+        private static void LoadWord(ref ushort target, ushort source)
         {
             target = source;
         }

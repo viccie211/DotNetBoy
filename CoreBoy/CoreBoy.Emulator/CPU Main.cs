@@ -94,15 +94,15 @@ namespace CoreBoy.Emulator
 
         public void Reset()
         {
-            _RegA = 1;
-            _RegB = 255;
+            _RegA = 0;
+            _RegB = 0;
             _RegC = 0;
             _RegD = 0;
             _RegE = 0;
             _RegF = 0;
             _RegH = 0;
             _RegL = 0;
-            _RegPC = 0;
+            _RegPC = 0x38;
             _RegSP = 0;
             _RegM = 0;
             _RegT = 0;

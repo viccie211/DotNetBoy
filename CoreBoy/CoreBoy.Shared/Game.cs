@@ -10,6 +10,7 @@ using Ultraviolet.OpenGL;
 using CoreBoy.Models;
 using System.Linq;
 using CoreBoy.Emulator;
+using System.IO;
 
 namespace CoreBoy
 {
@@ -48,8 +49,8 @@ namespace CoreBoy
             : base("viccie211", "CoreBoy")
         {
             cpu = new CPU();
-            tileData.TileSet = new TileSet(StringToByteArray(System.IO.File.ReadAllText("TileSet.txt")));
-            tileData.TileMap = new TileMap(StringToByteArray(System.IO.File.ReadAllText("TileMap.txt")));
+            cpu._MMU.LoadRom(File.ReadAllBytes("C:\\Users\\VictorRemmerswaal\\Downloads\\bgbw64\\bgbtest.gb"));
+            cpu.Loop();
         }
 
         protected override UltravioletContext OnCreatingUltravioletContext()

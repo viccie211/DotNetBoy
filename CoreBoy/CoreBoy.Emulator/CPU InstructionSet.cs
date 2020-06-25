@@ -15,6 +15,47 @@ namespace CoreBoy.Emulator
             {
                 0x76,OpcodeNames.HALT
             },
+
+            #region INC
+            #region INC_R16
+            {
+                0x03,OpcodeNames.INC_BC
+            },
+            {
+                0x13,OpcodeNames.INC_DE
+            },
+            {
+                0x23,OpcodeNames.INC_HL
+            },
+            {
+                0x33,OpcodeNames.INC_SP
+            },
+            #endregion
+            #region INC_R8
+            {
+                0x04,OpcodeNames.INC_B
+            },
+            {
+                0x0C,OpcodeNames.INC_C
+            },
+            {
+                0x14,OpcodeNames.INC_D
+            },
+            {
+                0x1C,OpcodeNames.INC_E
+            },
+            {
+                0x24,OpcodeNames.INC_H
+            },
+            {
+                0x2C,OpcodeNames.INC_L
+            },
+            {
+                0x3C,OpcodeNames.INC_A
+            },
+            #endregion
+            #endregion
+
             #region LD
             #region LD_D8
             {
@@ -255,6 +296,32 @@ namespace CoreBoy.Emulator
                 0x7F,OpcodeNames.LD_A_A
             },
             #endregion
+            
+            #region LD_R16_D16
+            {
+                0x01, OpcodeNames.LD_BC_D16
+            },
+
+                        {
+                0x11, OpcodeNames.LD_DE_D16
+            },
+                        {
+                0x21, OpcodeNames.LD_HL_D16
+            },
+
+                        {
+                0x31, OpcodeNames.LD_SP_D16
+            },
+            #endregion
+            
+            #region LD_(R16)_A
+            {
+                0x02,OpcodeNames.LD_BC_A
+            },
+            {
+                0x12,OpcodeNames.LD_DE_A
+            },
+            #endregion
             #endregion            
             
             #region ADD
@@ -374,6 +441,47 @@ namespace CoreBoy.Emulator
             {
                 OpcodeNames.HALT,HALT
             },
+
+            #region INC
+            #region INC_R16
+            {
+                OpcodeNames.INC_BC,INC_BC
+            },
+            {
+                OpcodeNames.INC_DE,INC_DE
+            },
+            {
+                OpcodeNames.INC_HL,INC_HL
+            },
+            {
+                OpcodeNames.INC_SP,INC_SP
+            },
+            #endregion
+            #region INC_R8
+            {
+                OpcodeNames.INC_B,INC_B
+            },
+            {
+                OpcodeNames.INC_C,INC_C
+            },
+            {
+                OpcodeNames.INC_D,INC_D
+            },
+            {
+                OpcodeNames.INC_E,INC_E
+            },
+            {
+                OpcodeNames.INC_H,INC_H
+            },
+            {
+                OpcodeNames.INC_L,INC_L
+            },
+            {
+                OpcodeNames.INC_A,INC_A
+            },
+            #endregion
+            #endregion
+
             #region LD_D8
             {
                 OpcodeNames.LD_B_D8,LD_B_D8
@@ -581,6 +689,30 @@ namespace CoreBoy.Emulator
             },
             #endregion
             
+            #region LD_R16_D16
+            {
+                OpcodeNames.LD_BC_D16, LD_BC_D16
+            },
+            {
+                OpcodeNames.LD_DE_D16, LD_DE_D16
+            },
+            {
+                OpcodeNames.LD_HL_D16, LD_HL_D16
+            },
+            {
+                OpcodeNames.LD_SP_D16, LD_SP_D16
+            },
+            #endregion
+
+            #region LD_(R16)_A
+            {
+                OpcodeNames.LD_BC_A,LD_BC_A
+            },
+            {
+                OpcodeNames.LD_DE_A,LD_DE_A
+            },
+            #endregion
+
             #region ADD
             {
                 OpcodeNames.ADD_A_B, ADD_A_B
