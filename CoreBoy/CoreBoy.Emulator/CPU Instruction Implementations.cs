@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 
-namespace CoreBoy
+namespace CoreBoy.Emulator
 {
     public partial class CPU
     {
+
         #region Instructions
         #region ADD
         private static void ADD_A_B(CPU cpu)

@@ -1,4 +1,6 @@
-namespace CoreBoy
+using System.Linq;
+
+namespace CoreBoy.Emulator
 {
     public class MMU
     {
@@ -30,6 +32,11 @@ namespace CoreBoy
         public void WriteByte(ushort address, byte value)
         {
             _MappedMemory[address] = value;
+        }
+
+        public byte[] GetTileSet0()
+        {
+            return _MappedMemory.Skip(0x8000).Take(1024).ToArray();
         }
     }
 }

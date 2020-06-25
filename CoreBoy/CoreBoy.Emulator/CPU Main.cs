@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
-namespace CoreBoy
+namespace CoreBoy.Emulator
 {
     public partial class CPU
     {
@@ -82,7 +82,7 @@ namespace CoreBoy
         #endregion
 
         public MMU _MMU = new MMU();
-        private bool Halted = false;
+        private bool _Halted = false;
 
         #region Public Methods
 
@@ -116,7 +116,7 @@ namespace CoreBoy
 
         public void Loop()
         {
-            while (!Halted)
+            while (!_Halted)
             {
                 byte instruction = _MMU.ReadByte(_RegPC);
                 bool prefixed = false;

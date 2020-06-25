@@ -1,2 +1,7 @@
 ﻿CoreBoy/obj
 CoreBoy/bin
+CoreBoy/.vs
+CoreBoy/CoreBoy.Emulator/bin
+CoreBoy/CoreBoy.Emulator/obj
+CoreBoy/CoreBoy.NETCore3/bin
+CoreBoy/CoreBoy.NETCore3/obj

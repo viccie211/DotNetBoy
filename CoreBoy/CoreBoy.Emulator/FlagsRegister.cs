@@ -1,4 +1,4 @@
-namespace CoreBoy
+namespace CoreBoy.Emulator
 {
     class FlagsRegister
     {

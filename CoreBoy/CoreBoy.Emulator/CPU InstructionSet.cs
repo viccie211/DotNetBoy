@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace CoreBoy
+namespace CoreBoy.Emulator
 {
     public partial class CPU
     {
@@ -373,7 +373,7 @@ namespace CoreBoy
             },
             {
                 OpcodeNames.HALT,HALT
-            }
+            },
             #region LD_D8
             {
                 OpcodeNames.LD_B_D8,LD_B_D8
