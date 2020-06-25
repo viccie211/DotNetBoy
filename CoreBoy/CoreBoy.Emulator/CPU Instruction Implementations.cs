@@ -78,6 +78,77 @@ namespace CoreBoy.Emulator
         #endregion
         #endregion
 
+        #region DEC
+        #region DEC_R16
+        public static void DEC_BC(CPU cpu)
+        {
+            cpu._RegBC--;
+            cpu._RegPC++;
+        }
+
+        public static void DEC_DE(CPU cpu)
+        {
+            cpu._RegDE--;
+            cpu._RegPC++;
+        }
+
+        public static void DEC_HL(CPU cpu)
+        {
+            cpu._RegHL--;
+            cpu._RegPC++;
+        }
+
+        public static void DEC_SP(CPU cpu)
+        {
+            cpu._RegSP--;
+            cpu._RegPC++;
+        }
+        #endregion
+
+        #region DEC_R8
+        public static void DEC_B(CPU cpu)
+        {
+            DecWithFlags(ref cpu._RegB, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void DEC_C(CPU cpu)
+        {
+            DecWithFlags(ref cpu._RegC, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void DEC_D(CPU cpu)
+        {
+            DecWithFlags(ref cpu._RegD, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+        public static void DEC_E(CPU cpu)
+        {
+            DecWithFlags(ref cpu._RegE, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void DEC_H(CPU cpu)
+        {
+            DecWithFlags(ref cpu._RegH, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void DEC_L(CPU cpu)
+        {
+            DecWithFlags(ref cpu._RegL, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void DEC_A(CPU cpu)
+        {
+            DecWithFlags(ref cpu._RegA, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+        #endregion
+        #endregion
+
         #region ADD
         private static void ADD_A_B(CPU cpu)
         {
@@ -128,6 +199,12 @@ namespace CoreBoy.Emulator
         private static void JP_C(CPU cpu)
         {
             Jump(ref cpu._RegPC, cpu._MMU, cpu._RegF.Carry);
+        }
+
+        private static void JR(CPU cpu)
+        {
+            byte toAdd = cpu._MMU.ReadByte((ushort)(cpu._RegPC + 1));
+            cpu._RegPC += toAdd;
         }
         #endregion
 
@@ -750,7 +827,25 @@ namespace CoreBoy.Emulator
             cpu._Halted = true;
         }
 
+        public static void STOP(CPU cpu)
+        {
+            cpu._Halted = true;
+        }
 
+        public static void CCF(CPU cpu)
+        {
+            cpu._RegF.Carry = !cpu._RegF.Carry;
+            cpu._RegPC++;
+        }
+
+        #region Bitwise Logic
+        public static void RRCA(CPU cpu)
+        {
+            cpu._RegF.Carry = (cpu._RegA & 0x01) == 1;
+            cpu._RegA = (byte)(cpu._RegA >> 1);
+            cpu._RegPC++;
+        }
+        #endregion
 
         #endregion
 
@@ -767,6 +862,20 @@ namespace CoreBoy.Emulator
             }
 
             flagsRegister.Subtract = false;
+            flagsRegister.HalfCarry = (target & 0xF) + (1 & 0xF) > 0xF;
+            target = result;
+        }
+        private static void DecWithFlags(ref byte target, ref FlagsRegister flagsRegister)
+        {
+            int newValue = target - 1;
+            byte result = (byte)(newValue % 256);
+
+            if (result == 0)
+            {
+                flagsRegister.Zero = true;
+            }
+
+            flagsRegister.Subtract = true;
             flagsRegister.HalfCarry = (target & 0xF) + (1 & 0xF) > 0xF;
             target = result;
         }

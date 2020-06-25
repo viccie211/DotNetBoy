@@ -102,7 +102,7 @@ namespace CoreBoy.Emulator
             _RegF = 0;
             _RegH = 0;
             _RegL = 0;
-            _RegPC = 0x38;
+            _RegPC = 0x100;
             _RegSP = 0;
             _RegM = 0;
             _RegT = 0;

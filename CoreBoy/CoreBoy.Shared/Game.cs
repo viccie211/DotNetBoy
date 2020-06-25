@@ -51,6 +51,8 @@ namespace CoreBoy
             cpu = new CPU();
             cpu._MMU.LoadRom(File.ReadAllBytes("C:\\Users\\VictorRemmerswaal\\Downloads\\bgbw64\\bgbtest.gb"));
             cpu.Loop();
+            tileData.TileSet = new TileSet(cpu._MMU.GetTileSet0());
+            tileData.TileMap = new TileMap(cpu._MMU.GetTileMap0());
         }
 
         protected override UltravioletContext OnCreatingUltravioletContext()

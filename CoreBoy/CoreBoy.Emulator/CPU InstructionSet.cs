@@ -13,8 +13,15 @@ namespace CoreBoy.Emulator
                 0x00, OpcodeNames.NOP
             },
             {
+                0x10,OpcodeNames.STOP
+            },
+            {
                 0x76,OpcodeNames.HALT
             },
+            {
+                0xF3,OpcodeNames.CCF
+                },
+
 
             #region INC
             #region INC_R16
@@ -52,6 +59,46 @@ namespace CoreBoy.Emulator
             },
             {
                 0x3C,OpcodeNames.INC_A
+            },
+            #endregion
+            #endregion
+
+            #region DEC
+            #region DEC_R16
+            {
+                0x0B,OpcodeNames.DEC_BC
+            },
+            {
+                0x1B,OpcodeNames.DEC_DE
+            },
+            {
+                0x2B,OpcodeNames.DEC_HL
+            },
+            {
+                0x3B,OpcodeNames.DEC_SP
+            },
+            #endregion
+            #region DEC_R8
+            {
+                0x05,OpcodeNames.DEC_B
+            },
+            {
+                0x0D,OpcodeNames.DEC_C
+            },
+            {
+                0x15,OpcodeNames.DEC_D
+            },
+            {
+                0x1D,OpcodeNames.DEC_E
+            },
+            {
+                0x25,OpcodeNames.DEC_H
+            },
+            {
+                0x2D,OpcodeNames.DEC_L
+            },
+            {
+                0x3D,OpcodeNames.DEC_A
             },
             #endregion
             #endregion
@@ -358,6 +405,9 @@ namespace CoreBoy.Emulator
             {
                 0xDA, OpcodeNames.JP_C
             },
+            {
+                0x18, OpcodeNames.JR
+            },
             #endregion
 
             #region POP
@@ -426,6 +476,11 @@ namespace CoreBoy.Emulator
             },
             #endregion
 
+            #region Bitwise Logic
+            {
+                0xF0,OpcodeNames.RRCA
+            }
+            #endregion
             
         };
 
@@ -441,6 +496,13 @@ namespace CoreBoy.Emulator
             {
                 OpcodeNames.HALT,HALT
             },
+            {
+                OpcodeNames.STOP,STOP
+            },
+            {
+                OpcodeNames.CCF,CCF
+            },
+
 
             #region INC
             #region INC_R16
@@ -478,6 +540,46 @@ namespace CoreBoy.Emulator
             },
             {
                 OpcodeNames.INC_A,INC_A
+            },
+            #endregion
+            #endregion
+
+            #region DEC
+            #region DEC_R16
+            {
+                OpcodeNames.DEC_BC,DEC_BC
+            },
+            {
+                OpcodeNames.DEC_DE,DEC_DE
+            },
+            {
+                OpcodeNames.DEC_HL,DEC_HL
+            },
+            {
+                OpcodeNames.DEC_SP,DEC_SP
+            },
+            #endregion
+            #region DEC_R8
+            {
+                OpcodeNames.DEC_B,DEC_B
+            },
+            {
+                OpcodeNames.DEC_C,DEC_C
+            },
+            {
+                OpcodeNames.DEC_D,DEC_D
+            },
+            {
+                OpcodeNames.DEC_E,DEC_E
+            },
+            {
+                OpcodeNames.DEC_H,DEC_H
+            },
+            {
+                OpcodeNames.DEC_L,DEC_L
+            },
+            {
+                OpcodeNames.DEC_A,DEC_A
             },
             #endregion
             #endregion
@@ -747,6 +849,9 @@ namespace CoreBoy.Emulator
             {
                 OpcodeNames.JP_C,JP_C
             },
+            {
+                OpcodeNames.JR,JR
+            },
             #endregion
             #region POP
             {
@@ -811,6 +916,13 @@ namespace CoreBoy.Emulator
                 OpcodeNames.RET_NZ,RET_NZ
             },
             #endregion
+        
+            #region Bitwise logic
+            {
+                OpcodeNames.RRCA,RRCA
+            }
+            #endregion
+                
         };
         #endregion
 

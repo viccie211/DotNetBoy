@@ -21,6 +21,26 @@ namespace CoreBoy.Emulator
         public const string INC_L = "INC_L";
         #endregion
         #endregion
+
+        #region DEC
+        #region DEC_R16
+        public const string DEC_BC = "DEC_BC";
+        public const string DEC_DE = "DEC_DE";
+        public const string DEC_HL = "DEC_HL";
+        public const string DEC_SP = "DEC_SP";
+        #endregion
+
+        #region DEC_R8
+        public const string DEC_A = "DEC_A";
+        public const string DEC_B = "DEC_B";
+        public const string DEC_C = "DEC_C";
+        public const string DEC_D = "DEC_D";
+        public const string DEC_E = "DEC_E";
+        public const string DEC_H = "DEC_H";
+        public const string DEC_L = "DEC_L";
+        #endregion
+        #endregion
+
         #region ADD
         public const string ADD_A_B = "ADD_A_B";
         public const string ADD_A_C = "ADD_A_C";
@@ -35,6 +55,7 @@ namespace CoreBoy.Emulator
         public const string JP_Z = "JP_Z";
         public const string JP_NC = "JP_NC";
         public const string JP_C = "JP_C";
+        public const string JR = "JR";
         #endregion
 
         #region LD
@@ -171,7 +192,15 @@ namespace CoreBoy.Emulator
         public const string RET_NC = "RET_NC";
         #endregion
 
+        #region Bitwise Logic
+
+        public const string RRCA = "RRCA";
+        #endregion
+
         public const string NOP = "NOP";
+        public const string STOP = "STOP";
         public const string HALT = "HALT";
+
+        public const string CCF = "CCF";
     }
 }
