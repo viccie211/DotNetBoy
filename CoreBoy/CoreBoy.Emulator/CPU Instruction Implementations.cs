@@ -233,7 +233,61 @@ namespace CoreBoy.Emulator
         }
         #endregion
 
+        #region SUB
 
+        public static void SUB_A(CPU cpu)
+        {
+            Sub(ref cpu._RegA, cpu._RegA, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void SUB_B(CPU cpu)
+        {
+            Sub(ref cpu._RegA, cpu._RegB, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void SUB_C(CPU cpu)
+        {
+            Sub(ref cpu._RegA, cpu._RegC, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void SUB_D(CPU cpu)
+        {
+            Sub(ref cpu._RegA, cpu._RegD, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+        public static void SUB_E(CPU cpu)
+        {
+            Sub(ref cpu._RegA, cpu._RegE, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void SUB_H(CPU cpu)
+        {
+            Sub(ref cpu._RegA, cpu._RegH, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void SUB_L(CPU cpu)
+        {
+            Sub(ref cpu._RegA, cpu._RegL, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void SUB_HL(CPU cpu)
+        {
+            Sub(ref cpu._RegA, cpu._MMU.ReadByte(cpu._RegHL), ref cpu._RegF);
+            cpu._RegPC++;
+        }
+        public static void SUB_D8(CPU cpu)
+        {
+            Sub(ref cpu._RegA, cpu._MMU.ReadByte(((ushort)(cpu._RegPC + 1))), ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+
+        #endregion
         #region JP
         public static void JP(CPU cpu)
         {
@@ -259,11 +313,40 @@ namespace CoreBoy.Emulator
             Jump(ref cpu._RegPC, cpu._MMU, cpu._RegF.Carry);
         }
 
+
+        #endregion
+
+        #region JR
         public static void JR(CPU cpu)
         {
             byte toAdd = cpu._MMU.ReadByte((ushort)(cpu._RegPC + 1));
             cpu._RegPC += toAdd;
         }
+
+        public static void JR_NZ(CPU cpu)
+        {
+            byte toAdd = cpu._MMU.ReadByte((ushort)(cpu._RegPC + 1));
+            JumpRelative(ref cpu._RegPC, toAdd, !cpu._RegF.Zero);
+        }
+
+        public static void JR_Z(CPU cpu)
+        {
+            byte toAdd = cpu._MMU.ReadByte((ushort)(cpu._RegPC + 1));
+            JumpRelative(ref cpu._RegPC, toAdd, cpu._RegF.Zero);
+        }
+
+        public static void JR_NC(CPU cpu)
+        {
+            byte toAdd = cpu._MMU.ReadByte((ushort)(cpu._RegPC + 1));
+            JumpRelative(ref cpu._RegPC, toAdd, !cpu._RegF.Carry);
+        }
+
+        public static void JR_C(CPU cpu)
+        {
+            byte toAdd = cpu._MMU.ReadByte((ushort)(cpu._RegPC + 1));
+            JumpRelative(ref cpu._RegPC, toAdd, cpu._RegF.Carry);
+        }
+
         #endregion
 
         #region LD
@@ -909,6 +992,120 @@ namespace CoreBoy.Emulator
         }
         #endregion
 
+        #region AND
+
+        public static void AND_B(CPU cpu)
+        {
+            And(ref cpu._RegA, cpu._RegB, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void AND_C(CPU cpu)
+        {
+            And(ref cpu._RegA, cpu._RegC, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void AND_D(CPU cpu)
+        {
+            And(ref cpu._RegA, cpu._RegD, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void AND_E(CPU cpu)
+        {
+            And(ref cpu._RegA, cpu._RegE, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void AND_H(CPU cpu)
+        {
+            And(ref cpu._RegA, cpu._RegH, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void AND_L(CPU cpu)
+        {
+            And(ref cpu._RegA, cpu._RegL, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void AND_A(CPU cpu)
+        {
+            And(ref cpu._RegA, cpu._RegA, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void AND_HL(CPU cpu)
+        {
+            And(ref cpu._RegA, cpu._MMU.ReadByte(cpu._RegHL), ref cpu._RegF);
+            cpu._RegPC++;
+        }
+        public static void AND_D8(CPU cpu)
+        {
+            And(ref cpu._RegA, cpu._MMU.ReadByte((ushort)(cpu._RegPC + 1)), ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        #endregion
+
+        #region OR
+
+        public static void OR_B(CPU cpu)
+        {
+            Or(ref cpu._RegA, cpu._RegB, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void OR_C(CPU cpu)
+        {
+            Or(ref cpu._RegA, cpu._RegC, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void OR_D(CPU cpu)
+        {
+            Or(ref cpu._RegA, cpu._RegD, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void OR_E(CPU cpu)
+        {
+            Or(ref cpu._RegA, cpu._RegE, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void OR_H(CPU cpu)
+        {
+            Or(ref cpu._RegA, cpu._RegH, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void OR_L(CPU cpu)
+        {
+            Or(ref cpu._RegA, cpu._RegL, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void OR_A(CPU cpu)
+        {
+            Or(ref cpu._RegA, cpu._RegA, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void OR_HL(CPU cpu)
+        {
+            Or(ref cpu._RegA, cpu._MMU.ReadByte(cpu._RegHL), ref cpu._RegF);
+            cpu._RegPC++;
+        }
+        public static void OR_D8(CPU cpu)
+        {
+            Or(ref cpu._RegA, cpu._MMU.ReadByte((ushort)(cpu._RegPC + 1)), ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        #endregion
+
+
+
         public static void NOP(CPU cpu)
         {
             cpu._RegPC++;
@@ -938,6 +1135,53 @@ namespace CoreBoy.Emulator
             cpu._RegA = (byte)(cpu._RegA >> 1);
             cpu._RegPC++;
         }
+
+        #region BIT
+        #region BIT7
+        public static void BIT_7_A(CPU cpu)
+        {
+            Bit(cpu._RegA, 7, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_7_B(CPU cpu)
+        {
+            Bit(cpu._RegB, 7, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_7_C(CPU cpu)
+        {
+            Bit(cpu._RegC, 7, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_7_D(CPU cpu)
+        {
+            Bit(cpu._RegD, 7, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_7_E(CPU cpu)
+        {
+            Bit(cpu._RegE, 7, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_7_L(CPU cpu)
+        {
+            Bit(cpu._RegL, 7, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_7_H(CPU cpu)
+        {
+            Bit(cpu._RegH, 7, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+
+        public static void BIT_7_HL(CPU cpu)
+        {
+            Bit(cpu._RegH, 7, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+
+        #endregion
+        #endregion
         #endregion
 
         #endregion
@@ -998,6 +1242,26 @@ namespace CoreBoy.Emulator
             programCounter++;
         }
 
+        private static void Sub(ref byte target, byte source, ref FlagsRegister flagsRegister)
+        {
+            int newValue = target - source;
+            byte result;
+
+            if (newValue < 0)
+            {
+                result = (byte)(newValue + 256);
+            }
+            else
+            {
+                result = (byte)newValue;
+            }
+
+            flagsRegister.Zero = newValue == 0;
+            flagsRegister.Subtract = true;
+            flagsRegister.HalfCarry = (((target & 0xF) - (source & 0xF)) < 0);
+            flagsRegister.Carry = target < source;
+        }
+
         private static void Jump(ref ushort programCounter, MMU mmu, bool conditionMet)
         {
             if (!conditionMet)
@@ -1007,6 +1271,18 @@ namespace CoreBoy.Emulator
             }
             ushort newAddress = mmu.ReadWordLSFirst((ushort)(programCounter + 1));
             programCounter = newAddress;
+        }
+
+        private static void JumpRelative(ref ushort programCounter, byte toAdd, bool conditionMet)
+        {
+            if (conditionMet)
+            {
+                programCounter += toAdd;
+            }
+            else
+            {
+                programCounter += 2;
+            }
         }
 
 
@@ -1083,6 +1359,34 @@ namespace CoreBoy.Emulator
             }
 
             cpu._RegPC++;
+        }
+
+        private static void And(ref byte target, byte source, ref FlagsRegister flagsRegister)
+        {
+            byte result = (byte)(target & source);
+            flagsRegister.Carry = false;
+            flagsRegister.Zero = result == 0;
+            flagsRegister.Subtract = false;
+            flagsRegister.HalfCarry = true;
+            target = result;
+        }
+
+        private static void Or(ref byte target, byte source, ref FlagsRegister flagsRegister)
+        {
+            byte result = (byte)(target | source);
+            flagsRegister.Carry = false;
+            flagsRegister.Zero = result == 0;
+            flagsRegister.Subtract = false;
+            flagsRegister.HalfCarry = true;
+            target = result;
+        }
+
+        private static void Bit(byte target, byte bitNr, ref FlagsRegister flagsRegister)
+        {
+            int shifted = target >> bitNr;
+            flagsRegister.Zero = (shifted & 1) == 1;
+            flagsRegister.HalfCarry = true;
+            flagsRegister.Subtract = false;
         }
         #endregion
     }

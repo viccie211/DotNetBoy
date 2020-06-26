@@ -61,13 +61,32 @@ namespace CoreBoy.Emulator
         public const string CP_HL = "CP_HL";
         #endregion
 
+        #region SUB
+        public const string SUB_D8 = "SUB_D8";
+        public const string SUB_A = "SUB_A";
+        public const string SUB_B = "SUB_B";
+        public const string SUB_C = "SUB_C";
+        public const string SUB_D = "SUB_D";
+        public const string SUB_E = "SUB_E";
+        public const string SUB_H = "SUB_H";
+        public const string SUB_L = "SUB_L";
+        public const string SUB_HL = "SUB_HL";
+        #endregion
+
         #region JP
         public const string JP = "JP";
         public const string JP_NZ = "JP_NZ";
         public const string JP_Z = "JP_Z";
         public const string JP_NC = "JP_NC";
         public const string JP_C = "JP_C";
+        #endregion
+
+        #region JR
         public const string JR = "JR";
+        public const string JR_NZ = "JR_NZ";
+        public const string JR_Z = "JR_Z";
+        public const string JR_NC = "JR_NC";
+        public const string JR_C = "JR_C";
         #endregion
 
         #region LD
@@ -216,6 +235,31 @@ namespace CoreBoy.Emulator
 
         #endregion
 
+        #region AND
+        public const string AND_D8 = "AND_D8";
+        public const string AND_B = "AND_B";
+        public const string AND_C = "AND_C";
+        public const string AND_D = "AND_D";
+        public const string AND_E = "AND_E";
+        public const string AND_H = "AND_H";
+        public const string AND_L = "AND_L";
+
+        public const string AND_HL = "AND_HL";
+        public const string AND_A = "AND_A";
+        #endregion
+
+        #region OR
+        public const string OR_D8 = "OR_D8";
+        public const string OR_B = "OR_B";
+        public const string OR_C = "OR_C";
+        public const string OR_D = "OR_D";
+        public const string OR_E = "OR_E";
+        public const string OR_H = "OR_H";
+        public const string OR_L = "OR_L";
+
+        public const string OR_HL = "OR_HL";
+        public const string OR_A = "OR_A";
+        #endregion
 
         #region Bitwise Logic
 
