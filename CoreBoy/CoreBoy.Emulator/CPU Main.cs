@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
 using System.Text;
 
 namespace CoreBoy.Emulator
@@ -89,6 +90,14 @@ namespace CoreBoy.Emulator
         public CPU()
         {
             Reset();
+            this.InstructionSet = new Dictionary<string, Action<CPU>>();
+            Type cpuType = this.GetType();
+            foreach (KeyValuePair<byte, string> opcodebinding in this.NonPrefixedInstructions)
+            {
+                MethodInfo instructionImplementationInfo = cpuType.GetMethod(opcodebinding.Value);
+                Action<CPU> action = (Action<CPU>)Delegate.CreateDelegate(typeof(Action<CPU>), instructionImplementationInfo);
+                this.InstructionSet.Add(opcodebinding.Value, action);
+            }
         }
 
 

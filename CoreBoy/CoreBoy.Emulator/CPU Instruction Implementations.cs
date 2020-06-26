@@ -150,27 +150,27 @@ namespace CoreBoy.Emulator
         #endregion
 
         #region ADD
-        private static void ADD_A_B(CPU cpu)
+        public static void ADD_A_B(CPU cpu)
         {
             Add(ref cpu._RegA, cpu._RegB, ref cpu._RegF, ref cpu._RegPC);
         }
 
-        private static void ADD_A_C(CPU cpu)
+        public static void ADD_A_C(CPU cpu)
         {
             Add(ref cpu._RegA, cpu._RegC, ref cpu._RegF, ref cpu._RegPC);
         }
 
-        private static void ADD_A_D(CPU cpu)
+        public static void ADD_A_D(CPU cpu)
         {
             Add(ref cpu._RegA, cpu._RegD, ref cpu._RegF, ref cpu._RegPC);
         }
 
-        private static void ADD_A_E(CPU cpu)
+        public static void ADD_A_E(CPU cpu)
         {
             Add(ref cpu._RegA, cpu._RegE, ref cpu._RegF, ref cpu._RegPC);
         }
 
-        private static void ADD_A_H(CPU cpu)
+        public static void ADD_A_H(CPU cpu)
         {
             Add(ref cpu._RegA, cpu._RegH, ref cpu._RegF, ref cpu._RegPC);
         }
@@ -235,31 +235,31 @@ namespace CoreBoy.Emulator
 
 
         #region JP
-        private static void JP(CPU cpu)
+        public static void JP(CPU cpu)
         {
             Jump(ref cpu._RegPC, cpu._MMU, true);
         }
 
-        private static void JP_NZ(CPU cpu)
+        public static void JP_NZ(CPU cpu)
         {
             Jump(ref cpu._RegPC, cpu._MMU, !cpu._RegF.Zero);
         }
 
-        private static void JP_Z(CPU cpu)
+        public static void JP_Z(CPU cpu)
         {
             Jump(ref cpu._RegPC, cpu._MMU, cpu._RegF.Zero);
         }
 
-        private static void JP_NC(CPU cpu)
+        public static void JP_NC(CPU cpu)
         {
             Jump(ref cpu._RegPC, cpu._MMU, !cpu._RegF.Carry);
         }
-        private static void JP_C(CPU cpu)
+        public static void JP_C(CPU cpu)
         {
             Jump(ref cpu._RegPC, cpu._MMU, cpu._RegF.Carry);
         }
 
-        private static void JR(CPU cpu)
+        public static void JR(CPU cpu)
         {
             byte toAdd = cpu._MMU.ReadByte((ushort)(cpu._RegPC + 1));
             cpu._RegPC += toAdd;
@@ -274,7 +274,7 @@ namespace CoreBoy.Emulator
             cpu._RegPC++;
         }
 
-        public static void LOAD_A_B(CPU cpu)
+        public static void LD_A_B(CPU cpu)
         {
             LoadByte(ref cpu._RegA, cpu._RegB);
             cpu._RegPC++;
@@ -818,7 +818,7 @@ namespace CoreBoy.Emulator
         #endregion
 
         #region CALL
-        public static void CALL_ALWAYS(CPU cpu)
+        public static void CALL(CPU cpu)
         {
             Call(cpu, true);
         }
@@ -846,7 +846,7 @@ namespace CoreBoy.Emulator
         #endregion
 
         #region RET
-        public static void RET_ALWAYS(CPU cpu)
+        public static void RET(CPU cpu)
         {
             Ret(cpu, true);
         }
