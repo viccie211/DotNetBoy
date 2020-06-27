@@ -98,6 +98,13 @@ namespace CoreBoy.Emulator
                 Action<CPU> action = (Action<CPU>)Delegate.CreateDelegate(typeof(Action<CPU>), instructionImplementationInfo);
                 this.InstructionSet.Add(opcodebinding.Value, action);
             }
+
+            foreach (KeyValuePair<byte, string> opcodebinding in this.PrefixedInstructions)
+            {
+                MethodInfo instructionImplementationInfo = cpuType.GetMethod(opcodebinding.Value);
+                Action<CPU> action = (Action<CPU>)Delegate.CreateDelegate(typeof(Action<CPU>), instructionImplementationInfo);
+                this.InstructionSet.Add(opcodebinding.Value, action);
+            }
         }
 
 

@@ -263,6 +263,105 @@ namespace CoreBoy.Emulator
 
         #region Bitwise Logic
 
+
+        #region Bit
+        #region Bit 0
+        public const string BIT_0_A = "BIT_0_A";
+        public const string BIT_0_B = "BIT_0_B";
+        public const string BIT_0_C = "BIT_0_C";
+        public const string BIT_0_D = "BIT_0_D";
+        public const string BIT_0_E = "BIT_0_E";
+        public const string BIT_0_H = "BIT_0_H";
+        public const string BIT_0_L = "BIT_0_L";
+        public const string BIT_0_HL = "BIT_0_HL";
+
+        #endregion
+
+        #region Bit 1
+        public const string BIT_1_A = "BIT_1_A";
+        public const string BIT_1_B = "BIT_1_B";
+        public const string BIT_1_C = "BIT_1_C";
+        public const string BIT_1_D = "BIT_1_D";
+        public const string BIT_1_E = "BIT_1_E";
+        public const string BIT_1_H = "BIT_1_H";
+        public const string BIT_1_L = "BIT_1_L";
+        public const string BIT_1_HL = "BIT_1_HL";
+
+        #endregion
+
+        #region Bit 2
+        public const string BIT_2_A = "BIT_2_A";
+        public const string BIT_2_B = "BIT_2_B";
+        public const string BIT_2_C = "BIT_2_C";
+        public const string BIT_2_D = "BIT_2_D";
+        public const string BIT_2_E = "BIT_2_E";
+        public const string BIT_2_H = "BIT_2_H";
+        public const string BIT_2_L = "BIT_2_L";
+        public const string BIT_2_HL = "BIT_2_HL";
+
+        #endregion
+
+        #region Bit 3
+        public const string BIT_3_A = "BIT_3_A";
+        public const string BIT_3_B = "BIT_3_B";
+        public const string BIT_3_C = "BIT_3_C";
+        public const string BIT_3_D = "BIT_3_D";
+        public const string BIT_3_E = "BIT_3_E";
+        public const string BIT_3_H = "BIT_3_H";
+        public const string BIT_3_L = "BIT_3_L";
+        public const string BIT_3_HL = "BIT_3_HL";
+
+        #endregion
+
+        #region Bit 4
+        public const string BIT_4_A = "BIT_4_A";
+        public const string BIT_4_B = "BIT_4_B";
+        public const string BIT_4_C = "BIT_4_C";
+        public const string BIT_4_D = "BIT_4_D";
+        public const string BIT_4_E = "BIT_4_E";
+        public const string BIT_4_H = "BIT_4_H";
+        public const string BIT_4_L = "BIT_4_L";
+        public const string BIT_4_HL = "BIT_4_HL";
+
+        #endregion
+
+        #region Bit 5
+        public const string BIT_5_A = "BIT_5_A";
+        public const string BIT_5_B = "BIT_5_B";
+        public const string BIT_5_C = "BIT_5_C";
+        public const string BIT_5_D = "BIT_5_D";
+        public const string BIT_5_E = "BIT_5_E";
+        public const string BIT_5_H = "BIT_5_H";
+        public const string BIT_5_L = "BIT_5_L";
+        public const string BIT_5_HL = "BIT_5_HL";
+
+        #endregion
+
+        #region Bit 6
+        public const string BIT_6_A = "BIT_6_A";
+        public const string BIT_6_B = "BIT_6_B";
+        public const string BIT_6_C = "BIT_6_C";
+        public const string BIT_6_D = "BIT_6_D";
+        public const string BIT_6_E = "BIT_6_E";
+        public const string BIT_6_H = "BIT_6_H";
+        public const string BIT_6_L = "BIT_6_L";
+        public const string BIT_6_HL = "BIT_6_HL";
+
+        #endregion
+
+        #region Bit 7
+        public const string BIT_7_A = "BIT_7_A";
+        public const string BIT_7_B = "BIT_7_B";
+        public const string BIT_7_C = "BIT_7_C";
+        public const string BIT_7_D = "BIT_7_D";
+        public const string BIT_7_E = "BIT_7_E";
+        public const string BIT_7_H = "BIT_7_H";
+        public const string BIT_7_L = "BIT_7_L";
+        public const string BIT_7_HL = "BIT_7_HL";
+
+        #endregion
+        #endregion
+
         public const string RRCA = "RRCA";
         #endregion
 

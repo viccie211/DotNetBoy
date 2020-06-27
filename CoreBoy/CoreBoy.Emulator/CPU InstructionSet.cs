@@ -637,6 +637,7 @@ namespace CoreBoy.Emulator
             #endregion
 
             #region Bitwise Logic
+
             {
                 0xF0,OpcodeNames.RRCA
             }
@@ -646,7 +647,216 @@ namespace CoreBoy.Emulator
 
         public Dictionary<byte, string> PrefixedInstructions = new Dictionary<byte, string>()
         {
-
+            #region Bit
+            #region Bit 0
+            {
+                0x47, OpcodeNames.BIT_0_A
+            },
+            {
+                0x40, OpcodeNames.BIT_0_B
+            },
+            {
+                0x41, OpcodeNames.BIT_0_C
+            },
+            {
+                0x42, OpcodeNames.BIT_0_D
+            },
+            {
+                0x43, OpcodeNames.BIT_0_E
+            },
+            {
+                0x44, OpcodeNames.BIT_0_H
+            },
+            {
+                0x45, OpcodeNames.BIT_0_L
+            },
+            {
+                0x46, OpcodeNames.BIT_0_HL
+            },
+            #endregion
+            #region Bit 1
+            {
+                0x4F, OpcodeNames.BIT_1_A
+            },
+            {
+                0x48, OpcodeNames.BIT_1_B
+            },
+            {
+                0x49, OpcodeNames.BIT_1_C
+            },
+            {
+                0x4A, OpcodeNames.BIT_1_D
+            },
+            {
+                0x4B, OpcodeNames.BIT_1_E
+            },
+            {
+                0x4C, OpcodeNames.BIT_1_H
+            },
+            {
+                0x4D, OpcodeNames.BIT_1_L
+            },
+            {
+                0x4E, OpcodeNames.BIT_1_HL
+            },
+            #endregion
+            #region Bit 2
+            {
+                0x57, OpcodeNames.BIT_2_A
+            },
+            {
+                0x50, OpcodeNames.BIT_2_B
+            },
+            {
+                0x51, OpcodeNames.BIT_2_C
+            },
+            {
+                0x52, OpcodeNames.BIT_2_D
+            },
+            {
+                0x53, OpcodeNames.BIT_2_E
+            },
+            {
+                0x54, OpcodeNames.BIT_2_H
+            },
+            {
+                0x55, OpcodeNames.BIT_2_L
+            },
+            {
+                0x56, OpcodeNames.BIT_2_HL
+            },
+            #endregion
+            #region Bit 3
+            {
+                0x5F, OpcodeNames.BIT_3_A
+            },
+            {
+                0x58, OpcodeNames.BIT_3_B
+            },
+            {
+                0x59, OpcodeNames.BIT_3_C
+            },
+            {
+                0x5A, OpcodeNames.BIT_3_D
+            },
+            {
+                0x5B, OpcodeNames.BIT_3_E
+            },
+            {
+                0x5C, OpcodeNames.BIT_3_H
+            },
+            {
+                0x5D, OpcodeNames.BIT_3_L
+            },
+            {
+                0x5E, OpcodeNames.BIT_3_HL
+            },
+            #endregion
+            #region Bit 4
+            {
+                0x67, OpcodeNames.BIT_4_A
+            },
+            {
+                0x60, OpcodeNames.BIT_4_B
+            },
+            {
+                0x61, OpcodeNames.BIT_4_C
+            },
+            {
+                0x62, OpcodeNames.BIT_4_D
+            },
+            {
+                0x63, OpcodeNames.BIT_4_E
+            },
+            {
+                0x64, OpcodeNames.BIT_4_H
+            },
+            {
+                0x65, OpcodeNames.BIT_4_L
+            },
+            {
+                0x66, OpcodeNames.BIT_4_HL
+            },
+            #endregion
+            #region Bit 5
+            {
+                0x6F, OpcodeNames.BIT_5_A
+            },
+            {
+                0x68, OpcodeNames.BIT_5_B
+            },
+            {
+                0x69, OpcodeNames.BIT_5_C
+            },
+            {
+                0x6A, OpcodeNames.BIT_5_D
+            },
+            {
+                0x6B, OpcodeNames.BIT_5_E
+            },
+            {
+                0x6C, OpcodeNames.BIT_5_H
+            },
+            {
+                0x6D, OpcodeNames.BIT_5_L
+            },
+            {
+                0x6E, OpcodeNames.BIT_5_HL
+            },
+            #endregion
+            #region Bit 6
+            {
+                0x77, OpcodeNames.BIT_6_A
+            },
+            {
+                0x70, OpcodeNames.BIT_6_B
+            },
+            {
+                0x71, OpcodeNames.BIT_6_C
+            },
+            {
+                0x72, OpcodeNames.BIT_6_D
+            },
+            {
+                0x73, OpcodeNames.BIT_6_E
+            },
+            {
+                0x74, OpcodeNames.BIT_6_H
+            },
+            {
+                0x75, OpcodeNames.BIT_6_L
+            },
+            {
+                0x76, OpcodeNames.BIT_6_HL
+            },
+            #endregion
+            #region Bit 7
+            {
+                0x7F, OpcodeNames.BIT_7_A
+            },
+            {
+                0x78, OpcodeNames.BIT_7_B
+            },
+            {
+                0x79, OpcodeNames.BIT_7_C
+            },
+            {
+                0x7A, OpcodeNames.BIT_7_D
+            },
+            {
+                0x7B, OpcodeNames.BIT_7_E
+            },
+            {
+                0x7C, OpcodeNames.BIT_7_H
+            },
+            {
+                0x7D, OpcodeNames.BIT_7_L
+            },
+            {
+                0x7E, OpcodeNames.BIT_7_HL
+            },
+            #endregion
+            #endregion
         };
 
         public Dictionary<string, Action<CPU>> InstructionSet;

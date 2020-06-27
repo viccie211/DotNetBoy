@@ -1137,6 +1137,308 @@ namespace CoreBoy.Emulator
         }
 
         #region BIT
+        #region BIT0
+        public static void BIT_0_A(CPU cpu)
+        {
+            Bit(cpu._RegA, 0, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_0_B(CPU cpu)
+        {
+            Bit(cpu._RegB, 0, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_0_C(CPU cpu)
+        {
+            Bit(cpu._RegC, 0, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_0_D(CPU cpu)
+        {
+            Bit(cpu._RegD, 0, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_0_E(CPU cpu)
+        {
+            Bit(cpu._RegE, 0, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_0_L(CPU cpu)
+        {
+            Bit(cpu._RegL, 0, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_0_H(CPU cpu)
+        {
+            Bit(cpu._RegH, 0, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+
+        public static void BIT_0_HL(CPU cpu)
+        {
+            Bit(cpu._RegH, 0, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+
+        #endregion
+        #region BIT1
+        public static void BIT_1_A(CPU cpu)
+        {
+            Bit(cpu._RegA, 1, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_1_B(CPU cpu)
+        {
+            Bit(cpu._RegB, 1, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_1_C(CPU cpu)
+        {
+            Bit(cpu._RegC, 1, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_1_D(CPU cpu)
+        {
+            Bit(cpu._RegD, 1, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_1_E(CPU cpu)
+        {
+            Bit(cpu._RegE, 1, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_1_L(CPU cpu)
+        {
+            Bit(cpu._RegL, 1, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_1_H(CPU cpu)
+        {
+            Bit(cpu._RegH, 1, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+
+        public static void BIT_1_HL(CPU cpu)
+        {
+            Bit(cpu._MMU.ReadByte(cpu._RegHL), 1, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+
+        #endregion
+        #region BIT2
+        public static void BIT_2_A(CPU cpu)
+        {
+            Bit(cpu._RegA, 2, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_2_B(CPU cpu)
+        {
+            Bit(cpu._RegB, 2, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_2_C(CPU cpu)
+        {
+            Bit(cpu._RegC, 2, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_2_D(CPU cpu)
+        {
+            Bit(cpu._RegD, 2, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_2_E(CPU cpu)
+        {
+            Bit(cpu._RegE, 2, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_2_L(CPU cpu)
+        {
+            Bit(cpu._RegL, 2, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_2_H(CPU cpu)
+        {
+            Bit(cpu._RegH, 2, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_2_HL(CPU cpu)
+        {
+            Bit(cpu._MMU.ReadByte(cpu._RegHL), 2, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        #endregion
+        #region BIT3
+        public static void BIT_3_A(CPU cpu)
+        {
+            Bit(cpu._RegA, 3, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_3_B(CPU cpu)
+        {
+            Bit(cpu._RegB, 3, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_3_C(CPU cpu)
+        {
+            Bit(cpu._RegC, 3, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_3_D(CPU cpu)
+        {
+            Bit(cpu._RegD, 3, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_3_E(CPU cpu)
+        {
+            Bit(cpu._RegE, 3, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_3_L(CPU cpu)
+        {
+            Bit(cpu._RegL, 3, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_3_H(CPU cpu)
+        {
+            Bit(cpu._RegH, 3, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+
+        public static void BIT_3_HL(CPU cpu)
+        {
+            Bit(cpu._MMU.ReadByte(cpu._RegHL), 3, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+
+        #endregion
+        #region BIT4
+        public static void BIT_4_A(CPU cpu)
+        {
+            Bit(cpu._RegA, 4, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_4_B(CPU cpu)
+        {
+            Bit(cpu._RegB, 4, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_4_C(CPU cpu)
+        {
+            Bit(cpu._RegC, 4, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_4_D(CPU cpu)
+        {
+            Bit(cpu._RegD, 4, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_4_E(CPU cpu)
+        {
+            Bit(cpu._RegE, 4, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_4_L(CPU cpu)
+        {
+            Bit(cpu._RegL, 4, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_4_H(CPU cpu)
+        {
+            Bit(cpu._RegH, 4, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_4_HL(CPU cpu)
+        {
+            Bit(cpu._MMU.ReadByte(cpu._RegHL), 4, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        #endregion
+        #region BIT5
+        public static void BIT_5_A(CPU cpu)
+        {
+            Bit(cpu._RegA, 5, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_5_B(CPU cpu)
+        {
+            Bit(cpu._RegB, 5, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_5_C(CPU cpu)
+        {
+            Bit(cpu._RegC, 5, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_5_D(CPU cpu)
+        {
+            Bit(cpu._RegD, 5, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_5_E(CPU cpu)
+        {
+            Bit(cpu._RegE, 5, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_5_L(CPU cpu)
+        {
+            Bit(cpu._RegL, 5, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_5_H(CPU cpu)
+        {
+            Bit(cpu._RegH, 5, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+
+        public static void BIT_5_HL(CPU cpu)
+        {
+            Bit(cpu._MMU.ReadByte(cpu._RegHL), 5, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+
+        #endregion
+        #region BIT6
+        public static void BIT_6_A(CPU cpu)
+        {
+            Bit(cpu._RegA, 6, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_6_B(CPU cpu)
+        {
+            Bit(cpu._RegB, 6, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_6_C(CPU cpu)
+        {
+            Bit(cpu._RegC, 6, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_6_D(CPU cpu)
+        {
+            Bit(cpu._RegD, 6, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_6_E(CPU cpu)
+        {
+            Bit(cpu._RegE, 6, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_6_L(CPU cpu)
+        {
+            Bit(cpu._RegL, 6, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_6_H(CPU cpu)
+        {
+            Bit(cpu._RegH, 6, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void BIT_6_HL(CPU cpu)
+        {
+            Bit(cpu._MMU.ReadByte(cpu._RegHL), 6, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        #endregion
         #region BIT7
         public static void BIT_7_A(CPU cpu)
         {
@@ -1176,7 +1478,7 @@ namespace CoreBoy.Emulator
 
         public static void BIT_7_HL(CPU cpu)
         {
-            Bit(cpu._RegH, 7, ref cpu._RegF);
+            Bit(cpu._MMU.ReadByte(cpu._RegHL), 7, ref cpu._RegF);
             cpu._RegPC += 2;
         }
 
