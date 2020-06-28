@@ -19,7 +19,10 @@ namespace CoreBoy.Emulator
                 0x76,OpcodeNames.HALT
             },
             {
-                0xF3,OpcodeNames.CCF
+                0x3F,OpcodeNames.CCF
+            },
+            {
+                0xF3,OpcodeNames.DI
             },
 
 
@@ -369,6 +372,16 @@ namespace CoreBoy.Emulator
                 0x12,OpcodeNames.LD_DE_A
             },
             #endregion
+            
+            #region LDH
+            {
+                0xE0, OpcodeNames.LDH_A8_A
+            },
+            {
+                0xF0, OpcodeNames.LDH_A_A8
+            },
+            #endregion
+
             #endregion            
             
             #region ADD
@@ -636,10 +649,40 @@ namespace CoreBoy.Emulator
             },
             #endregion
 
+            #region XOR
+             {
+                0xEE,OpcodeNames.XOR_D8
+            },
+            {
+                0xA8, OpcodeNames.XOR_B
+            },
+            {
+                0xA9, OpcodeNames.XOR_C
+            },
+            {
+                0xAA, OpcodeNames.XOR_D
+            },
+            {
+                0xAB, OpcodeNames.XOR_E
+            },
+            {
+                0xAC, OpcodeNames.XOR_H
+            },
+            {
+                0xAD, OpcodeNames.XOR_L
+            },
+            {
+                0xAE, OpcodeNames.XOR_HL
+            },
+            {
+                0xAF, OpcodeNames.XOR_A
+            },
+            #endregion
+
             #region Bitwise Logic
 
             {
-                0xF0,OpcodeNames.RRCA
+                0x0F,OpcodeNames.RRCA
             }
             #endregion
             

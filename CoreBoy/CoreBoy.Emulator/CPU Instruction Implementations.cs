@@ -842,27 +842,45 @@ namespace CoreBoy.Emulator
         }
         #endregion
 
+        #region LDH
+        public static void LDH_A_A8(CPU cpu)
+        {
+            cpu._RegA = cpu._MMU.ReadByte((ushort)(0xFF00 + cpu._MMU.ReadByte((ushort)(cpu._RegPC + 1))));
+            cpu._RegPC += 2;
+        }
+
+        public static void LDH_A8_A(CPU cpu)
+        {
+            cpu._MMU.WriteByte((ushort)(0xFF00 + cpu._MMU.ReadByte((ushort)(cpu._RegPC + 1))), cpu._RegA);
+            cpu._RegPC += 2;
+        }
+        #endregion
+
         #endregion
 
         #region PUSH
         public static void PUSH_AF(CPU cpu)
         {
             Push(cpu._RegAF, cpu);
+            cpu._RegPC++;
         }
 
         public static void PUSH_BC(CPU cpu)
         {
             Push(cpu._RegBC, cpu);
+            cpu._RegPC++;
         }
 
         public static void PUSH_DE(CPU cpu)
         {
             Push(cpu._RegDE, cpu);
+            cpu._RegPC++;
         }
 
         public static void PUSH_HL(CPU cpu)
         {
             Push(cpu._RegHL, cpu);
+            cpu._RegPC++;
         }
         #endregion
 
@@ -1104,7 +1122,60 @@ namespace CoreBoy.Emulator
         }
         #endregion
 
+        #region XOR
+        public static void XOR_B(CPU cpu)
+        {
+            Xor(ref cpu._RegA, cpu._RegB, ref cpu._RegF);
+            cpu._RegPC++;
+        }
 
+        public static void XOR_C(CPU cpu)
+        {
+            Xor(ref cpu._RegA, cpu._RegC, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void XOR_D(CPU cpu)
+        {
+            Xor(ref cpu._RegA, cpu._RegD, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void XOR_E(CPU cpu)
+        {
+            Xor(ref cpu._RegA, cpu._RegE, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void XOR_H(CPU cpu)
+        {
+            Xor(ref cpu._RegA, cpu._RegH, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void XOR_L(CPU cpu)
+        {
+            Xor(ref cpu._RegA, cpu._RegL, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void XOR_A(CPU cpu)
+        {
+            Xor(ref cpu._RegA, cpu._RegA, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        public static void XOR_HL(CPU cpu)
+        {
+            Xor(ref cpu._RegA, cpu._MMU.ReadByte(cpu._RegHL), ref cpu._RegF);
+            cpu._RegPC++;
+        }
+        public static void XOR_D8(CPU cpu)
+        {
+            Xor(ref cpu._RegA, cpu._MMU.ReadByte((ushort)(cpu._RegPC + 1)), ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        #endregion
 
         public static void NOP(CPU cpu)
         {
@@ -1124,6 +1195,12 @@ namespace CoreBoy.Emulator
         public static void CCF(CPU cpu)
         {
             cpu._RegF.Carry = !cpu._RegF.Carry;
+            cpu._RegPC++;
+        }
+
+        public static void DI(CPU cpu)
+        {
+            Console.WriteLine("DI is called but interrupts aren't implemented yet");
             cpu._RegPC++;
         }
 
@@ -1577,13 +1654,14 @@ namespace CoreBoy.Emulator
 
         private static void JumpRelative(ref ushort programCounter, byte toAdd, bool conditionMet)
         {
+            ushort newAddress = (ushort)(programCounter + 2);
             if (conditionMet)
             {
-                programCounter += toAdd;
+                programCounter = (ushort)(newAddress + unchecked((sbyte)toAdd));
             }
             else
             {
-                programCounter += 2;
+                programCounter = newAddress;
             }
         }
 
@@ -1599,7 +1677,7 @@ namespace CoreBoy.Emulator
 
         private static void LoadWordFromAddress(ref ushort target, ushort address, MMU mmu)
         {
-            LoadWord(ref target, mmu.ReadWord(address));
+            LoadWord(ref target, mmu.ReadWordLSFirst(address));
         }
 
         private static void LoadWord(ref ushort target, ushort source)
@@ -1618,7 +1696,7 @@ namespace CoreBoy.Emulator
             LoadByteToAddress(cpu._RegSP, ByteUshortHelper.UpperByteOfSixteenBits(value), cpu._MMU);
             cpu._RegSP--;
             LoadByteToAddress(cpu._RegSP, ByteUshortHelper.LowerByteOfSixteenBits(value), cpu._MMU);
-            cpu._RegPC++;
+
         }
 
         private static void Pop(ref ushort target, CPU cpu)
@@ -1680,6 +1758,16 @@ namespace CoreBoy.Emulator
             flagsRegister.Zero = result == 0;
             flagsRegister.Subtract = false;
             flagsRegister.HalfCarry = true;
+            target = result;
+        }
+
+        private static void Xor(ref byte target, byte source, ref FlagsRegister flagsRegister)
+        {
+            byte result = (byte)(target ^ source);
+            flagsRegister.Carry = false;
+            flagsRegister.Zero = result == 0;
+            flagsRegister.Subtract = false;
+            flagsRegister.HalfCarry = false;
             target = result;
         }
 

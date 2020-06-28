@@ -142,6 +142,7 @@ namespace CoreBoy.Emulator
                     instruction = _MMU.ReadByte((ushort)(_RegPC + 1));
                     prefixed = true;
                 }
+                Console.WriteLine($"{_RegPC.ToString("x2")}:{instruction.ToString("x2")} {((!prefixed) ? NonPrefixedInstructions[instruction] : PrefixedInstructions[instruction])}");
                 ExecuteInstruction(instruction, prefixed);
             }
         }
