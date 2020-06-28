@@ -6,6 +6,7 @@ namespace CoreBoy.Emulator
     {
         public MMU()
         {
+            _MappedMemory[0xFF44] = 0x90;
         }
 
         private byte[] _MappedMemory = new byte[0xFFFF];

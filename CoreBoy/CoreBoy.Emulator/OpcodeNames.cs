@@ -191,6 +191,10 @@ namespace CoreBoy.Emulator
 
         #endregion
 
+        #region LDH
+        public const string LDH_A_A8 = "LDH_A_A8";
+        public const string LDH_A8_A = "LDH_A8_A";
+        #endregion
         #endregion
 
         #region PUSH
@@ -260,6 +264,20 @@ namespace CoreBoy.Emulator
         public const string OR_HL = "OR_HL";
         public const string OR_A = "OR_A";
         #endregion
+
+        #region XOR
+        public const string XOR_D8 = "XOR_D8";
+        public const string XOR_B = "XOR_B";
+        public const string XOR_C = "XOR_C";
+        public const string XOR_D = "XOR_D";
+        public const string XOR_E = "XOR_E";
+        public const string XOR_H = "XOR_H";
+        public const string XOR_L = "XOR_L";
+
+        public const string XOR_HL = "XOR_HL";
+        public const string XOR_A = "XOR_A";
+        #endregion
+
 
         #region Bitwise Logic
 
@@ -368,7 +386,7 @@ namespace CoreBoy.Emulator
         public const string NOP = "NOP";
         public const string STOP = "STOP";
         public const string HALT = "HALT";
-
+        public const string DI = "DI";
         public const string CCF = "CCF";
     }
 }
