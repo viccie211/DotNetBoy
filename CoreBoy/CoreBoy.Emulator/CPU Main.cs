@@ -83,13 +83,15 @@ namespace CoreBoy.Emulator
         #endregion
 
         public MMU _MMU = new MMU();
-        private bool _Halted = false;
+        public PPU _PPU;
+        public bool _Halted = false;
 
         #region Public Methods
 
         public CPU()
         {
             Reset();
+            _PPU = new PPU(_MMU);
         }
 
 
@@ -124,8 +126,6 @@ namespace CoreBoy.Emulator
 
         public void Loop()
         {
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
             while (!_Halted)
             {
                 byte instruction = _MMU.ReadByte(_RegPC);
@@ -136,10 +136,11 @@ namespace CoreBoy.Emulator
                     instruction = _MMU.ReadByte((ushort)(_RegPC + 1));
                     prefixed = true;
                 }
-                Console.WriteLine($"{_RegPC.ToString("x2")}:{instruction.ToString("x2")}");
                 ExecuteInstruction(instruction, prefixed);
-                if (stopwatch.ElapsedMilliseconds > 10000)
+                _PPU.Step();
+                if (_PPU.Line > PPU._height + 10)
                 {
+                    _PPU.Line = 0;
                     _Halted = true;
                 }
             }

@@ -7,7 +7,6 @@ using Ultraviolet.Graphics;
 using Ultraviolet.Graphics.Graphics2D;
 using Ultraviolet.Input;
 using Ultraviolet.OpenGL;
-using CoreBoy.Models;
 using System.Linq;
 using CoreBoy.Emulator;
 using System.IO;
@@ -35,8 +34,6 @@ namespace CoreBoy
         private int _tileMapNr = 0;
         private int _tileSetNr = 0;
         private CPU cpu;
-        private Colors[,] _frameData = new Colors[_height, _width];
-        private TileData tileData = new TileData();
 
         public byte[] StringToByteArray(string hex)
         {
@@ -50,9 +47,6 @@ namespace CoreBoy
         {
             cpu = new CPU();
             cpu._MMU.LoadRom(File.ReadAllBytes("C:\\Users\\VictorRemmerswaal\\Downloads\\bgbw64\\bgbtest.gb"));
-            cpu.Loop();
-            tileData.TileSet = new TileSet(cpu._MMU.GetTileSet0());
-            tileData.TileMap = new TileMap(cpu._MMU.GetTileMap0());
         }
 
         protected override UltravioletContext OnCreatingUltravioletContext()
@@ -106,7 +100,8 @@ namespace CoreBoy
             }
             this.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend);
             _colorList = new List<Color>();
-            SetFrameData();
+            cpu._Halted = false;
+            cpu.Loop();
             for (int y = 0; y < _height; y++)
             {
                 for (int yScale = 0; yScale < _scale; yScale++)
@@ -115,18 +110,18 @@ namespace CoreBoy
                     {
                         for (int xScale = 0; xScale < _scale; xScale++)
                         {
-                            switch (_frameData[y, x])
+                            switch (cpu._PPU._frameData[y, x])
                             {
-                                case (Colors)0:
+                                case 0:
                                     _colorList.Add(_white);
                                     break;
-                                case (Colors)1:
+                                case 1:
                                     _colorList.Add(_dark);
                                     break;
-                                case (Colors)2:
+                                case 2:
                                     _colorList.Add(_light);
                                     break;
-                                case (Colors)3:
+                                case 3:
                                     _colorList.Add(_black);
                                     break;
                             }
@@ -143,47 +138,6 @@ namespace CoreBoy
             this.spriteBatch.End();
 
             _canvas.Clear(_black);
-            if (stepCounter == stepThreshold)
-            {
-
-
-                switch (direction)
-                {
-                    case 0:
-                        xOffSet -= 1;
-                        if (xOffSet <= -(_width / 2))
-                        {
-                            direction = 1;
-                        }
-                        break;
-                    case 1:
-                        yOffSet -= 1;
-                        if (yOffSet <= -(_height / 2))
-                        {
-                            direction = 2;
-                        }
-                        break;
-                    case 2:
-                        xOffSet += 1;
-                        if (xOffSet >= 0)
-                        {
-                            direction = 3;
-                        }
-                        break;
-                    case 3:
-                        yOffSet += 1;
-                        if (yOffSet >= 0)
-                        {
-                            direction = 0;
-                        }
-                        break;
-                }
-                stepCounter = 0;
-            }
-            else
-            {
-                stepCounter++;
-            }
             base.OnDrawing(time);
         }
 
@@ -198,30 +152,5 @@ namespace CoreBoy
         }
 
         private SpriteBatch spriteBatch;
-
-        private void SetFrameData()
-        {
-            for (int y = 0; y < 0x20; y++)
-            {
-                for (int x = 0; x < 0x20; x++)
-                {
-
-                    Tile tile = tileData.TileSet.GetByTileAndSetNr(tileData.TileMap.GetTileNrFromTileMap(y, x, _tileMapNr), _tileSetNr);
-
-                    for (int tiley = 0; tiley < 8; tiley++)
-                    {
-                        for (int tilex = 0; tilex < 8; tilex++)
-                        {
-                            int screenX = x * 8 + tilex + xOffSet;
-                            int screenY = y * 8 + tiley + yOffSet;
-                            if (screenY >= 0 && screenY < _height && screenX >= 0 && screenX < _width)
-                            {
-                                _frameData[screenY, screenX] = tile.Pixels[tiley, tilex];
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 }

@@ -1,15 +1,15 @@
-namespace CoreBoy.Models
+namespace CoreBoy.Emulator.PPUModels
 {
     public class Tile
     {
-        public Colors[,] Pixels { get; set; }
+        public int[,] Pixels { get; set; }
         public Tile()
         {
-            this.Pixels = new Colors[8, 8];
+            this.Pixels = new int[8, 8];
         }
         public Tile(byte[] tileData)
         {
-            this.Pixels = new Colors[8, 8];
+            this.Pixels = new int[8, 8];
 
             for (int i = 0; i < tileData.Length - 1; i += 2)
             {
@@ -23,19 +23,19 @@ namespace CoreBoy.Models
                     bool bit2 = ((byte2 & mask) == mask);
                     if (!bit1 && !bit2)
                     {
-                        Pixels[i / 2, j] = Colors.Black;
+                        Pixels[i / 2, j] = 0;
                     }
                     if (!bit1 && bit2)
                     {
-                        Pixels[i / 2, j] = Colors.Dark;
+                        Pixels[i / 2, j] = 1;
                     }
                     if (bit1 && !bit2)
                     {
-                        Pixels[i / 2, j] = Colors.Light;
+                        Pixels[i / 2, j] = 2;
                     }
                     if (bit1 && bit2)
                     {
-                        Pixels[i / 2, j] = Colors.White;
+                        Pixels[i / 2, j] = 3;
                     }
                     mask = (byte)(mask >> 1);
                     j++;

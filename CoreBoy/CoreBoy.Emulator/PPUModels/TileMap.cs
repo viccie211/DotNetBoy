@@ -1,5 +1,5 @@
 using System;
-namespace CoreBoy.Models
+namespace CoreBoy.Emulator.PPUModels
 {
     public class TileMap
     {
