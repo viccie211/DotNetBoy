@@ -90,21 +90,6 @@ namespace CoreBoy.Emulator
         public CPU()
         {
             Reset();
-            this.InstructionSet = new Dictionary<string, Action<CPU>>();
-            Type cpuType = this.GetType();
-            foreach (KeyValuePair<byte, string> opcodebinding in this.NonPrefixedInstructions)
-            {
-                MethodInfo instructionImplementationInfo = cpuType.GetMethod(opcodebinding.Value);
-                Action<CPU> action = (Action<CPU>)Delegate.CreateDelegate(typeof(Action<CPU>), instructionImplementationInfo);
-                this.InstructionSet.Add(opcodebinding.Value, action);
-            }
-
-            foreach (KeyValuePair<byte, string> opcodebinding in this.PrefixedInstructions)
-            {
-                MethodInfo instructionImplementationInfo = cpuType.GetMethod(opcodebinding.Value);
-                Action<CPU> action = (Action<CPU>)Delegate.CreateDelegate(typeof(Action<CPU>), instructionImplementationInfo);
-                this.InstructionSet.Add(opcodebinding.Value, action);
-            }
         }
 
 
@@ -127,11 +112,20 @@ namespace CoreBoy.Emulator
 
         public void ExecuteInstruction(byte instruction, bool prefixed = false)
         {
-            InstructionSet[prefixed ? PrefixedInstructions[instruction] : NonPrefixedInstructions[instruction]](this);
+            if (prefixed)
+            {
+                PrefixedInstructions(instruction);
+            }
+            else
+            {
+                NonPrefixedInstructions(instruction);
+            }
         }
 
         public void Loop()
         {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
             while (!_Halted)
             {
                 byte instruction = _MMU.ReadByte(_RegPC);
@@ -142,8 +136,12 @@ namespace CoreBoy.Emulator
                     instruction = _MMU.ReadByte((ushort)(_RegPC + 1));
                     prefixed = true;
                 }
-                Console.WriteLine($"{_RegPC.ToString("x2")}:{instruction.ToString("x2")} {((!prefixed) ? NonPrefixedInstructions[instruction] : PrefixedInstructions[instruction])}");
+                Console.WriteLine($"{_RegPC.ToString("x2")}:{instruction.ToString("x2")}");
                 ExecuteInstruction(instruction, prefixed);
+                if (stopwatch.ElapsedMilliseconds > 10000)
+                {
+                    _Halted = true;
+                }
             }
         }
         #endregion

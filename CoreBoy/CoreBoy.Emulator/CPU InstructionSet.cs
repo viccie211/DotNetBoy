@@ -5,902 +5,1179 @@ namespace CoreBoy.Emulator
 {
     public partial class CPU
     {
-        #region Properties
-
-        public Dictionary<byte, string> NonPrefixedInstructions = new Dictionary<byte, string>()
+        #region InstructionSet
+        public void NonPrefixedInstructions(byte opcode)
         {
+            switch (opcode)
             {
-                0x00, OpcodeNames.NOP
-            },
-            {
-                0x10,OpcodeNames.STOP
-            },
-            {
-                0x76,OpcodeNames.HALT
-            },
-            {
-                0x3F,OpcodeNames.CCF
-            },
-            {
-                0xF3,OpcodeNames.DI
-            },
+                case
+                0x00:
+                    NOP(this);
+                    break;
+                case
+                0x10:
+                    STOP(this);
+                    break;
+                case
+                0x76:
+                    HALT(this);
+                    break;
+                case
+                0x3F:
+                    CCF(this);
+                    break;
+                case
+                0xF3:
+                    DI(this);
+                    break;
 
 
-            #region INC
-            #region INC_R16
-            {
-                0x03,OpcodeNames.INC_BC
-            },
-            {
-                0x13,OpcodeNames.INC_DE
-            },
-            {
-                0x23,OpcodeNames.INC_HL
-            },
-            {
-                0x33,OpcodeNames.INC_SP
-            },
-            #endregion
-            #region INC_R8
-            {
-                0x04,OpcodeNames.INC_B
-            },
-            {
-                0x0C,OpcodeNames.INC_C
-            },
-            {
-                0x14,OpcodeNames.INC_D
-            },
-            {
-                0x1C,OpcodeNames.INC_E
-            },
-            {
-                0x24,OpcodeNames.INC_H
-            },
-            {
-                0x2C,OpcodeNames.INC_L
-            },
-            {
-                0x3C,OpcodeNames.INC_A
-            },
-            #endregion
-            #endregion
+                #region INC
+                #region INC_R16
+                case
+                0x03:
+                    INC_BC(this);
+                    break;
+                case
+                0x13:
+                    INC_DE(this);
+                    break;
+                case
+                0x23:
+                    INC_HL(this);
+                    break;
+                case
+                0x33:
+                    INC_SP(this);
+                    break;
+                #endregion
+                #region INC_R8
+                case
+                0x04:
+                    INC_B(this);
+                    break;
+                case
+                0x0C:
+                    INC_C(this);
+                    break;
+                case
+                0x14:
+                    INC_D(this);
+                    break;
+                case
+                0x1C:
+                    INC_E(this);
+                    break;
+                case
+                0x24:
+                    INC_H(this);
+                    break;
+                case
+                0x2C:
+                    INC_L(this);
+                    break;
+                case
+                0x3C:
+                    INC_A(this);
+                    break;
+                #endregion
+                #endregion
 
-            #region DEC
-            #region DEC_R16
-            {
-                0x0B,OpcodeNames.DEC_BC
-            },
-            {
-                0x1B,OpcodeNames.DEC_DE
-            },
-            {
-                0x2B,OpcodeNames.DEC_HL
-            },
-            {
-                0x3B,OpcodeNames.DEC_SP
-            },
-            #endregion
-            #region DEC_R8
-            {
-                0x05,OpcodeNames.DEC_B
-            },
-            {
-                0x0D,OpcodeNames.DEC_C
-            },
-            {
-                0x15,OpcodeNames.DEC_D
-            },
-            {
-                0x1D,OpcodeNames.DEC_E
-            },
-            {
-                0x25,OpcodeNames.DEC_H
-            },
-            {
-                0x2D,OpcodeNames.DEC_L
-            },
-            {
-                0x3D,OpcodeNames.DEC_A
-            },
-            #endregion
-            #endregion
+                #region DEC
+                #region DEC_R16
+                case
+                0x0B:
+                    DEC_BC(this);
+                    break;
+                case
+                0x1B:
+                    DEC_DE(this);
+                    break;
+                case
+                0x2B:
+                    DEC_HL(this);
+                    break;
+                case
+                0x3B:
+                    DEC_SP(this);
+                    break;
+                #endregion
+                #region DEC_R8
+                case
+                0x05:
+                    DEC_B(this);
+                    break;
+                case
+                0x0D:
+                    DEC_C(this);
+                    break;
+                case
+                0x15:
+                    DEC_D(this);
+                    break;
+                case
+                0x1D:
+                    DEC_E(this);
+                    break;
+                case
+                0x25:
+                    DEC_H(this);
+                    break;
+                case
+                0x2D:
+                    DEC_L(this);
+                    break;
+                case
+                0x3D:
+                    DEC_A(this);
+                    break;
+                #endregion
+                #endregion
 
-            #region LD
-            #region LD_D8
-            {
-                0x06, OpcodeNames.LD_B_D8
-            },
-            {
-                0x0E, OpcodeNames.LD_C_D8
-            },
-            {
-                0x16, OpcodeNames.LD_D_D8
-            },
-            {
-                0x1E, OpcodeNames.LD_E_D8
-            },
-            {
-                0x26, OpcodeNames.LD_H_D8
-            },
-            {
-                0x2E, OpcodeNames.LD_L_D8
-            },
-            {
-                0x36, OpcodeNames.LD_HL_D8
-            },
-            {
-                0x3E, OpcodeNames.LD_A_D8
-            },
-            #endregion
+                #region LD
+                #region LD_D8
+                case
+                0x06:
+                    LD_B_D8(this);
+                    break;
+                case
+                0x0E:
+                    LD_C_D8(this);
+                    break;
+                case
+                0x16:
+                    LD_D_D8(this);
+                    break;
+                case
+                0x1E:
+                    LD_E_D8(this);
+                    break;
+                case
+                0x26:
+                    LD_H_D8(this);
+                    break;
+                case
+                0x2E:
+                    LD_L_D8(this);
+                    break;
+                case
+                0x36:
+                    LD_HL_D8(this);
+                    break;
+                case
+                0x3E:
+                    LD_A_D8(this);
+                    break;
+                case
+                0x0A:
+                    LD_A_BC(this);
+                    break;
+                case
+                0x1A:
+                    LD_A_DE(this);
+                    break;
 
-    	    #region LD_B
-            {
-                0x40,OpcodeNames.LD_B_B
-            },
-            {
-                0x41,OpcodeNames.LD_B_C
-            },
-            {
-                0x42,OpcodeNames.LD_B_D
-            },
-            {
-                0x43,OpcodeNames.LD_B_E
-            },
-            {
-                0x44,OpcodeNames.LD_B_H
-            },
-            {
-                0x45,OpcodeNames.LD_B_L
-            },
-            {
-                0x46,OpcodeNames.LD_B_HL
-            },
-            {
-                0x47,OpcodeNames.LD_B_A
-            },
-            #endregion
+                #endregion
 
-            #region LD_C
-            {
-                0x48,OpcodeNames.LD_C_B
-            },
-            {
-                0x49,OpcodeNames.LD_C_C
-            },
-            {
-                0x4A,OpcodeNames.LD_C_D
-            },
-            {
-                0x4B,OpcodeNames.LD_C_E
-            },
-            {
-                0x4C,OpcodeNames.LD_C_H
-            },
-            {
-                0x4D,OpcodeNames.LD_C_L
-            },
-            {
-                0x4E,OpcodeNames.LD_C_HL
-            },
-            {
-                0x4F,OpcodeNames.LD_C_A
-            },
-            #endregion
+                #region LD_B
+                case
+                0x40:
+                    LD_B_B(this);
+                    break;
+                case
+                0x41:
+                    LD_B_C(this);
+                    break;
+                case
+                0x42:
+                    LD_B_D(this);
+                    break;
+                case
+                0x43:
+                    LD_B_E(this);
+                    break;
+                case
+                0x44:
+                    LD_B_H(this);
+                    break;
+                case
+                0x45:
+                    LD_B_L(this);
+                    break;
+                case
+                0x46:
+                    LD_B_HL(this);
+                    break;
+                case
+                0x47:
+                    LD_B_A(this);
+                    break;
+                #endregion
 
-            #region LD_D
-            {
-                0x50,OpcodeNames.LD_D_B
-            },
-            {
-                0x51,OpcodeNames.LD_D_C
-            },
-            {
-                0x52,OpcodeNames.LD_D_D
-            },
-            {
-                0x53,OpcodeNames.LD_D_E
-            },
-            {
-                0x54,OpcodeNames.LD_D_H
-            },
-            {
-                0x55,OpcodeNames.LD_D_L
-            },
-            {
-                0x56,OpcodeNames.LD_D_HL
-            },
-            {
-                0x57,OpcodeNames.LD_D_A
-            },
-            #endregion
+                #region LD_C
+                case
+                0x48:
+                    LD_C_B(this);
+                    break;
+                case
+                0x49:
+                    LD_C_C(this);
+                    break;
+                case
+                0x4A:
+                    LD_C_D(this);
+                    break;
+                case
+                0x4B:
+                    LD_C_E(this);
+                    break;
+                case
+                0x4C:
+                    LD_C_H(this);
+                    break;
+                case
+                0x4D:
+                    LD_C_L(this);
+                    break;
+                case
+                0x4E:
+                    LD_C_HL(this);
+                    break;
+                case
+                0x4F:
+                    LD_C_A(this);
+                    break;
+                #endregion
 
-            #region LD_E
-            {
-                0x58,OpcodeNames.LD_E_B
-            },
-            {
-                0x59,OpcodeNames.LD_E_C
-            },
-            {
-                0x5A,OpcodeNames.LD_E_D
-            },
-            {
-                0x5B,OpcodeNames.LD_E_E
-            },
-            {
-                0x5C,OpcodeNames.LD_E_H
-            },
-            {
-                0x5D,OpcodeNames.LD_E_L
-            },
-            {
-                0x5E,OpcodeNames.LD_E_HL
-            },
-            {
-                0x5F,OpcodeNames.LD_E_A
-            },
-            #endregion
+                #region LD_D
+                case
+                0x50:
+                    LD_D_B(this);
+                    break;
+                case
+                0x51:
+                    LD_D_C(this);
+                    break;
+                case
+                0x52:
+                    LD_D_D(this);
+                    break;
+                case
+                0x53:
+                    LD_D_E(this);
+                    break;
+                case
+                0x54:
+                    LD_D_H(this);
+                    break;
+                case
+                0x55:
+                    LD_D_L(this);
+                    break;
+                case
+                0x56:
+                    LD_D_HL(this);
+                    break;
+                case
+                0x57:
+                    LD_D_A(this);
+                    break;
+                #endregion
 
-            #region LD_H
-            {
-                0x60,OpcodeNames.LD_H_B
-            },
-            {
-                0x61,OpcodeNames.LD_H_C
-            },
-            {
-                0x62,OpcodeNames.LD_H_D
-            },
-            {
-                0x63,OpcodeNames.LD_H_E
-            },
-            {
-                0x64,OpcodeNames.LD_H_H
-            },
-            {
-                0x65,OpcodeNames.LD_H_L
-            },
-            {
-                0x66,OpcodeNames.LD_H_HL
-            },
-            {
-                0x67,OpcodeNames.LD_H_A
-            },
-            #endregion
+                #region LD_E
+                case
+                0x58:
+                    LD_E_B(this);
+                    break;
+                case
+                0x59:
+                    LD_E_C(this);
+                    break;
+                case
+                0x5A:
+                    LD_E_D(this);
+                    break;
+                case
+                0x5B:
+                    LD_E_E(this);
+                    break;
+                case
+                0x5C:
+                    LD_E_H(this);
+                    break;
+                case
+                0x5D:
+                    LD_E_L(this);
+                    break;
+                case
+                0x5E:
+                    LD_E_HL(this);
+                    break;
+                case
+                0x5F:
+                    LD_E_A(this);
+                    break;
+                #endregion
 
-            #region LD_L
-            {
-                0x68,OpcodeNames.LD_L_B
-            },
-            {
-                0x69,OpcodeNames.LD_L_C
-            },
-            {
-                0x6A,OpcodeNames.LD_L_D
-            },
-            {
-                0x6B,OpcodeNames.LD_L_E
-            },
-            {
-                0x6C,OpcodeNames.LD_L_H
-            },
-            {
-                0x6D,OpcodeNames.LD_L_L
-            },
-            {
-                0x6E,OpcodeNames.LD_L_HL
-            },
-            {
-                0x6F,OpcodeNames.LD_L_A
-            },
-            #endregion
+                #region LD_H
+                case
+                0x60:
+                    LD_H_B(this);
+                    break;
+                case
+                0x61:
+                    LD_H_C(this);
+                    break;
+                case
+                0x62:
+                    LD_H_D(this);
+                    break;
+                case
+                0x63:
+                    LD_H_E(this);
+                    break;
+                case
+                0x64:
+                    LD_H_H(this);
+                    break;
+                case
+                0x65:
+                    LD_H_L(this);
+                    break;
+                case
+                0x66:
+                    LD_H_HL(this);
+                    break;
+                case
+                0x67:
+                    LD_H_A(this);
+                    break;
+                #endregion
 
-            #region LD_HL
-            {
-                0x70,OpcodeNames.LD_HL_B
-            },
-            {
-                0x71,OpcodeNames.LD_HL_C
-            },
-            {
-                0x72,OpcodeNames.LD_HL_D
-            },
-            {
-                0x73,OpcodeNames.LD_HL_E
-            },
-            {
-                0x74,OpcodeNames.LD_HL_H
-            },
-            {
-                0x75,OpcodeNames.LD_HL_L
-            },
-            {
-                0x77,OpcodeNames.LD_HL_A
-            },
-            #endregion
+                #region LD_L
+                case
+                0x68:
+                    LD_L_B(this);
+                    break;
+                case
+                0x69:
+                    LD_L_C(this);
+                    break;
+                case
+                0x6A:
+                    LD_L_D(this);
+                    break;
+                case
+                0x6B:
+                    LD_L_E(this);
+                    break;
+                case
+                0x6C:
+                    LD_L_H(this);
+                    break;
+                case
+                0x6D:
+                    LD_L_L(this);
+                    break;
+                case
+                0x6E:
+                    LD_L_HL(this);
+                    break;
+                case
+                0x6F:
+                    LD_L_A(this);
+                    break;
+                #endregion
 
-            #region LD_A
-            {
-                0x78,OpcodeNames.LD_A_B
-            },
-            {
-                0x79,OpcodeNames.LD_A_C
-            },
-            {
-                0x7A,OpcodeNames.LD_A_D
-            },
-            {
-                0x7B,OpcodeNames.LD_A_E
-            },
-            {
-                0x7C,OpcodeNames.LD_A_H
-            },
-            {
-                0x7D,OpcodeNames.LD_A_L
-            },
-            {
-                0x7E,OpcodeNames.LD_A_HL
-            },
-            {
-                0x7F,OpcodeNames.LD_A_A
-            },
-            #endregion
-            
-            #region LD_R16_D16
-            {
-                0x01, OpcodeNames.LD_BC_D16
-            },
+                #region LD_HL
+                case
+                0x70:
+                    LD_HL_B(this);
+                    break;
+                case
+                0x71:
+                    LD_HL_C(this);
+                    break;
+                case
+                0x72:
+                    LD_HL_D(this);
+                    break;
+                case
+                0x73:
+                    LD_HL_E(this);
+                    break;
+                case
+                0x74:
+                    LD_HL_H(this);
+                    break;
+                case
+                0x75:
+                    LD_HL_L(this);
+                    break;
+                case
+                0x77:
+                    LD_HL_A(this);
+                    break;
+                case
+                0x22:
+                    LD_HL_A_INC(this);
+                    break;
+                case
+                0x32:
+                    LD_HL_A_DEC(this);
+                    break;
+                #endregion
 
-                        {
-                0x11, OpcodeNames.LD_DE_D16
-            },
-                        {
-                0x21, OpcodeNames.LD_HL_D16
-            },
+                #region LD_A
+                case
+                0x78:
+                    LD_A_B(this);
+                    break;
+                case
+                0x79:
+                    LD_A_C(this);
+                    break;
+                case
+                0x7A:
+                    LD_A_D(this);
+                    break;
+                case
+                0x7B:
+                    LD_A_E(this);
+                    break;
+                case
+                0x7C:
+                    LD_A_H(this);
+                    break;
+                case
+                0x7D:
+                    LD_A_L(this);
+                    break;
+                case
+                0x7E:
+                    LD_A_HL(this);
+                    break;
+                case
+                0x7F:
+                    LD_A_A(this);
+                    break;
+                #endregion
 
-                        {
-                0x31, OpcodeNames.LD_SP_D16
-            },
-            #endregion
-            
-            #region LD_(R16)_A
-            {
-                0x02,OpcodeNames.LD_BC_A
-            },
-            {
-                0x12,OpcodeNames.LD_DE_A
-            },
-            #endregion
-            
-            #region LDH
-            {
-                0xE0, OpcodeNames.LDH_A8_A
-            },
-            {
-                0xF0, OpcodeNames.LDH_A_A8
-            },
-            #endregion
+                #region LD_R16_D16
+                case
+                0x01:
+                    LD_BC_D16(this);
+                    break;
 
-            #endregion            
-            
-            #region ADD
-            {
-                0x80, OpcodeNames.ADD_A_B
-            },
-            {
-                0x81, OpcodeNames.ADD_A_C
-            },
-            {
-                0x82, OpcodeNames.ADD_A_D
-            },
-            {
-                0x83, OpcodeNames.ADD_A_E
-            },
-            {
-                0x84, OpcodeNames.ADD_A_H
-            },
-            #endregion
+                case
+                0x11:
+                    LD_DE_D16(this);
+                    break;
+                case
+                0x21:
+                    LD_HL_D16(this);
+                    break;
 
-            #region CP
-            {
-                0xBF, OpcodeNames.CP_A
-            },
-            {
-                0xB8, OpcodeNames.CP_B
-            },
-            {
-                0xB9, OpcodeNames.CP_C
-            },
-            {
-                0xBA, OpcodeNames.CP_D
-            },
-            {
-                0xBB, OpcodeNames.CP_E
-            },
-            {
-                0xBC, OpcodeNames.CP_H
-            },
-            {
-                0xBD, OpcodeNames.CP_L
-            },
-            {
-                0xBE, OpcodeNames.CP_HL
-            },
-            {
-                0xFE, OpcodeNames.CP_D8
-            },
-            #endregion
+                case
+                0x31:
+                    LD_SP_D16(this);
+                    break;
+                #endregion
 
-            #region SUB
-            {
-                0x9F, OpcodeNames.SUB_A
-            },
-            {
-                0x98, OpcodeNames.SUB_B
-            },
-            {
-                0x99, OpcodeNames.SUB_C
-            },
-            {
-                0x9A, OpcodeNames.SUB_D
-            },
-            {
-                0x9B, OpcodeNames.SUB_E
-            },
-            {
-                0x9C, OpcodeNames.SUB_H
-            },
-            {
-                0x9D, OpcodeNames.SUB_L
-            },
-            {
-                0x9E, OpcodeNames.SUB_HL
-            },
-            {
-                0xD6, OpcodeNames.SUB_D8
-            },
-            #endregion
+                #region LD_(R16)_A
+                case
+                0x02:
+                    LD_BC_A(this);
+                    break;
+                case
+                0x12:
+                    LD_DE_A(this);
+                    break;
+                #endregion
 
-            #region JP
-            {
-                0xC2, OpcodeNames.JP_NZ
-            },
-            {
-                0xC3, OpcodeNames.JP
-            },
-            {
-                0xCA, OpcodeNames.JP_Z
-            },
-            {
-                0xD2, OpcodeNames.JP_NC
-            },
-            {
-                0xDA, OpcodeNames.JP_C
-            },
-            #endregion
-            #region JR
-            {
-                0x18, OpcodeNames.JR
-            },
-            {
-                0x20,OpcodeNames.JR_NZ
-            },
-            {
-                0x30,OpcodeNames.JR_NC
-            },
-            {
-                0x28,OpcodeNames.JR_Z
-            },
-            {
-                0x38,OpcodeNames.JR_C
-            },
-            #endregion
-            #region POP
-            {
-                0xC1,OpcodeNames.POP_BC
-            },
-            {
-                0xD1,OpcodeNames.POP_DE
-            },
-            {
-                0xE1,OpcodeNames.POP_HL
-            },
-            {
-                0xF1,OpcodeNames.POP_AF
-            },
-            #endregion
+                #region LDH
+                case
+                0xE0:
+                    LDH_A8_A(this);
+                    break;
+                case
+                0xF0:
+                    LDH_A_A8(this);
+                    break;
+                #endregion
 
-            #region PUSH
-            {
-                0xC5,OpcodeNames.PUSH_BC
-            },
-            {
-                0xD5,OpcodeNames.PUSH_DE
-            },
-            {
-                0xE5,OpcodeNames.PUSH_HL
-            },
-            {
-                0xF5,OpcodeNames.PUSH_AF
-            },
-            #endregion
+                #endregion
 
-            #region CALL
-            {
-                0xC4, OpcodeNames.CALL_NZ
-            },
-            {
-                0xCC, OpcodeNames.CALL_Z
-            },
-            {
-                0xCD, OpcodeNames.CALL
-            },
-            {
-                0xD4, OpcodeNames.CALL_NC
-            },
-            {
-                0xDC, OpcodeNames.CALL_C
-            },
-            #endregion
+                #region ADD
+                case
+                0x80:
+                    ADD_A_B(this);
+                    break;
+                case
+                0x81:
+                    ADD_A_C(this);
+                    break;
+                case
+                0x82:
+                    ADD_A_D(this);
+                    break;
+                case
+                0x83:
+                    ADD_A_E(this);
+                    break;
+                case
+                0x84:
+                    ADD_A_H(this);
+                    break;
+                #endregion
 
-            #region RET
-            {
-                0xC0, OpcodeNames.RET_NZ
-            },
-            {
-                0xC8, OpcodeNames.RET_Z
-            },
-            {
-                0xC9, OpcodeNames.RET
-            },
-            {
-                0xD0, OpcodeNames.RET_NC
-            },
-            {
-                0xD8, OpcodeNames.RET_C
-            },
-            #endregion
+                #region CP
+                case
+                0xBF:
+                    CP_A(this);
+                    break;
+                case
+                0xB8:
+                    CP_B(this);
+                    break;
+                case
+                0xB9:
+                    CP_C(this);
+                    break;
+                case
+                0xBA:
+                    CP_D(this);
+                    break;
+                case
+                0xBB:
+                    CP_E(this);
+                    break;
+                case
+                0xBC:
+                    CP_H(this);
+                    break;
+                case
+                0xBD:
+                    CP_L(this);
+                    break;
+                case
+                0xBE:
+                    CP_HL(this);
+                    break;
+                case
+                0xFE:
+                    CP_D8(this);
+                    break;
+                #endregion
 
-            #region RST
-            {
-                0xC7,OpcodeNames.RST_00
-            },
-            {
-                0xCF,OpcodeNames.RST_08
-            },
-            {
-                0xD7,OpcodeNames.RST_10
-            },
-            {
-                0xDF,OpcodeNames.RST_18
-            },
-            {
-                0xE7,OpcodeNames.RST_20
-            },
-            {
-                0xEF,OpcodeNames.RST_28
-            },
-            {
-                0xF7,OpcodeNames.RST_30
-            },
-            {
-                0xFF,OpcodeNames.RST_38
-            },
-            #endregion
-           
-            #region AND
-             {
-                0xE6,OpcodeNames.AND_D8
-            },
-            {
-                0xA0, OpcodeNames.AND_B
-            },
-            {
-                0xA1, OpcodeNames.AND_C
-            },
-            {
-                0xA2, OpcodeNames.AND_D
-            },
-            {
-                0xA3, OpcodeNames.AND_E
-            },
-            {
-                0xA4, OpcodeNames.AND_H
-            },
-            {
-                0xA5, OpcodeNames.AND_L
-            },
-            {
-                0xA6, OpcodeNames.AND_HL
-            },
-            {
-                0xA7, OpcodeNames.AND_A
-            },
-            #endregion
+                #region SUB
+                case
+                0x9F:
+                    SUB_A(this);
+                    break;
+                case
+                0x98:
+                    SUB_B(this);
+                    break;
+                case
+                0x99:
+                    SUB_C(this);
+                    break;
+                case
+                0x9A:
+                    SUB_D(this);
+                    break;
+                case
+                0x9B:
+                    SUB_E(this);
+                    break;
+                case
+                0x9C:
+                    SUB_H(this);
+                    break;
+                case
+                0x9D:
+                    SUB_L(this);
+                    break;
+                case
+                0x9E:
+                    SUB_HL(this);
+                    break;
+                case
+                0xD6:
+                    SUB_D8(this);
+                    break;
+                #endregion
 
-            #region OR
-             {
-                0xF6,OpcodeNames.OR_D8
-            },
-            {
-                0xB0, OpcodeNames.OR_B
-            },
-            {
-                0xB1, OpcodeNames.OR_C
-            },
-            {
-                0xB2, OpcodeNames.OR_D
-            },
-            {
-                0xB3, OpcodeNames.OR_E
-            },
-            {
-                0xB4, OpcodeNames.OR_H
-            },
-            {
-                0xB5, OpcodeNames.OR_L
-            },
-            {
-                0xB6, OpcodeNames.OR_HL
-            },
-            {
-                0xB7, OpcodeNames.OR_A
-            },
-            #endregion
+                #region JP
+                case
+                0xC2:
+                    JP_NZ(this);
+                    break;
+                case
+                0xC3:
+                    JP(this);
+                    break;
+                case
+                0xCA:
+                    JP_Z(this);
+                    break;
+                case
+                0xD2:
+                    JP_NC(this);
+                    break;
+                case
+                0xDA:
+                    JP_C(this);
+                    break;
+                #endregion
+                #region JR
+                case
+                0x18:
+                    JR(this);
+                    break;
+                case
+                0x20:
+                    JR_NZ(this);
+                    break;
+                case
+                0x30:
+                    JR_NC(this);
+                    break;
+                case
+                0x28:
+                    JR_Z(this);
+                    break;
+                case
+                0x38:
+                    JR_C(this);
+                    break;
+                #endregion
+                #region POP
+                case
+                0xC1:
+                    POP_BC(this);
+                    break;
+                case
+                0xD1:
+                    POP_DE(this);
+                    break;
+                case
+                0xE1:
+                    POP_HL(this);
+                    break;
+                case
+                0xF1:
+                    POP_AF(this);
+                    break;
+                #endregion
 
-            #region XOR
-             {
-                0xEE,OpcodeNames.XOR_D8
-            },
-            {
-                0xA8, OpcodeNames.XOR_B
-            },
-            {
-                0xA9, OpcodeNames.XOR_C
-            },
-            {
-                0xAA, OpcodeNames.XOR_D
-            },
-            {
-                0xAB, OpcodeNames.XOR_E
-            },
-            {
-                0xAC, OpcodeNames.XOR_H
-            },
-            {
-                0xAD, OpcodeNames.XOR_L
-            },
-            {
-                0xAE, OpcodeNames.XOR_HL
-            },
-            {
-                0xAF, OpcodeNames.XOR_A
-            },
-            #endregion
+                #region PUSH
+                case
+                0xC5:
+                    PUSH_BC(this);
+                    break;
+                case
+                0xD5:
+                    PUSH_DE(this);
+                    break;
+                case
+                0xE5:
+                    PUSH_HL(this);
+                    break;
+                case
+                0xF5:
+                    PUSH_AF(this);
+                    break;
+                #endregion
 
-            #region Bitwise Logic
+                #region CALL
+                case
+                0xC4:
+                    CALL_NZ(this);
+                    break;
+                case
+                0xCC:
+                    CALL_Z(this);
+                    break;
+                case
+                0xCD:
+                    CALL(this);
+                    break;
+                case
+                0xD4:
+                    CALL_NC(this);
+                    break;
+                case
+                0xDC:
+                    CALL_C(this);
+                    break;
+                #endregion
 
-            {
-                0x0F,OpcodeNames.RRCA
+                #region RET
+                case
+                0xC0:
+                    RET_NZ(this);
+                    break;
+                case
+                0xC8:
+                    RET_Z(this);
+                    break;
+                case
+                0xC9:
+                    RET(this);
+                    break;
+                case
+                0xD0:
+                    RET_NC(this);
+                    break;
+                case
+                0xD8:
+                    RET_C(this);
+                    break;
+                #endregion
+
+                #region RST
+                case
+                0xC7:
+                    RST_00(this);
+                    break;
+                case
+                0xCF:
+                    RST_08(this);
+                    break;
+                case
+                0xD7:
+                    RST_10(this);
+                    break;
+                case
+                0xDF:
+                    RST_18(this);
+                    break;
+                case
+                0xE7:
+                    RST_20(this);
+                    break;
+                case
+                0xEF:
+                    RST_28(this);
+                    break;
+                case
+                0xF7:
+                    RST_30(this);
+                    break;
+                case
+                0xFF:
+                    RST_38(this);
+                    break;
+                #endregion
+
+                #region AND
+                case
+                0xE6:
+                    AND_D8(this);
+                    break;
+                case
+                0xA0:
+                    AND_B(this);
+                    break;
+                case
+                0xA1:
+                    AND_C(this);
+                    break;
+                case
+                0xA2:
+                    AND_D(this);
+                    break;
+                case
+                0xA3:
+                    AND_E(this);
+                    break;
+                case
+                0xA4:
+                    AND_H(this);
+                    break;
+                case
+                0xA5:
+                    AND_L(this);
+                    break;
+                case
+                0xA6:
+                    AND_HL(this);
+                    break;
+                case
+                0xA7:
+                    AND_A(this);
+                    break;
+                #endregion
+
+                #region OR
+                case
+                0xF6:
+                    OR_D8(this);
+                    break;
+                case
+                0xB0:
+                    OR_B(this);
+                    break;
+                case
+                0xB1:
+                    OR_C(this);
+                    break;
+                case
+                0xB2:
+                    OR_D(this);
+                    break;
+                case
+                0xB3:
+                    OR_E(this);
+                    break;
+                case
+                0xB4:
+                    OR_H(this);
+                    break;
+                case
+                0xB5:
+                    OR_L(this);
+                    break;
+                case
+                0xB6:
+                    OR_HL(this);
+                    break;
+                case
+                0xB7:
+                    OR_A(this);
+                    break;
+                #endregion
+
+                #region XOR
+                case
+                0xEE:
+                    XOR_D8(this);
+                    break;
+                case
+                0xA8:
+                    XOR_B(this);
+                    break;
+                case
+                0xA9:
+                    XOR_C(this);
+                    break;
+                case
+                0xAA:
+                    XOR_D(this);
+                    break;
+                case
+                0xAB:
+                    XOR_E(this);
+                    break;
+                case
+                0xAC:
+                    XOR_H(this);
+                    break;
+                case
+                0xAD:
+                    XOR_L(this);
+                    break;
+                case
+                0xAE:
+                    XOR_HL(this);
+                    break;
+                case
+                0xAF:
+                    XOR_A(this);
+                    break;
+                #endregion
+
+                #region Bitwise Logic
+
+                case
+                0x0F:
+                    RRCA(this);
+                    break;
+                    #endregion
             }
-            #endregion
-            
-        };
-
-        public Dictionary<byte, string> PrefixedInstructions = new Dictionary<byte, string>()
+        }
+        public void PrefixedInstructions(byte opcode)
         {
-            #region Bit
-            #region Bit 0
-            {
-                0x47, OpcodeNames.BIT_0_A
-            },
-            {
-                0x40, OpcodeNames.BIT_0_B
-            },
-            {
-                0x41, OpcodeNames.BIT_0_C
-            },
-            {
-                0x42, OpcodeNames.BIT_0_D
-            },
-            {
-                0x43, OpcodeNames.BIT_0_E
-            },
-            {
-                0x44, OpcodeNames.BIT_0_H
-            },
-            {
-                0x45, OpcodeNames.BIT_0_L
-            },
-            {
-                0x46, OpcodeNames.BIT_0_HL
-            },
-            #endregion
-            #region Bit 1
-            {
-                0x4F, OpcodeNames.BIT_1_A
-            },
-            {
-                0x48, OpcodeNames.BIT_1_B
-            },
-            {
-                0x49, OpcodeNames.BIT_1_C
-            },
-            {
-                0x4A, OpcodeNames.BIT_1_D
-            },
-            {
-                0x4B, OpcodeNames.BIT_1_E
-            },
-            {
-                0x4C, OpcodeNames.BIT_1_H
-            },
-            {
-                0x4D, OpcodeNames.BIT_1_L
-            },
-            {
-                0x4E, OpcodeNames.BIT_1_HL
-            },
-            #endregion
-            #region Bit 2
-            {
-                0x57, OpcodeNames.BIT_2_A
-            },
-            {
-                0x50, OpcodeNames.BIT_2_B
-            },
-            {
-                0x51, OpcodeNames.BIT_2_C
-            },
-            {
-                0x52, OpcodeNames.BIT_2_D
-            },
-            {
-                0x53, OpcodeNames.BIT_2_E
-            },
-            {
-                0x54, OpcodeNames.BIT_2_H
-            },
-            {
-                0x55, OpcodeNames.BIT_2_L
-            },
-            {
-                0x56, OpcodeNames.BIT_2_HL
-            },
-            #endregion
-            #region Bit 3
-            {
-                0x5F, OpcodeNames.BIT_3_A
-            },
-            {
-                0x58, OpcodeNames.BIT_3_B
-            },
-            {
-                0x59, OpcodeNames.BIT_3_C
-            },
-            {
-                0x5A, OpcodeNames.BIT_3_D
-            },
-            {
-                0x5B, OpcodeNames.BIT_3_E
-            },
-            {
-                0x5C, OpcodeNames.BIT_3_H
-            },
-            {
-                0x5D, OpcodeNames.BIT_3_L
-            },
-            {
-                0x5E, OpcodeNames.BIT_3_HL
-            },
-            #endregion
-            #region Bit 4
-            {
-                0x67, OpcodeNames.BIT_4_A
-            },
-            {
-                0x60, OpcodeNames.BIT_4_B
-            },
-            {
-                0x61, OpcodeNames.BIT_4_C
-            },
-            {
-                0x62, OpcodeNames.BIT_4_D
-            },
-            {
-                0x63, OpcodeNames.BIT_4_E
-            },
-            {
-                0x64, OpcodeNames.BIT_4_H
-            },
-            {
-                0x65, OpcodeNames.BIT_4_L
-            },
-            {
-                0x66, OpcodeNames.BIT_4_HL
-            },
-            #endregion
-            #region Bit 5
-            {
-                0x6F, OpcodeNames.BIT_5_A
-            },
-            {
-                0x68, OpcodeNames.BIT_5_B
-            },
-            {
-                0x69, OpcodeNames.BIT_5_C
-            },
-            {
-                0x6A, OpcodeNames.BIT_5_D
-            },
-            {
-                0x6B, OpcodeNames.BIT_5_E
-            },
-            {
-                0x6C, OpcodeNames.BIT_5_H
-            },
-            {
-                0x6D, OpcodeNames.BIT_5_L
-            },
-            {
-                0x6E, OpcodeNames.BIT_5_HL
-            },
-            #endregion
-            #region Bit 6
-            {
-                0x77, OpcodeNames.BIT_6_A
-            },
-            {
-                0x70, OpcodeNames.BIT_6_B
-            },
-            {
-                0x71, OpcodeNames.BIT_6_C
-            },
-            {
-                0x72, OpcodeNames.BIT_6_D
-            },
-            {
-                0x73, OpcodeNames.BIT_6_E
-            },
-            {
-                0x74, OpcodeNames.BIT_6_H
-            },
-            {
-                0x75, OpcodeNames.BIT_6_L
-            },
-            {
-                0x76, OpcodeNames.BIT_6_HL
-            },
-            #endregion
-            #region Bit 7
-            {
-                0x7F, OpcodeNames.BIT_7_A
-            },
-            {
-                0x78, OpcodeNames.BIT_7_B
-            },
-            {
-                0x79, OpcodeNames.BIT_7_C
-            },
-            {
-                0x7A, OpcodeNames.BIT_7_D
-            },
-            {
-                0x7B, OpcodeNames.BIT_7_E
-            },
-            {
-                0x7C, OpcodeNames.BIT_7_H
-            },
-            {
-                0x7D, OpcodeNames.BIT_7_L
-            },
-            {
-                0x7E, OpcodeNames.BIT_7_HL
-            },
-            #endregion
-            #endregion
-        };
+            switch (opcode)
+            {
+                #region Bit
+                #region Bit 0
+                case
+                0x47:
+                    BIT_0_A(this);
+                    break;
+                case
+                0x40:
+                    BIT_0_B(this);
+                    break;
+                case
+                0x41:
+                    BIT_0_C(this);
+                    break;
+                case
+                0x42:
+                    BIT_0_D(this);
+                    break;
+                case
+                0x43:
+                    BIT_0_E(this);
+                    break;
+                case
+                0x44:
+                    BIT_0_H(this);
+                    break;
+                case
+                0x45:
+                    BIT_0_L(this);
+                    break;
+                case
+                0x46:
+                    BIT_0_HL(this);
+                    break;
+                #endregion
+                #region Bit 1
+                case
+                0x4F:
+                    BIT_1_A(this);
+                    break;
+                case
+                0x48:
+                    BIT_1_B(this);
+                    break;
+                case
+                0x49:
+                    BIT_1_C(this);
+                    break;
+                case
+                0x4A:
+                    BIT_1_D(this);
+                    break;
+                case
+                0x4B:
+                    BIT_1_E(this);
+                    break;
+                case
+                0x4C:
+                    BIT_1_H(this);
+                    break;
+                case
+                0x4D:
+                    BIT_1_L(this);
+                    break;
+                case
+                0x4E:
+                    BIT_1_HL(this);
+                    break;
+                #endregion
+                #region Bit 2
+                case
+                0x57:
+                    BIT_2_A(this);
+                    break;
+                case
+                0x50:
+                    BIT_2_B(this);
+                    break;
+                case
+                0x51:
+                    BIT_2_C(this);
+                    break;
+                case
+                0x52:
+                    BIT_2_D(this);
+                    break;
+                case
+                0x53:
+                    BIT_2_E(this);
+                    break;
+                case
+                0x54:
+                    BIT_2_H(this);
+                    break;
+                case
+                0x55:
+                    BIT_2_L(this);
+                    break;
+                case
+                0x56:
+                    BIT_2_HL(this);
+                    break;
+                #endregion
+                #region Bit 3
+                case
+                0x5F:
+                    BIT_3_A(this);
+                    break;
+                case
+                0x58:
+                    BIT_3_B(this);
+                    break;
+                case
+                0x59:
+                    BIT_3_C(this);
+                    break;
+                case
+                0x5A:
+                    BIT_3_D(this);
+                    break;
+                case
+                0x5B:
+                    BIT_3_E(this);
+                    break;
+                case
+                0x5C:
+                    BIT_3_H(this);
+                    break;
+                case
+                0x5D:
+                    BIT_3_L(this);
+                    break;
+                case
+                0x5E:
+                    BIT_3_HL(this);
+                    break;
+                #endregion
+                #region Bit 4
+                case
+                0x67:
+                    BIT_4_A(this);
+                    break;
+                case
+                0x60:
+                    BIT_4_B(this);
+                    break;
+                case
+                0x61:
+                    BIT_4_C(this);
+                    break;
+                case
+                0x62:
+                    BIT_4_D(this);
+                    break;
+                case
+                0x63:
+                    BIT_4_E(this);
+                    break;
+                case
+                0x64:
+                    BIT_4_H(this);
+                    break;
+                case
+                0x65:
+                    BIT_4_L(this);
+                    break;
+                case
+                0x66:
+                    BIT_4_HL(this);
+                    break;
+                #endregion
+                #region Bit 5
+                case
+                0x6F:
+                    BIT_5_A(this);
+                    break;
+                case
+                0x68:
+                    BIT_5_B(this);
+                    break;
+                case
+                0x69:
+                    BIT_5_C(this);
+                    break;
+                case
+                0x6A:
+                    BIT_5_D(this);
+                    break;
+                case
+                0x6B:
+                    BIT_5_E(this);
+                    break;
+                case
+                0x6C:
+                    BIT_5_H(this);
+                    break;
+                case
+                0x6D:
+                    BIT_5_L(this);
+                    break;
+                case
+                0x6E:
+                    BIT_5_HL(this);
+                    break;
+                #endregion
+                #region Bit 6
+                case
+                0x77:
+                    BIT_6_A(this);
+                    break;
+                case
+                0x70:
+                    BIT_6_B(this);
+                    break;
+                case
+                0x71:
+                    BIT_6_C(this);
+                    break;
+                case
+                0x72:
+                    BIT_6_D(this);
+                    break;
+                case
+                0x73:
+                    BIT_6_E(this);
+                    break;
+                case
+                0x74:
+                    BIT_6_H(this);
+                    break;
+                case
+                0x75:
+                    BIT_6_L(this);
+                    break;
+                case
+                0x76:
+                    BIT_6_HL(this);
+                    break;
+                #endregion
+                #region Bit 7
+                case
+                0x7F:
+                    BIT_7_A(this);
+                    break;
+                case
+                0x78:
+                    BIT_7_B(this);
+                    break;
+                case
+                0x79:
+                    BIT_7_C(this);
+                    break;
+                case
+                0x7A:
+                    BIT_7_D(this);
+                    break;
+                case
+                0x7B:
+                    BIT_7_E(this);
+                    break;
+                case
+                0x7C:
+                    BIT_7_H(this);
+                    break;
+                case
+                0x7D:
+                    BIT_7_L(this);
+                    break;
+                case
+                0x7E:
+                    BIT_7_HL(this);
+                    break;
+                    #endregion
+                    #endregion
+            }
+        }
 
         public Dictionary<string, Action<CPU>> InstructionSet;
 

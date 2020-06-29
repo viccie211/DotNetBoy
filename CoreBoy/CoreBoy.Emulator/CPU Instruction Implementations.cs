@@ -320,7 +320,7 @@ namespace CoreBoy.Emulator
         public static void JR(CPU cpu)
         {
             byte toAdd = cpu._MMU.ReadByte((ushort)(cpu._RegPC + 1));
-            cpu._RegPC += toAdd;
+            JumpRelative(ref cpu._RegPC, toAdd, true);
         }
 
         public static void JR_NZ(CPU cpu)
@@ -403,6 +403,18 @@ namespace CoreBoy.Emulator
         {
             LoadFromAddress(ref cpu._RegA, (ushort)(cpu._RegPC + 1), cpu._MMU);
             cpu._RegPC += 2;
+        }
+
+        public static void LD_A_BC(CPU cpu)
+        {
+            LoadFromAddress(ref cpu._RegA, cpu._RegBC, cpu._MMU);
+            cpu._RegPC++;
+        }
+
+        public static void LD_A_DE(CPU cpu)
+        {
+            LoadFromAddress(ref cpu._RegA, cpu._RegDE, cpu._MMU);
+            cpu._RegPC++;
         }
         #endregion
 
@@ -791,6 +803,20 @@ namespace CoreBoy.Emulator
             LoadFromAddress(ref value, (ushort)(cpu._RegPC + 1), cpu._MMU);
             LoadByteToAddress(cpu._RegHL, value, cpu._MMU);
             cpu._RegPC += 2;
+        }
+
+        public static void LD_HL_A_INC(CPU cpu)
+        {
+            LoadByteToAddress(cpu._RegHL, cpu._RegA, cpu._MMU);
+            cpu._RegHL++;
+            cpu._RegPC++;
+        }
+
+        public static void LD_HL_A_DEC(CPU cpu)
+        {
+            LoadByteToAddress(cpu._RegHL, cpu._RegA, cpu._MMU);
+            cpu._RegHL--;
+            cpu._RegPC++;
         }
 
         #endregion
@@ -1571,11 +1597,7 @@ namespace CoreBoy.Emulator
         {
             int newValue = target + 1;
             byte result = (byte)(newValue % 256);
-
-            if (result == 0)
-            {
-                flagsRegister.Zero = true;
-            }
+            flagsRegister.Zero = result == 0;
 
             flagsRegister.Subtract = false;
             flagsRegister.HalfCarry = (target & 0xF) + (1 & 0xF) > 0xF;
@@ -1585,11 +1607,7 @@ namespace CoreBoy.Emulator
         {
             int newValue = target - 1;
             byte result = (byte)(newValue % 256);
-
-            if (result == 0)
-            {
-                flagsRegister.Zero = true;
-            }
+            flagsRegister.Zero = result == 0;
 
             flagsRegister.Subtract = true;
             flagsRegister.HalfCarry = (target & 0xF) + (1 & 0xF) > 0xF;
@@ -1608,12 +1626,7 @@ namespace CoreBoy.Emulator
         {
             int newValue = target + source;
             byte result = (byte)(newValue % 256);
-
-            if (result == 0)
-            {
-                flagsRegister.Zero = true;
-            }
-
+            flagsRegister.Zero = result == 0;
             flagsRegister.Subtract = false;
             flagsRegister.Carry = newValue > 255;
             flagsRegister.HalfCarry = (target & 0xF) + (source & 0xF) > 0xF;
