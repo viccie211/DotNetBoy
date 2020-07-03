@@ -7,6 +7,7 @@ namespace CoreBoy.Emulator
         public const int _width = 160;
         public const int _height = 144;
         private const int _tileSize = 8;
+        private const ushort INTERRUPTS_TRIGGERED_ADDRESS = 0xFF0F;
 
         private const ushort _lyAddress = 0xFF44;
         public int[,] _frameData;
@@ -39,6 +40,11 @@ namespace CoreBoy.Emulator
             if (Line < _height)
             {
                 RenderScan(Line);
+            }
+            else if(Line==_height)
+            {
+                byte interruptsTriggered = _MMU.ReadByte(INTERRUPTS_TRIGGERED_ADDRESS);
+                _MMU.WriteByte(INTERRUPTS_TRIGGERED_ADDRESS, (byte)(interruptsTriggered | 0b00000001));
             }
             _MMU.WriteByte(_lyAddress, (byte)Line);
             Line++;

@@ -30,7 +30,9 @@ namespace CoreBoy.Emulator
                 0xF3:
                     DI(this);
                     break;
-
+                case 0xFB:
+                    EI(this);
+                    break;
 
                 #region INC
                 #region INC_R16
@@ -81,6 +83,10 @@ namespace CoreBoy.Emulator
                     INC_A(this);
                     break;
                 #endregion
+
+                case 0x34:
+                    INC_AT_HL(this);
+                    break;
                 #endregion
 
                 #region DEC
@@ -132,6 +138,9 @@ namespace CoreBoy.Emulator
                     DEC_A(this);
                     break;
                 #endregion
+                case 0x35:
+                    DEC_AT_HL(this);
+                    break;
                 #endregion
 
                 #region LD
@@ -461,6 +470,13 @@ namespace CoreBoy.Emulator
                 0x7F:
                     LD_A_A(this);
                     break;
+                case 0x2A:
+                    LD_A_HL_INC(this);
+                    break;
+                case 0x3A:
+                    LD_A_HL_DEC(this);
+                    break;
+
                 #endregion
 
                 #region LD_R16_D16
@@ -506,6 +522,21 @@ namespace CoreBoy.Emulator
                     break;
                 #endregion
 
+                case 0xEA:
+                    LD_A16_A(this);
+                    break;
+                case 0xFA:
+                    LD_A_A16(this);
+                    break;
+                case 0xE2:
+                    LDH_C_A(this);
+                    break;
+                case 0xF2:
+                    LDH_A_C(this);
+                    break;
+                case 0xF8:
+                    LD_HL_SP_R8(this);
+                    break;
                 #endregion
 
                 #region ADD
@@ -528,6 +559,32 @@ namespace CoreBoy.Emulator
                 case
                 0x84:
                     ADD_A_H(this);
+                    break;
+                case 0x85:
+                    ADD_A_L(this);
+                    break;
+
+                case 0x86:
+                    ADD_A_HL(this);
+                    break;
+                case 0x87:
+                    ADD_A_A(this);
+                    break;
+                case 0xC6:
+                    ADD_A_D8(this);
+                    break;
+                case 0x09:
+                    ADD_HL_BC(this);
+                    break;
+
+                case 0x19:
+                    ADD_HL_DE(this);
+                    break;
+                case 0x29:
+                    ADD_HL_HL(this);
+                    break;
+                case 0x39:
+                    ADD_HL_SP(this);
                     break;
                 #endregion
 
@@ -629,6 +686,9 @@ namespace CoreBoy.Emulator
                 case
                 0xDA:
                     JP_C(this);
+                    break;
+                case 0xE9:
+                    JP_HL(this);
                     break;
                 #endregion
                 #region JR
@@ -734,6 +794,9 @@ namespace CoreBoy.Emulator
                 case
                 0xD8:
                     RET_C(this);
+                    break;
+                case 0xD9:
+                    RETI(this);
                     break;
                 #endregion
 
@@ -895,13 +958,76 @@ namespace CoreBoy.Emulator
                 0x0F:
                     RRCA(this);
                     break;
-                    #endregion
+                case 0x1F:
+                    RR_A_nonprefix(this);
+                    break;
+                case 0x2F:
+                    CPL(this);
+                    break;
+                #endregion
+
+                default:
+                    throw new NotImplementedException($"nonprefixed:{opcode.ToString("x2")}");
             }
         }
         public void PrefixedInstructions(byte opcode)
         {
             switch (opcode)
             {
+                #region RR
+                case 0x18:
+                    RR_B(this);
+                    break;
+                case 0x19:
+                    RR_C(this);
+                    break;
+                case 0x1A:
+                    RR_D(this);
+                    break;
+                case 0x1B:
+                    RR_E(this);
+                    break;
+                case 0x1C:
+                    RR_H(this);
+                    break;
+                case 0x1D:
+                    RR_L(this);
+                    break;
+                case 0x1E:
+                    RR_HL(this);
+                    break;
+                case 0x1F:
+                    RR_A(this);
+                    break;
+                #endregion
+
+                #region SRL
+                case 0x38:
+                    SRL_B(this);
+                    break;
+                case 0x39:
+                    SRL_C(this);
+                    break;
+                case 0x3A:
+                    SRL_D(this);
+                    break;
+                case 0x3B:
+                    SRL_E(this);
+                    break;
+                case 0x3C:
+                    SRL_H(this);
+                    break;
+                case 0x3D:
+                    SRL_L(this);
+                    break;
+                case 0x3E:
+                    SRL_HL(this);
+                    break;
+                case 0x3F:
+                    SRL_A(this);
+                    break;
+                #endregion
+
                 #region Bit
                 #region Bit 0
                 case
@@ -1174,8 +1300,253 @@ namespace CoreBoy.Emulator
                 0x7E:
                     BIT_7_HL(this);
                     break;
-                    #endregion
-                    #endregion
+                #endregion
+
+                #region SWAP
+                case 0x37:
+                    SWAP_A(this);
+                    break;
+                case 0x30:
+                    SWAP_B(this);
+                    break;
+                case 0x31:
+                    SWAP_C(this);
+                    break;
+                case 0x32:
+                    SWAP_C(this);
+                    break;
+                case 0x33:
+                    SWAP_D(this);
+                    break;
+                case 0x34:
+                    SWAP_E(this);
+                    break;
+                case 0x35:
+                    SWAP_H(this);
+                    break;
+                case 0x36:
+                    SWAP_HL(this);
+                    break;
+                #endregion
+                #endregion
+
+                #region RES
+                #region RES_0
+                case 0x80:
+                    RES_0_B(this);
+                    break;
+                case 0x81:
+                    RES_0_C(this);
+                    break;
+                case 0x82:
+                    RES_0_D(this);
+                    break;
+                case 0x83:
+                    RES_0_E(this);
+                    break;
+                case 0x84:
+                    RES_0_H(this);
+                    break;
+                case 0x85:
+                    RES_0_L(this);
+                    break;
+                case 0x86:
+                    RES_0_HL(this);
+                    break;
+                case 0x87:
+                    RES_0_A(this);
+                    break;
+                #endregion
+
+                #region RES_1
+                case 0x88:
+                    RES_1_B(this);
+                    break;
+                case 0x89:
+                    RES_1_C(this);
+                    break;
+                case 0x8A:
+                    RES_1_D(this);
+                    break;
+                case 0x8B:
+                    RES_1_E(this);
+                    break;
+                case 0x8C:
+                    RES_1_H(this);
+                    break;
+                case 0x8D:
+                    RES_1_L(this);
+                    break;
+                case 0x8E:
+                    RES_1_HL(this);
+                    break;
+                case 0x8F:
+                    RES_1_A(this);
+                    break;
+                #endregion
+                #region RES_2
+                case 0x90:
+                    RES_2_B(this);
+                    break;
+                case 0x91:
+                    RES_2_C(this);
+                    break;
+                case 0x92:
+                    RES_2_D(this);
+                    break;
+                case 0x93:
+                    RES_2_E(this);
+                    break;
+                case 0x94:
+                    RES_2_H(this);
+                    break;
+                case 0x95:
+                    RES_2_L(this);
+                    break;
+                case 0x96:
+                    RES_2_HL(this);
+                    break;
+                case 0x97:
+                    RES_2_A(this);
+                    break;
+                #endregion
+
+                #region RES_3
+                case 0x98:
+                    RES_3_B(this);
+                    break;
+                case 0x99:
+                    RES_3_C(this);
+                    break;
+                case 0x9A:
+                    RES_3_D(this);
+                    break;
+                case 0x9B:
+                    RES_3_E(this);
+                    break;
+                case 0x9C:
+                    RES_3_H(this);
+                    break;
+                case 0x9D:
+                    RES_3_L(this);
+                    break;
+                case 0x9E:
+                    RES_3_HL(this);
+                    break;
+                case 0x9F:
+                    RES_3_A(this);
+                    break;
+                #endregion
+                #region RES_4
+                case 0xA0:
+                    RES_4_B(this);
+                    break;
+                case 0xA1:
+                    RES_4_C(this);
+                    break;
+                case 0xA2:
+                    RES_4_D(this);
+                    break;
+                case 0xA3:
+                    RES_4_E(this);
+                    break;
+                case 0xA4:
+                    RES_4_H(this);
+                    break;
+                case 0xA5:
+                    RES_4_L(this);
+                    break;
+                case 0xA6:
+                    RES_4_HL(this);
+                    break;
+                case 0xA7:
+                    RES_4_A(this);
+                    break;
+                #endregion
+
+                #region RES_5
+                case 0xA8:
+                    RES_5_B(this);
+                    break;
+                case 0xA9:
+                    RES_5_C(this);
+                    break;
+                case 0xAA:
+                    RES_5_D(this);
+                    break;
+                case 0xAB:
+                    RES_5_E(this);
+                    break;
+                case 0xAC:
+                    RES_5_H(this);
+                    break;
+                case 0xAD:
+                    RES_5_L(this);
+                    break;
+                case 0xAE:
+                    RES_5_HL(this);
+                    break;
+                case 0xAF:
+                    RES_5_A(this);
+                    break;
+                #endregion
+                #region RES_6
+                case 0xB0:
+                    RES_6_B(this);
+                    break;
+                case 0xB1:
+                    RES_6_C(this);
+                    break;
+                case 0xB2:
+                    RES_6_D(this);
+                    break;
+                case 0xB3:
+                    RES_6_E(this);
+                    break;
+                case 0xB4:
+                    RES_6_H(this);
+                    break;
+                case 0xB5:
+                    RES_6_L(this);
+                    break;
+                case 0xB6:
+                    RES_6_HL(this);
+                    break;
+                case 0xB7:
+                    RES_6_A(this);
+                    break;
+                #endregion
+
+                #region RES_7
+                case 0xB8:
+                    RES_7_B(this);
+                    break;
+                case 0xB9:
+                    RES_7_C(this);
+                    break;
+                case 0xBA:
+                    RES_7_D(this);
+                    break;
+                case 0xBB:
+                    RES_7_E(this);
+                    break;
+                case 0xBC:
+                    RES_7_H(this);
+                    break;
+                case 0xBD:
+                    RES_7_L(this);
+                    break;
+                case 0xBE:
+                    RES_7_HL(this);
+                    break;
+                case 0xBF:
+                    RES_7_A(this);
+                    break;
+                #endregion
+                #endregion
+
+                default:
+                    throw new NotImplementedException($"prefixed:{opcode.ToString("x2")}");
             }
         }
 

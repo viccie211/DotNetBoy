@@ -9,7 +9,7 @@ namespace CoreBoy.Emulator
             //_MappedMemory[0xFF44] = 0x90;
         }
 
-        private byte[] _MappedMemory = new byte[0xFFFF];
+        private byte[] _MappedMemory = new byte[0xFFFF + 1];
 
         public byte ReadByte(ushort address)
         {
@@ -38,7 +38,7 @@ namespace CoreBoy.Emulator
 
         public byte[] GetTileMap0()
         {
-            return _MappedMemory.Skip(0x97FF).Take(1024).ToArray();
+            return _MappedMemory.Skip(0x9800).Take(1024).ToArray();
         }
 
         public void LoadRom(byte[] rom)

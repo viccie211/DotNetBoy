@@ -76,6 +76,15 @@ namespace CoreBoy.Emulator
             cpu._RegPC++;
         }
         #endregion
+
+        public static void INC_AT_HL(CPU cpu)
+        {
+            byte value = 0;
+            LoadFromAddress(ref value, cpu._RegHL, cpu._MMU);
+            value++;
+            LoadByteToAddress(cpu._RegHL, value, cpu._MMU);
+            cpu._RegPC++;
+        }
         #endregion
 
         #region DEC
@@ -147,6 +156,15 @@ namespace CoreBoy.Emulator
             cpu._RegPC++;
         }
         #endregion
+
+        public static void DEC_AT_HL(CPU cpu)
+        {
+            byte value = 0;
+            LoadFromAddress(ref value, cpu._RegHL, cpu._MMU);
+            value--;
+            LoadByteToAddress(cpu._RegHL, value, cpu._MMU);
+            cpu._RegPC++;
+        }
         #endregion
 
         #region ADD
@@ -174,8 +192,61 @@ namespace CoreBoy.Emulator
         {
             Add(ref cpu._RegA, cpu._RegH, ref cpu._RegF, ref cpu._RegPC);
         }
+
+        public static void ADD_A_L(CPU cpu)
+        {
+            Add(ref cpu._RegA, cpu._RegL, ref cpu._RegF, ref cpu._RegPC);
+        }
+
+        public static void ADD_A_HL(CPU cpu)
+        {
+            byte value = 0;
+            LoadFromAddress(ref value, cpu._RegHL, cpu._MMU);
+            Add(ref cpu._RegA, value, ref cpu._RegF, ref cpu._RegPC);
+        }
+
+        public static void ADD_HL_BC(CPU cpu)
+        {
+            ushort value = cpu._RegHL;
+            Add_16(ref value, cpu._RegBC, ref cpu._RegF);
+            cpu._RegHL = value;
+            cpu._RegPC++;
+        }
+        public static void ADD_HL_DE(CPU cpu)
+        {
+            ushort value = cpu._RegHL;
+            Add_16(ref value, cpu._RegDE, ref cpu._RegF);
+            cpu._RegHL = value;
+            cpu._RegPC++;
+        }
+
+        public static void ADD_HL_HL(CPU cpu)
+        {
+            ushort value = cpu._RegHL;
+            Add_16(ref value, cpu._RegHL, ref cpu._RegF);
+            cpu._RegHL = value;
+            cpu._RegPC++;
+        }
+
+        public static void ADD_HL_SP(CPU cpu)
+        {
+            ushort value = cpu._RegHL;
+            Add_16(ref value, cpu._RegSP, ref cpu._RegF);
+            cpu._RegHL = value;
+            cpu._RegPC++;
+        }
+
+        public static void ADD_A_A(CPU cpu)
+        {
+            Add(ref cpu._RegA, cpu._RegA, ref cpu._RegF, ref cpu._RegPC);
+        }
         #endregion
 
+        public static void ADD_A_D8(CPU cpu)
+        {
+            Add(ref cpu._RegA, cpu._MMU.ReadByte((ushort)(cpu._RegPC + 1)), ref cpu._RegF, ref cpu._RegPC);
+            cpu._RegPC++;
+        }
 
         #region CP
 
@@ -313,6 +384,11 @@ namespace CoreBoy.Emulator
             Jump(ref cpu._RegPC, cpu._MMU, cpu._RegF.Carry);
         }
 
+        public static void JP_HL(CPU cpu)
+        {
+            cpu._RegPC = cpu._RegHL;
+        }
+
 
         #endregion
 
@@ -414,6 +490,19 @@ namespace CoreBoy.Emulator
         public static void LD_A_DE(CPU cpu)
         {
             LoadFromAddress(ref cpu._RegA, cpu._RegDE, cpu._MMU);
+            cpu._RegPC++;
+        }
+
+        public static void LD_A_HL_INC(CPU cpu)
+        {
+            LoadFromAddress(ref cpu._RegA, cpu._RegHL, cpu._MMU);
+            cpu._RegHL++;
+            cpu._RegPC++;
+        }
+        public static void LD_A_HL_DEC(CPU cpu)
+        {
+            LoadFromAddress(ref cpu._RegA, cpu._RegHL, cpu._MMU);
+            cpu._RegHL--;
             cpu._RegPC++;
         }
         #endregion
@@ -882,6 +971,39 @@ namespace CoreBoy.Emulator
         }
         #endregion
 
+        public static void LD_A16_A(CPU cpu)
+        {
+            cpu._MMU.WriteByte(cpu._MMU.ReadWordLSFirst((ushort)(cpu._RegPC + 1)), cpu._RegA);
+            cpu._RegPC += 3;
+        }
+
+        public static void LD_A_A16(CPU cpu)
+        {
+            LoadFromAddress(ref cpu._RegA, cpu._MMU.ReadWordLSFirst((ushort)(cpu._RegPC + 1)), cpu._MMU);
+            cpu._RegPC += 3;
+        }
+
+        public static void LDH_C_A(CPU cpu)
+        {
+            LoadByteToAddress((ushort)(0xFF00 + cpu._RegC), cpu._RegA, cpu._MMU);
+            cpu._RegPC++;
+        }
+
+        public static void LDH_A_C(CPU cpu)
+        {
+            LoadFromAddress(ref cpu._RegA, (ushort)(0xFF00 + cpu._RegC), cpu._MMU);
+            cpu._RegPC++;
+        }
+
+        public static void LD_HL_SP_R8(CPU cpu)
+        {
+            byte toAdd = 0;
+            LoadFromAddress(ref toAdd, (ushort)(cpu._RegPC + 1), cpu._MMU);
+            ushort value = (ushort)(cpu._RegPC + unchecked((sbyte)toAdd));
+            cpu._RegHL = value;
+            cpu._RegPC += 2;
+        }
+
         #endregion
 
         #region PUSH
@@ -997,6 +1119,12 @@ namespace CoreBoy.Emulator
         public static void RET_NC(CPU cpu)
         {
             Ret(cpu, !cpu._RegF.Carry);
+        }
+
+        public static void RETI(CPU cpu)
+        {
+            cpu.InteruptsEnabled = true;
+            Ret(cpu, true);
         }
         #endregion
 
@@ -1226,7 +1354,15 @@ namespace CoreBoy.Emulator
 
         public static void DI(CPU cpu)
         {
-            Console.WriteLine("DI is called but interrupts aren't implemented yet");
+            cpu.InteruptsEnabled = false;
+            cpu.InterruptsToggled = true;
+            cpu._RegPC++;
+        }
+
+        public static void EI(CPU cpu)
+        {
+            cpu.InteruptsEnabled = true;
+            cpu.InterruptsToggled = true;
             cpu._RegPC++;
         }
 
@@ -1239,6 +1375,13 @@ namespace CoreBoy.Emulator
             cpu._RegPC++;
         }
 
+        public static void CPL(CPU cpu)
+        {
+            cpu._RegA = (byte)~cpu._RegA;
+            cpu._RegF.HalfCarry = true;
+            cpu._RegF.Subtract = true;
+            cpu._RegPC++;
+        }
         #region BIT
         #region BIT0
         public static void BIT_0_A(CPU cpu)
@@ -1587,6 +1730,556 @@ namespace CoreBoy.Emulator
 
         #endregion
         #endregion
+
+        #region RES
+        #region RES_0
+        public static void RES_0_B(CPU cpu)
+        {
+            Res(ref cpu._RegB, 0);
+            cpu._RegPC += 2;
+        }
+        public static void RES_0_C(CPU cpu)
+        {
+            Res(ref cpu._RegC, 0);
+            cpu._RegPC += 2;
+        }
+        public static void RES_0_D(CPU cpu)
+        {
+            Res(ref cpu._RegD, 0);
+            cpu._RegPC += 2;
+        }
+
+        public static void RES_0_E(CPU cpu)
+        {
+            Res(ref cpu._RegE, 0);
+            cpu._RegPC += 2;
+        }
+        public static void RES_0_H(CPU cpu)
+        {
+            Res(ref cpu._RegH, 0);
+            cpu._RegPC += 2;
+        }
+
+        public static void RES_0_L(CPU cpu)
+        {
+            Res(ref cpu._RegL, 0);
+            cpu._RegPC += 2;
+        }
+
+        public static void RES_0_HL(CPU cpu)
+        {
+            byte value = 0;
+            LoadFromAddress(ref value, cpu._RegHL, cpu._MMU);
+            Res(ref value, 0);
+            LoadByteToAddress(cpu._RegHL, value, cpu._MMU);
+            cpu._RegPC += 2;
+        }
+
+        public static void RES_0_A(CPU cpu)
+        {
+            Res(ref cpu._RegA, 0);
+            cpu._RegPC += 2;
+        }
+        #endregion
+        #region RES_1
+        public static void RES_1_B(CPU cpu)
+        {
+            Res(ref cpu._RegB, 1);
+            cpu._RegPC += 2;
+        }
+        public static void RES_1_C(CPU cpu)
+        {
+            Res(ref cpu._RegC, 1);
+            cpu._RegPC += 2;
+        }
+        public static void RES_1_D(CPU cpu)
+        {
+            Res(ref cpu._RegD, 1);
+            cpu._RegPC += 2;
+        }
+
+        public static void RES_1_E(CPU cpu)
+        {
+            Res(ref cpu._RegE, 1);
+            cpu._RegPC += 2;
+        }
+        public static void RES_1_H(CPU cpu)
+        {
+            Res(ref cpu._RegH, 1);
+            cpu._RegPC += 2;
+        }
+
+        public static void RES_1_L(CPU cpu)
+        {
+            Res(ref cpu._RegL, 1);
+            cpu._RegPC += 2;
+        }
+
+        public static void RES_1_HL(CPU cpu)
+        {
+            byte value = 2;
+            LoadFromAddress(ref value, cpu._RegHL, cpu._MMU);
+            Res(ref value, 1);
+            LoadByteToAddress(cpu._RegHL, value, cpu._MMU);
+            cpu._RegPC += 2;
+        }
+
+        public static void RES_1_A(CPU cpu)
+        {
+            Res(ref cpu._RegA, 1);
+            cpu._RegPC += 2;
+        }
+        #endregion
+
+        #region RES_2
+        public static void RES_2_B(CPU cpu)
+        {
+            Res(ref cpu._RegB, 2);
+            cpu._RegPC += 2;
+        }
+        public static void RES_2_C(CPU cpu)
+        {
+            Res(ref cpu._RegC, 2);
+            cpu._RegPC += 2;
+        }
+        public static void RES_2_D(CPU cpu)
+        {
+            Res(ref cpu._RegD, 2);
+            cpu._RegPC += 2;
+        }
+
+        public static void RES_2_E(CPU cpu)
+        {
+            Res(ref cpu._RegE, 2);
+            cpu._RegPC += 2;
+        }
+        public static void RES_2_H(CPU cpu)
+        {
+            Res(ref cpu._RegH, 2);
+            cpu._RegPC += 2;
+        }
+
+        public static void RES_2_L(CPU cpu)
+        {
+            Res(ref cpu._RegL, 2);
+            cpu._RegPC += 2;
+        }
+
+        public static void RES_2_HL(CPU cpu)
+        {
+            byte value = 2;
+            LoadFromAddress(ref value, cpu._RegHL, cpu._MMU);
+            Res(ref value, 2);
+            LoadByteToAddress(cpu._RegHL, value, cpu._MMU);
+            cpu._RegPC += 2;
+        }
+        public static void RES_2_A(CPU cpu)
+        {
+            Res(ref cpu._RegA, 2);
+            cpu._RegPC += 2;
+        }
+        #endregion
+
+        #region RES_3
+        public static void RES_3_B(CPU cpu)
+        {
+            Res(ref cpu._RegB, 3);
+            cpu._RegPC += 2;
+        }
+        public static void RES_3_C(CPU cpu)
+        {
+            Res(ref cpu._RegC, 3);
+            cpu._RegPC += 2;
+        }
+        public static void RES_3_D(CPU cpu)
+        {
+            Res(ref cpu._RegD, 3);
+            cpu._RegPC += 2;
+        }
+
+        public static void RES_3_E(CPU cpu)
+        {
+            Res(ref cpu._RegE, 3);
+            cpu._RegPC += 2;
+        }
+        public static void RES_3_H(CPU cpu)
+        {
+            Res(ref cpu._RegH, 3);
+            cpu._RegPC += 2;
+        }
+
+        public static void RES_3_L(CPU cpu)
+        {
+            Res(ref cpu._RegL, 3);
+            cpu._RegPC += 2;
+        }
+
+        public static void RES_3_HL(CPU cpu)
+        {
+            byte value = 2;
+            LoadFromAddress(ref value, cpu._RegHL, cpu._MMU);
+            Res(ref value, 3);
+            LoadByteToAddress(cpu._RegHL, value, cpu._MMU);
+            cpu._RegPC += 2;
+        }
+
+        public static void RES_3_A(CPU cpu)
+        {
+            Res(ref cpu._RegA, 3);
+            cpu._RegPC += 2;
+        }
+        #endregion
+
+        #region RES_4
+        public static void RES_4_B(CPU cpu)
+        {
+            Res(ref cpu._RegB, 4);
+            cpu._RegPC += 2;
+        }
+        public static void RES_4_C(CPU cpu)
+        {
+            Res(ref cpu._RegC, 4);
+            cpu._RegPC += 2;
+        }
+        public static void RES_4_D(CPU cpu)
+        {
+            Res(ref cpu._RegD, 4);
+            cpu._RegPC += 2;
+        }
+
+        public static void RES_4_E(CPU cpu)
+        {
+            Res(ref cpu._RegE, 4);
+            cpu._RegPC += 2;
+        }
+        public static void RES_4_H(CPU cpu)
+        {
+            Res(ref cpu._RegH, 4);
+            cpu._RegPC += 2;
+        }
+
+        public static void RES_4_L(CPU cpu)
+        {
+            Res(ref cpu._RegL, 4);
+            cpu._RegPC += 2;
+        }
+
+        public static void RES_4_HL(CPU cpu)
+        {
+            byte value = 2;
+            LoadFromAddress(ref value, cpu._RegHL, cpu._MMU);
+            Res(ref value, 4);
+            LoadByteToAddress(cpu._RegHL, value, cpu._MMU);
+            cpu._RegPC += 2;
+        }
+        public static void RES_4_A(CPU cpu)
+        {
+            Res(ref cpu._RegA, 4);
+            cpu._RegPC += 2;
+        }
+        #endregion
+
+        #region RES_5
+        public static void RES_5_B(CPU cpu)
+        {
+            Res(ref cpu._RegB, 5);
+            cpu._RegPC += 2;
+        }
+        public static void RES_5_C(CPU cpu)
+        {
+            Res(ref cpu._RegC, 5);
+            cpu._RegPC += 2;
+        }
+        public static void RES_5_D(CPU cpu)
+        {
+            Res(ref cpu._RegD, 5);
+            cpu._RegPC += 2;
+        }
+
+        public static void RES_5_E(CPU cpu)
+        {
+            Res(ref cpu._RegE, 5);
+            cpu._RegPC += 2;
+        }
+        public static void RES_5_H(CPU cpu)
+        {
+            Res(ref cpu._RegH, 5);
+            cpu._RegPC += 2;
+        }
+
+        public static void RES_5_L(CPU cpu)
+        {
+            Res(ref cpu._RegL, 5);
+            cpu._RegPC += 2;
+        }
+
+        public static void RES_5_HL(CPU cpu)
+        {
+            byte value = 2;
+            LoadFromAddress(ref value, cpu._RegHL, cpu._MMU);
+            Res(ref value, 5);
+            LoadByteToAddress(cpu._RegHL, value, cpu._MMU);
+            cpu._RegPC += 2;
+        }
+        public static void RES_5_A(CPU cpu)
+        {
+            Res(ref cpu._RegA, 5);
+            cpu._RegPC += 2;
+        }
+        #endregion
+
+        #region RES_6
+        public static void RES_6_B(CPU cpu)
+        {
+            Res(ref cpu._RegB, 6);
+            cpu._RegPC += 2;
+        }
+        public static void RES_6_C(CPU cpu)
+        {
+            Res(ref cpu._RegC, 6);
+            cpu._RegPC += 2;
+        }
+        public static void RES_6_D(CPU cpu)
+        {
+            Res(ref cpu._RegD, 6);
+            cpu._RegPC += 2;
+        }
+
+        public static void RES_6_E(CPU cpu)
+        {
+            Res(ref cpu._RegE, 6);
+            cpu._RegPC += 2;
+        }
+        public static void RES_6_H(CPU cpu)
+        {
+            Res(ref cpu._RegH, 6);
+            cpu._RegPC += 2;
+        }
+
+        public static void RES_6_L(CPU cpu)
+        {
+            Res(ref cpu._RegL, 6);
+            cpu._RegPC += 2;
+        }
+
+        public static void RES_6_HL(CPU cpu)
+        {
+            byte value = 2;
+            LoadFromAddress(ref value, cpu._RegHL, cpu._MMU);
+            Res(ref value, 6);
+            LoadByteToAddress(cpu._RegHL, value, cpu._MMU);
+            cpu._RegPC += 2;
+        }
+        public static void RES_6_A(CPU cpu)
+        {
+            Res(ref cpu._RegA, 6);
+            cpu._RegPC += 2;
+        }
+        #endregion
+
+        #region RES_7
+        public static void RES_7_B(CPU cpu)
+        {
+            Res(ref cpu._RegB, 7);
+            cpu._RegPC += 2;
+        }
+        public static void RES_7_C(CPU cpu)
+        {
+            Res(ref cpu._RegC, 7);
+            cpu._RegPC += 2;
+        }
+        public static void RES_7_D(CPU cpu)
+        {
+            Res(ref cpu._RegD, 7);
+            cpu._RegPC += 2;
+        }
+
+        public static void RES_7_E(CPU cpu)
+        {
+            Res(ref cpu._RegE, 7);
+            cpu._RegPC += 2;
+        }
+        public static void RES_7_H(CPU cpu)
+        {
+            Res(ref cpu._RegH, 7);
+            cpu._RegPC += 2;
+        }
+
+        public static void RES_7_L(CPU cpu)
+        {
+            Res(ref cpu._RegL, 7);
+            cpu._RegPC += 2;
+        }
+
+        public static void RES_7_HL(CPU cpu)
+        {
+            byte value = 2;
+            LoadFromAddress(ref value, cpu._RegHL, cpu._MMU);
+            Res(ref value, 7);
+            LoadByteToAddress(cpu._RegHL, value, cpu._MMU);
+            cpu._RegPC += 2;
+        }
+        public static void RES_7_A(CPU cpu)
+        {
+            Res(ref cpu._RegA, 7);
+            cpu._RegPC += 2;
+        }
+        #endregion
+        #endregion
+
+        #region SWAP
+        public static void SWAP_A(CPU cpu)
+        {
+            Swap(ref cpu._RegA);
+            cpu._RegPC += 2;
+        }
+        public static void SWAP_B(CPU cpu)
+        {
+            Swap(ref cpu._RegB);
+            cpu._RegPC += 2;
+        }
+        public static void SWAP_C(CPU cpu)
+        {
+            Swap(ref cpu._RegC);
+            cpu._RegPC += 2;
+        }
+        public static void SWAP_D(CPU cpu)
+        {
+            Swap(ref cpu._RegD);
+            cpu._RegPC += 2;
+        }
+        public static void SWAP_E(CPU cpu)
+        {
+            Swap(ref cpu._RegE);
+            cpu._RegPC += 2;
+        }
+        public static void SWAP_H(CPU cpu)
+        {
+            Swap(ref cpu._RegH);
+            cpu._RegPC += 2;
+        }
+        public static void SWAP_L(CPU cpu)
+        {
+            Swap(ref cpu._RegL);
+            cpu._RegPC += 2;
+        }
+
+        public static void SWAP_HL(CPU cpu)
+        {
+            byte value = 0;
+            LoadFromAddress(ref value, cpu._RegHL, cpu._MMU);
+            Swap(ref value);
+            LoadByteToAddress(cpu._RegHL, value, cpu._MMU);
+            cpu._RegPC += 2;
+        }
+        #endregion
+
+        #region SRL
+        public static void SRL_B(CPU cpu)
+        {
+            Srl(ref cpu._RegB, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void SRL_C(CPU cpu)
+        {
+            Srl(ref cpu._RegC, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+
+        public static void SRL_D(CPU cpu)
+        {
+            Srl(ref cpu._RegD, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+
+        public static void SRL_E(CPU cpu)
+        {
+            Srl(ref cpu._RegE, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void SRL_H(CPU cpu)
+        {
+            Srl(ref cpu._RegH, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+
+        public static void SRL_L(CPU cpu)
+        {
+            Srl(ref cpu._RegL, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+
+        public static void SRL_HL(CPU cpu)
+        {
+            byte value = 0;
+            LoadFromAddress(ref value, cpu._RegHL, cpu._MMU);
+            Srl(ref value, ref cpu._RegF);
+            LoadByteToAddress(cpu._RegHL, value, cpu._MMU);
+            cpu._RegPC += 2;
+        }
+
+        public static void SRL_A(CPU cpu)
+        {
+            Srl(ref cpu._RegA, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        #endregion
+
+        #region RR
+        public static void RR_B(CPU cpu)
+        {
+            Rr(ref cpu._RegB, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void RR_C(CPU cpu)
+        {
+            Rr(ref cpu._RegC, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void RR_D(CPU cpu)
+        {
+            Rr(ref cpu._RegD, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void RR_E(CPU cpu)
+        {
+            Rr(ref cpu._RegE, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void RR_H(CPU cpu)
+        {
+            Rr(ref cpu._RegH, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+        public static void RR_L(CPU cpu)
+        {
+            Rr(ref cpu._RegL, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+
+        public static void RR_HL(CPU cpu)
+        {
+            byte value = 0;
+            LoadFromAddress(ref value, cpu._RegHL, cpu._MMU);
+            Rr(ref value, ref cpu._RegF);
+            LoadByteToAddress(cpu._RegHL, value, cpu._MMU);
+            cpu._RegPC += 2;
+        }
+
+        public static void RR_A(CPU cpu)
+        {
+            Rr(ref cpu._RegA, ref cpu._RegF);
+            cpu._RegPC += 2;
+        }
+
+        public static void RR_A_nonprefix(CPU cpu)
+        {
+            Rr(ref cpu._RegA, ref cpu._RegF);
+            cpu._RegPC++;
+        }
+
+        #endregion
+
         #endregion
 
         #endregion
@@ -1632,6 +2325,17 @@ namespace CoreBoy.Emulator
             flagsRegister.HalfCarry = (target & 0xF) + (source & 0xF) > 0xF;
             target = result;
             programCounter++;
+        }
+
+        private static void Add_16(ref ushort target, ushort source, ref FlagsRegister flagsRegister)
+        {
+            int newValue = target + source;
+            ushort result = (ushort)(newValue % 0x10000);
+            flagsRegister.Zero = result == 0;
+            flagsRegister.Subtract = false;
+            flagsRegister.Carry = newValue > 0xFFFF;
+            flagsRegister.HalfCarry = (target & 0xF00) + (source & 0xF00) > 0xF00;
+            target = result;
         }
 
         private static void Sub(ref byte target, byte source, ref FlagsRegister flagsRegister)
@@ -1790,6 +2494,43 @@ namespace CoreBoy.Emulator
             flagsRegister.Zero = (shifted & 1) == 1;
             flagsRegister.HalfCarry = true;
             flagsRegister.Subtract = false;
+        }
+
+        private static void Res(ref byte target, byte bitNr)
+        {
+            int shifted = target >> bitNr;
+            if ((shifted & 1) == 1)
+            {
+                byte mask = 0b00000001;
+                mask = (byte)(mask << bitNr);
+                target = (byte)(target ^ mask);
+            }
+        }
+
+        private static void Swap(ref byte target)
+        {
+            target = (byte)((target & 0x0F) << 4 | (target & 0xF0) >> 4);
+        }
+
+        private static void Srl(ref byte target, ref FlagsRegister flagsRegister)
+        {
+            flagsRegister.Carry = (target & 0x1) == 1;
+            target = (byte)(target >> 1);
+            flagsRegister.Zero = target == 0;
+            flagsRegister.HalfCarry = false;
+            flagsRegister.Subtract = false;
+        }
+
+        private static void Rr(ref byte target, ref FlagsRegister flagsRegister)
+        {
+            bool newCarry = (target & 0x1) == 1;
+            byte newTarget = (byte)(target >> 1);
+            byte mask = (byte)(flagsRegister.Carry ? 0b10000000 : 0b00000000);
+            target = (byte)(newTarget | mask);
+            flagsRegister.Zero = target == 0;
+            flagsRegister.Subtract = false;
+            flagsRegister.HalfCarry = false;
+            flagsRegister.Carry = newCarry;
         }
         #endregion
     }

@@ -46,7 +46,9 @@ namespace CoreBoy
             : base("viccie211", "CoreBoy")
         {
             cpu = new CPU();
-            cpu._MMU.LoadRom(File.ReadAllBytes("C:\\Users\\VictorRemmerswaal\\Downloads\\bgbw64\\bgbtest.gb"));
+            cpu._MMU.LoadRom(File.ReadAllBytes("C:\\Users\\VictorRemmerswaal\\Downloads\\bgbw64\\Tetris.gb"));
+            //cpu._MMU.LoadRom(File.ReadAllBytes("C:\\Users\\VictorRemmerswaal\\Downloads\\bgbw64\\cpu_instrs.gb"));
+
         }
 
         protected override UltravioletContext OnCreatingUltravioletContext()

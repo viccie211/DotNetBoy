@@ -10,6 +10,13 @@ namespace CoreBoy.Emulator
     {
         #region Consts
         private const byte INSTRUCTION_PREFIX = 0xCB;
+        private const ushort INTERRUPTS_FLAGS_ADDRESS = 0xFFFF;
+        private const ushort INTERRUPTS_TRIGGERED_ADDRESS = 0xFF0F;
+        private const ushort VERTICAL_BLANK_ISR = 0x0040;
+        private const ushort LCD_STATUS_TRIGGGERS_ISR = 0x0048;
+        private const ushort TIMER_OVERFLOW_ISR = 0x0050;
+        private const ushort SERIAL_LINK_ISR = 0x0058;
+        private const ushort JOYPAD_PRESS_ISR = 0x0060;
         #endregion
 
         #region Registers
@@ -85,6 +92,8 @@ namespace CoreBoy.Emulator
         public MMU _MMU = new MMU();
         public PPU _PPU;
         public bool _Halted = false;
+        public bool InteruptsEnabled = true;
+        public bool InterruptsToggled = false;
 
         #region Public Methods
 
@@ -97,14 +106,14 @@ namespace CoreBoy.Emulator
 
         public void Reset()
         {
-            _RegA = 0;
+            _RegA = 0x11;
             _RegB = 0;
             _RegC = 0;
-            _RegD = 0;
-            _RegE = 0;
-            _RegF = 0;
+            _RegD = 0xFF;
+            _RegE = 0X56;
+            _RegF = 0x80;
             _RegH = 0;
-            _RegL = 0;
+            _RegL = 0x0D;
             _RegPC = 0x100;
             _RegSP = 0;
             _RegM = 0;
@@ -136,9 +145,12 @@ namespace CoreBoy.Emulator
                     instruction = _MMU.ReadByte((ushort)(_RegPC + 1));
                     prefixed = true;
                 }
+                Console.WriteLine($"{_RegPC.ToString("x2")}:{instruction.ToString("x2")}");
                 ExecuteInstruction(instruction, prefixed);
+
                 _PPU.Step();
-                if (_PPU.Line > PPU._height + 10)
+//                Interupts();
+                if (_PPU.Line >= PPU._height + 10)
                 {
                     _PPU.Line = 0;
                     _Halted = true;
@@ -148,6 +160,57 @@ namespace CoreBoy.Emulator
         #endregion
 
         #region Private Methods
+
+        private void Interupts()
+        {
+            if ((InteruptsEnabled && !InterruptsToggled) || (!InteruptsEnabled && InterruptsToggled))
+            {
+                byte interruptEnableFlags = _MMU.ReadByte(INTERRUPTS_FLAGS_ADDRESS);
+                byte interruptsTriggered = _MMU.ReadByte(INTERRUPTS_TRIGGERED_ADDRESS);
+                ushort interruptToCall = 0;
+
+                if (interruptToCall == 0 && ((interruptEnableFlags & 0b00000001) == 1 && (interruptsTriggered & 0b00000001) == 1))
+                {
+                    interruptToCall = VERTICAL_BLANK_ISR;
+                }
+
+                if (interruptToCall == 0 && ((interruptEnableFlags & 0b00000010) == 2 && (interruptsTriggered & 0b00000010) == 2))
+                {
+                    interruptToCall = LCD_STATUS_TRIGGGERS_ISR;
+                }
+
+                if (interruptToCall == 0 && ((interruptEnableFlags & 0b00000100) == 4 && (interruptsTriggered & 0b00000100) == 4))
+                {
+                    interruptToCall = TIMER_OVERFLOW_ISR;
+
+                }
+
+                if (interruptToCall == 0 && ((interruptEnableFlags & 0b00001000) == 8 && (interruptsTriggered & 0b00001000) == 8))
+                {
+                    interruptToCall = SERIAL_LINK_ISR;
+                }
+
+                if (interruptToCall == 0 && ((interruptEnableFlags & 0b00010000) == 16 && (interruptsTriggered & 0b00010000) == 16))
+                {
+
+                    interruptToCall = JOYPAD_PRESS_ISR;
+                }
+
+                CallInterrupt(interruptToCall);
+            }
+
+            if (InterruptsToggled)
+            {
+                InterruptsToggled = false;
+            }
+        }
+
+        private void CallInterrupt(ushort address)
+        {
+            InteruptsEnabled = false;
+            Push(_RegPC, this);
+            _RegPC = address;
+        }
 
         #endregion
     }
