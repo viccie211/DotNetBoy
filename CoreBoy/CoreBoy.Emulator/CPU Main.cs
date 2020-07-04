@@ -149,7 +149,7 @@ namespace CoreBoy.Emulator
                 ExecuteInstruction(instruction, prefixed);
 
                 _PPU.Step();
-//                Interupts();
+                Interupts();
                 if (_PPU.Line >= PPU._height + 10)
                 {
                     _PPU.Line = 0;

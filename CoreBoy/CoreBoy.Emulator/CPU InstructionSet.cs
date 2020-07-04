@@ -588,6 +588,36 @@ namespace CoreBoy.Emulator
                     break;
                 #endregion
 
+                #region ADC
+                case 0x88:
+                    ADC_A_B(this);
+                    break;
+                case 0x89:
+                    ADC_A_C(this);
+                    break;
+                case 0x8A:
+                    ADC_A_D(this);
+                    break;
+                case 0x8B:
+                    ADC_A_E(this);
+                    break;
+                case 0x8C:
+                    ADC_A_H(this);
+                    break;
+                case 0x8D:
+                    ADC_A_L(this);
+                    break;
+                case 0x8E:
+                    ADC_A_HL(this);
+                    break;
+                case 0x8F:
+                    ADC_A_A(this);
+                    break;
+                case 0xCE:
+                    ADC_A_D8(this);
+                    break;
+                #endregion
+
                 #region CP
                 case
                 0xBF:

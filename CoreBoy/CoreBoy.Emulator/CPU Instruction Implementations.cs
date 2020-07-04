@@ -13,24 +13,28 @@ namespace CoreBoy.Emulator
         {
             cpu._RegBC++;
             cpu._RegPC++;
+            Clock(cpu, 2);
         }
 
         public static void INC_DE(CPU cpu)
         {
             cpu._RegDE++;
             cpu._RegPC++;
+            Clock(cpu, 2);
         }
 
         public static void INC_HL(CPU cpu)
         {
             cpu._RegHL++;
             cpu._RegPC++;
+            Clock(cpu, 2);
         }
 
         public static void INC_SP(CPU cpu)
         {
             cpu._RegSP++;
             cpu._RegPC++;
+            Clock(cpu, 2);
         }
         #endregion
 
@@ -39,41 +43,47 @@ namespace CoreBoy.Emulator
         {
             IncWithFlags(ref cpu._RegB, ref cpu._RegF);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void INC_C(CPU cpu)
         {
             IncWithFlags(ref cpu._RegC, ref cpu._RegF);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void INC_D(CPU cpu)
         {
             IncWithFlags(ref cpu._RegD, ref cpu._RegF);
             cpu._RegPC++;
+            Clock(cpu);
         }
         public static void INC_E(CPU cpu)
         {
             IncWithFlags(ref cpu._RegE, ref cpu._RegF);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void INC_H(CPU cpu)
         {
             IncWithFlags(ref cpu._RegH, ref cpu._RegF);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void INC_L(CPU cpu)
         {
             IncWithFlags(ref cpu._RegL, ref cpu._RegF);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void INC_A(CPU cpu)
         {
             IncWithFlags(ref cpu._RegA, ref cpu._RegF);
-            cpu._RegPC++;
+            cpu._RegPC++; Clock(cpu);
         }
         #endregion
 
@@ -84,6 +94,7 @@ namespace CoreBoy.Emulator
             value++;
             LoadByteToAddress(cpu._RegHL, value, cpu._MMU);
             cpu._RegPC++;
+            Clock(cpu, 3);
         }
         #endregion
 
@@ -93,24 +104,28 @@ namespace CoreBoy.Emulator
         {
             cpu._RegBC--;
             cpu._RegPC++;
+            Clock(cpu, 2);
         }
 
         public static void DEC_DE(CPU cpu)
         {
             cpu._RegDE--;
             cpu._RegPC++;
+            Clock(cpu, 2);
         }
 
         public static void DEC_HL(CPU cpu)
         {
             cpu._RegHL--;
             cpu._RegPC++;
+            Clock(cpu, 2);
         }
 
         public static void DEC_SP(CPU cpu)
         {
             cpu._RegSP--;
             cpu._RegPC++;
+            Clock(cpu, 2);
         }
         #endregion
 
@@ -119,41 +134,48 @@ namespace CoreBoy.Emulator
         {
             DecWithFlags(ref cpu._RegB, ref cpu._RegF);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void DEC_C(CPU cpu)
         {
             DecWithFlags(ref cpu._RegC, ref cpu._RegF);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void DEC_D(CPU cpu)
         {
             DecWithFlags(ref cpu._RegD, ref cpu._RegF);
             cpu._RegPC++;
+            Clock(cpu);
         }
         public static void DEC_E(CPU cpu)
         {
             DecWithFlags(ref cpu._RegE, ref cpu._RegF);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void DEC_H(CPU cpu)
         {
             DecWithFlags(ref cpu._RegH, ref cpu._RegF);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void DEC_L(CPU cpu)
         {
             DecWithFlags(ref cpu._RegL, ref cpu._RegF);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void DEC_A(CPU cpu)
         {
             DecWithFlags(ref cpu._RegA, ref cpu._RegF);
             cpu._RegPC++;
+            Clock(cpu);
         }
         #endregion
 
@@ -164,6 +186,7 @@ namespace CoreBoy.Emulator
             value--;
             LoadByteToAddress(cpu._RegHL, value, cpu._MMU);
             cpu._RegPC++;
+            Clock(cpu, 3);
         }
         #endregion
 
@@ -171,31 +194,37 @@ namespace CoreBoy.Emulator
         public static void ADD_A_B(CPU cpu)
         {
             Add(ref cpu._RegA, cpu._RegB, ref cpu._RegF, ref cpu._RegPC);
+            Clock(cpu);
         }
 
         public static void ADD_A_C(CPU cpu)
         {
             Add(ref cpu._RegA, cpu._RegC, ref cpu._RegF, ref cpu._RegPC);
+            Clock(cpu);
         }
 
         public static void ADD_A_D(CPU cpu)
         {
             Add(ref cpu._RegA, cpu._RegD, ref cpu._RegF, ref cpu._RegPC);
+            Clock(cpu);
         }
 
         public static void ADD_A_E(CPU cpu)
         {
             Add(ref cpu._RegA, cpu._RegE, ref cpu._RegF, ref cpu._RegPC);
+            Clock(cpu);
         }
 
         public static void ADD_A_H(CPU cpu)
         {
             Add(ref cpu._RegA, cpu._RegH, ref cpu._RegF, ref cpu._RegPC);
+            Clock(cpu);
         }
 
         public static void ADD_A_L(CPU cpu)
         {
             Add(ref cpu._RegA, cpu._RegL, ref cpu._RegF, ref cpu._RegPC);
+            Clock(cpu);
         }
 
         public static void ADD_A_HL(CPU cpu)
@@ -203,6 +232,7 @@ namespace CoreBoy.Emulator
             byte value = 0;
             LoadFromAddress(ref value, cpu._RegHL, cpu._MMU);
             Add(ref cpu._RegA, value, ref cpu._RegF, ref cpu._RegPC);
+            Clock(cpu, 2);
         }
 
         public static void ADD_HL_BC(CPU cpu)
@@ -211,6 +241,7 @@ namespace CoreBoy.Emulator
             Add_16(ref value, cpu._RegBC, ref cpu._RegF);
             cpu._RegHL = value;
             cpu._RegPC++;
+            Clock(cpu, 2);
         }
         public static void ADD_HL_DE(CPU cpu)
         {
@@ -218,6 +249,7 @@ namespace CoreBoy.Emulator
             Add_16(ref value, cpu._RegDE, ref cpu._RegF);
             cpu._RegHL = value;
             cpu._RegPC++;
+            Clock(cpu, 2);
         }
 
         public static void ADD_HL_HL(CPU cpu)
@@ -226,6 +258,7 @@ namespace CoreBoy.Emulator
             Add_16(ref value, cpu._RegHL, ref cpu._RegF);
             cpu._RegHL = value;
             cpu._RegPC++;
+            Clock(cpu, 2);
         }
 
         public static void ADD_HL_SP(CPU cpu)
@@ -234,11 +267,13 @@ namespace CoreBoy.Emulator
             Add_16(ref value, cpu._RegSP, ref cpu._RegF);
             cpu._RegHL = value;
             cpu._RegPC++;
+            Clock(cpu, 2);
         }
 
         public static void ADD_A_A(CPU cpu)
         {
             Add(ref cpu._RegA, cpu._RegA, ref cpu._RegF, ref cpu._RegPC);
+            Clock(cpu);
         }
         #endregion
 
@@ -246,7 +281,71 @@ namespace CoreBoy.Emulator
         {
             Add(ref cpu._RegA, cpu._MMU.ReadByte((ushort)(cpu._RegPC + 1)), ref cpu._RegF, ref cpu._RegPC);
             cpu._RegPC++;
+            Clock(cpu, 2);
         }
+
+        #region ADC
+        public static void ADC_A_B(CPU cpu)
+        {
+            Adc(ref cpu._RegA, cpu._RegB, ref cpu._RegF);
+            cpu._RegPC++;
+            Clock(cpu);
+        }
+        public static void ADC_A_C(CPU cpu)
+        {
+            Adc(ref cpu._RegA, cpu._RegC, ref cpu._RegF);
+            cpu._RegPC++;
+            Clock(cpu);
+        }
+        public static void ADC_A_D(CPU cpu)
+        {
+            Adc(ref cpu._RegA, cpu._RegD, ref cpu._RegF);
+            cpu._RegPC++;
+            Clock(cpu);
+        }
+        public static void ADC_A_E(CPU cpu)
+        {
+            Adc(ref cpu._RegA, cpu._RegE, ref cpu._RegF);
+            cpu._RegPC++;
+            Clock(cpu);
+        }
+        public static void ADC_A_H(CPU cpu)
+        {
+            Adc(ref cpu._RegA, cpu._RegH, ref cpu._RegF);
+            cpu._RegPC++;
+            Clock(cpu);
+        }
+        public static void ADC_A_L(CPU cpu)
+        {
+            Adc(ref cpu._RegA, cpu._RegL, ref cpu._RegF);
+            cpu._RegPC++;
+            Clock(cpu);
+        }
+        public static void ADC_A_HL(CPU cpu)
+        {
+            byte source = 0;
+            LoadFromAddress(ref source, cpu._RegHL, cpu._MMU);
+            Adc(ref cpu._RegA, source, ref cpu._RegF);
+            cpu._RegPC++;
+            Clock(cpu, 2);
+        }
+
+        public static void ADC_A_A(CPU cpu)
+        {
+            Adc(ref cpu._RegA, cpu._RegA, ref cpu._RegF);
+            cpu._RegPC++;
+            Clock(cpu);
+        }
+
+        public static void ADC_A_D8(CPU cpu)
+        {
+            byte source = 0;
+            LoadFromAddress(ref source, (ushort)(cpu._RegPC + 1), cpu._MMU);
+            Adc(ref cpu._RegA, source, ref cpu._RegF);
+            cpu._RegPC += 2;
+            Clock(cpu, 2);
+        }
+        #endregion
 
         #region CP
 
@@ -254,53 +353,62 @@ namespace CoreBoy.Emulator
         {
             Compare(cpu._RegA, cpu._RegA, ref cpu._RegF);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void CP_B(CPU cpu)
         {
             Compare(cpu._RegA, cpu._RegB, ref cpu._RegF);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void CP_C(CPU cpu)
         {
             Compare(cpu._RegA, cpu._RegC, ref cpu._RegF);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void CP_D(CPU cpu)
         {
             Compare(cpu._RegA, cpu._RegD, ref cpu._RegF);
             cpu._RegPC++;
+            Clock(cpu);
         }
         public static void CP_E(CPU cpu)
         {
             Compare(cpu._RegA, cpu._RegE, ref cpu._RegF);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void CP_H(CPU cpu)
         {
             Compare(cpu._RegA, cpu._RegH, ref cpu._RegF);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void CP_L(CPU cpu)
         {
             Compare(cpu._RegA, cpu._RegL, ref cpu._RegF);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void CP_HL(CPU cpu)
         {
             Compare(cpu._RegA, cpu._MMU.ReadByte(cpu._RegHL), ref cpu._RegF);
             cpu._RegPC++;
+            Clock(cpu, 2);
         }
 
         public static void CP_D8(CPU cpu)
         {
             Compare(cpu._RegA, cpu._MMU.ReadByte(((ushort)(cpu._RegPC + 1))), ref cpu._RegF);
             cpu._RegPC += 2;
+            Clock(cpu, 2);
         }
         #endregion
 
@@ -310,52 +418,61 @@ namespace CoreBoy.Emulator
         {
             Sub(ref cpu._RegA, cpu._RegA, ref cpu._RegF);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void SUB_B(CPU cpu)
         {
             Sub(ref cpu._RegA, cpu._RegB, ref cpu._RegF);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void SUB_C(CPU cpu)
         {
             Sub(ref cpu._RegA, cpu._RegC, ref cpu._RegF);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void SUB_D(CPU cpu)
         {
             Sub(ref cpu._RegA, cpu._RegD, ref cpu._RegF);
             cpu._RegPC++;
+            Clock(cpu);
         }
         public static void SUB_E(CPU cpu)
         {
             Sub(ref cpu._RegA, cpu._RegE, ref cpu._RegF);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void SUB_H(CPU cpu)
         {
             Sub(ref cpu._RegA, cpu._RegH, ref cpu._RegF);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void SUB_L(CPU cpu)
         {
             Sub(ref cpu._RegA, cpu._RegL, ref cpu._RegF);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void SUB_HL(CPU cpu)
         {
             Sub(ref cpu._RegA, cpu._MMU.ReadByte(cpu._RegHL), ref cpu._RegF);
             cpu._RegPC++;
+            Clock(cpu, 2);
         }
         public static void SUB_D8(CPU cpu)
         {
             Sub(ref cpu._RegA, cpu._MMU.ReadByte(((ushort)(cpu._RegPC + 1))), ref cpu._RegF);
             cpu._RegPC += 2;
+            Clock(cpu, 2);
         }
 
         #endregion
@@ -363,30 +480,37 @@ namespace CoreBoy.Emulator
         public static void JP(CPU cpu)
         {
             Jump(ref cpu._RegPC, cpu._MMU, true);
+            Clock(cpu, 4);
         }
 
         public static void JP_NZ(CPU cpu)
         {
             Jump(ref cpu._RegPC, cpu._MMU, !cpu._RegF.Zero);
+            //It takes more cycles when the condition is met
+            Clock(cpu, !cpu._RegF.Zero ? 4 : 3);
         }
 
         public static void JP_Z(CPU cpu)
         {
             Jump(ref cpu._RegPC, cpu._MMU, cpu._RegF.Zero);
+            Clock(cpu, cpu._RegF.Zero ? 4 : 3);
         }
 
         public static void JP_NC(CPU cpu)
         {
             Jump(ref cpu._RegPC, cpu._MMU, !cpu._RegF.Carry);
+            Clock(cpu, !cpu._RegF.Carry ? 4 : 3);
         }
         public static void JP_C(CPU cpu)
         {
             Jump(ref cpu._RegPC, cpu._MMU, cpu._RegF.Carry);
+            Clock(cpu, cpu._RegF.Carry ? 4 : 3);
         }
 
         public static void JP_HL(CPU cpu)
         {
             cpu._RegPC = cpu._RegHL;
+            Clock(cpu);
         }
 
 
@@ -397,30 +521,35 @@ namespace CoreBoy.Emulator
         {
             byte toAdd = cpu._MMU.ReadByte((ushort)(cpu._RegPC + 1));
             JumpRelative(ref cpu._RegPC, toAdd, true);
+            Clock(cpu, 3);
         }
 
         public static void JR_NZ(CPU cpu)
         {
             byte toAdd = cpu._MMU.ReadByte((ushort)(cpu._RegPC + 1));
             JumpRelative(ref cpu._RegPC, toAdd, !cpu._RegF.Zero);
+            Clock(cpu, !cpu._RegF.Zero ? 3 : 2);
         }
 
         public static void JR_Z(CPU cpu)
         {
             byte toAdd = cpu._MMU.ReadByte((ushort)(cpu._RegPC + 1));
             JumpRelative(ref cpu._RegPC, toAdd, cpu._RegF.Zero);
+            Clock(cpu, cpu._RegF.Zero ? 3 : 2);
         }
 
         public static void JR_NC(CPU cpu)
         {
             byte toAdd = cpu._MMU.ReadByte((ushort)(cpu._RegPC + 1));
             JumpRelative(ref cpu._RegPC, toAdd, !cpu._RegF.Carry);
+            Clock(cpu, !cpu._RegF.Carry ? 3 : 2);
         }
 
         public static void JR_C(CPU cpu)
         {
             byte toAdd = cpu._MMU.ReadByte((ushort)(cpu._RegPC + 1));
             JumpRelative(ref cpu._RegPC, toAdd, cpu._RegF.Carry);
+            Clock(cpu, cpu._RegF.Carry ? 3 : 2);
         }
 
         #endregion
@@ -431,66 +560,77 @@ namespace CoreBoy.Emulator
         {
             LoadByte(ref cpu._RegA, cpu._RegA);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void LD_A_B(CPU cpu)
         {
             LoadByte(ref cpu._RegA, cpu._RegB);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void LD_A_C(CPU cpu)
         {
             LoadByte(ref cpu._RegA, cpu._RegC);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void LD_A_D(CPU cpu)
         {
             LoadByte(ref cpu._RegA, cpu._RegD);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void LD_A_E(CPU cpu)
         {
             LoadByte(ref cpu._RegA, cpu._RegE);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void LD_A_H(CPU cpu)
         {
             LoadByte(ref cpu._RegA, cpu._RegH);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void LD_A_L(CPU cpu)
         {
             LoadByte(ref cpu._RegA, cpu._RegL);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void LD_A_HL(CPU cpu)
         {
             LoadFromAddress(ref cpu._RegA, cpu._RegHL, cpu._MMU);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void LD_A_D8(CPU cpu)
         {
             LoadFromAddress(ref cpu._RegA, (ushort)(cpu._RegPC + 1), cpu._MMU);
             cpu._RegPC += 2;
+            Clock(cpu,2);
         }
 
         public static void LD_A_BC(CPU cpu)
         {
             LoadFromAddress(ref cpu._RegA, cpu._RegBC, cpu._MMU);
             cpu._RegPC++;
+            Clock(cpu, 2);
         }
 
         public static void LD_A_DE(CPU cpu)
         {
             LoadFromAddress(ref cpu._RegA, cpu._RegDE, cpu._MMU);
             cpu._RegPC++;
+            Clock(cpu, 2);
         }
 
         public static void LD_A_HL_INC(CPU cpu)
@@ -498,12 +638,14 @@ namespace CoreBoy.Emulator
             LoadFromAddress(ref cpu._RegA, cpu._RegHL, cpu._MMU);
             cpu._RegHL++;
             cpu._RegPC++;
+            Clock(cpu, 3);
         }
         public static void LD_A_HL_DEC(CPU cpu)
         {
             LoadFromAddress(ref cpu._RegA, cpu._RegHL, cpu._MMU);
             cpu._RegHL--;
             cpu._RegPC++;
+            Clock(cpu, 3);
         }
         #endregion
 
@@ -512,48 +654,56 @@ namespace CoreBoy.Emulator
         {
             LoadByte(ref cpu._RegB, cpu._RegA);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void LD_B_B(CPU cpu)
         {
             LoadByte(ref cpu._RegB, cpu._RegB);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void LD_B_C(CPU cpu)
         {
             LoadByte(ref cpu._RegB, cpu._RegC);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void LD_B_D(CPU cpu)
         {
             LoadByte(ref cpu._RegB, cpu._RegD);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void LD_B_E(CPU cpu)
         {
             LoadByte(ref cpu._RegB, cpu._RegE);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void LD_B_H(CPU cpu)
         {
             LoadByte(ref cpu._RegB, cpu._RegH);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void LD_B_L(CPU cpu)
         {
             LoadByte(ref cpu._RegA, cpu._RegL);
             cpu._RegPC++;
+            Clock(cpu);
         }
 
         public static void LD_B_HL(CPU cpu)
         {
             LoadFromAddress(ref cpu._RegB, cpu._RegHL, cpu._MMU);
             cpu._RegPC++;
+            Clock(cpu,);
         }
         public static void LD_B_D8(CPU cpu)
         {
@@ -1124,6 +1274,7 @@ namespace CoreBoy.Emulator
         public static void RETI(CPU cpu)
         {
             cpu.InteruptsEnabled = true;
+            cpu.InterruptsToggled = true;
             Ret(cpu, true);
         }
         #endregion
@@ -2327,6 +2478,17 @@ namespace CoreBoy.Emulator
             programCounter++;
         }
 
+        private static void Adc(ref byte target, byte source, ref FlagsRegister flagsRegister)
+        {
+            int newValue = target + source + (flagsRegister.Carry ? 1 : 0);
+            byte result = (byte)(newValue % 256);
+            flagsRegister.Zero = result == 0;
+            flagsRegister.Subtract = false;
+            flagsRegister.Carry = newValue > 255;
+            flagsRegister.HalfCarry = (target & 0xF) + (source + 1 & 0xF) > 0xF;
+            target = result;
+        }
+
         private static void Add_16(ref ushort target, ushort source, ref FlagsRegister flagsRegister)
         {
             int newValue = target + source;
@@ -2531,6 +2693,15 @@ namespace CoreBoy.Emulator
             flagsRegister.Subtract = false;
             flagsRegister.HalfCarry = false;
             flagsRegister.Carry = newCarry;
+        }
+
+        private static void Clock(CPU cpu, int mInc = 1)
+        {
+            for (int i = 0; i < mInc; i++)
+            {
+                cpu._RegM += 1;
+                cpu._RegT += 4;
+            }
         }
         #endregion
     }
