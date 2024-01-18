@@ -5,3 +5,8 @@ CoreBoy/CoreBoy.Emulator/bin
 CoreBoy/CoreBoy.Emulator/obj
 CoreBoy/CoreBoy.NETCore3/bin
 CoreBoy/CoreBoy.NETCore3/obj
+src/.idea
+src/DotNetBoy/bin
+src/DotNetBoy/obj
+src/DotNetBoy.Emulator/bin
+src/DotNetBoy.Emulator/obj

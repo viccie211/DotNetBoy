@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetBoy", "DotNetBoy\DotNetBoy.csproj", "{EAA8CE9E-12C7-4BCF-9987-2448AB81203E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetBoy.Emulator", "DotNetBoy.Emulator\DotNetBoy.Emulator.csproj", "{A593C321-225B-44A6-A921-66FFA7AAE21A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EAA8CE9E-12C7-4BCF-9987-2448AB81203E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAA8CE9E-12C7-4BCF-9987-2448AB81203E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAA8CE9E-12C7-4BCF-9987-2448AB81203E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAA8CE9E-12C7-4BCF-9987-2448AB81203E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A593C321-225B-44A6-A921-66FFA7AAE21A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A593C321-225B-44A6-A921-66FFA7AAE21A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A593C321-225B-44A6-A921-66FFA7AAE21A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A593C321-225B-44A6-A921-66FFA7AAE21A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
