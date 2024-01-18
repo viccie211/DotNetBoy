@@ -1,17 +1,30 @@
-﻿namespace DotNetBoy.Emulator.InstructionSet;
+﻿using DotNetBoy.Emulator.InstructionSet.Interfaces;
 
-public class MiscellaneousInstructions
+namespace DotNetBoy.Emulator.InstructionSet;
+
+public class MiscellaneousInstructions : IInstructionSet
 {
-    public static void NOP(Cpu cpu)
+    public MiscellaneousInstructions()
     {
-        cpu.regPC++;
+        Instructions = new Dictionary<byte, Action<CpuRegisters>>
+        {
+            { 0x00, NOP },
+            { 0xF3, DisableInterrupts }
+        };
+    }
+
+    private void NOP(CpuRegisters cpu)
+    {
+        cpu.ProgramCounter++;
         cpu.Clock();
     }
 
-    public static void DisableInterrupts(Cpu cpu)
+    private void DisableInterrupts(CpuRegisters cpu)
     {
-        cpu.interuptMasterEnable = false;
+        cpu.InteruptMasterEnable = false;
         cpu.Clock();
-        cpu.regPC += 1;
+        cpu.ProgramCounter += 1;
     }
+
+    public Dictionary<byte, Action<CpuRegisters>> Instructions { get; }
 }

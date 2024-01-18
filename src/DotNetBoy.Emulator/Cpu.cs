@@ -1,4 +1,5 @@
 ﻿using DotNetBoy.Emulator.InstructionSet;
+using DotNetBoy.Emulator.InstructionSet.Interfaces;
 using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator;
@@ -10,113 +11,62 @@ public class Cpu
     internal readonly IByteUshortService ByteUshortService;
     public IMmuService MmuService { get; init; }
 
-    public Cpu(IByteUshortService byteUshortService, IMmuService mmuService)
-    {
-        ByteUshortService = byteUshortService;
-        MmuService = mmuService;
-    }
-
-    internal byte regA;
-    internal byte regB;
-    internal byte regC;
-    internal byte regD;
-    internal byte regE;
-    internal byte regH;
-    internal byte regL;
-    internal byte regM;
-    internal byte regT;
-    internal FlagsRegister regF;
-    internal bool interuptMasterEnable = false;
-
-    #region 16 Bit Register Views
-
-    internal ushort regAF
-    {
-        get => ByteUshortService.CombineBytes(regA, regF);
-        set
-        {
-            regA = ByteUshortService.UpperByteOfSixteenBits(value);
-            regF = ByteUshortService.LowerByteOfSixteenBits(value);
-        }
-    }
-
-    internal ushort regBC
-    {
-        get => ByteUshortService.CombineBytes(regB, regC);
-        set
-        {
-            regB = ByteUshortService.UpperByteOfSixteenBits(value);
-            regC = ByteUshortService.LowerByteOfSixteenBits(value);
-        }
-    }
-
-    internal ushort regDE
-    {
-        get => ByteUshortService.CombineBytes(regD, regE);
-        set
-        {
-            regD = ByteUshortService.UpperByteOfSixteenBits(value);
-            regE = ByteUshortService.LowerByteOfSixteenBits(value);
-        }
-    }
-
-    internal ushort regHL
-    {
-        get => ByteUshortService.CombineBytes(regH, regL);
-        set
-        {
-            regH = ByteUshortService.UpperByteOfSixteenBits(value);
-            regL = ByteUshortService.LowerByteOfSixteenBits(value);
-        }
-    }
-
-    #endregion
-
-    internal ushort regPC { get; set; }
-    internal ushort regSP { get; set; }
-    internal bool halted { get; set; }
-
-    public void Reset()
-    {
-        regA = 0x11;
-        regB = 0;
-        regC = 0;
-        regD = 0xFF;
-        regE = 0X56;
-        regF = 0x80;
-        regH = 0;
-        regL = 0x0D;
-        regPC = 0x100;
-        regSP = 0;
-        regT = 0;
-        regM = 0;
-    }
-
     public void Loop()
     {
-        while (!halted)
+        while (!_cpuRegisters.Halted)
         {
             //Fetch
-            var instruction = MmuService.ReadByte(regPC);
+            var instruction = MmuService.ReadByte(_cpuRegisters.ProgramCounter);
 
             if (instruction == INSTRUCTION_PREFIX)
             {
-                var actualInstruction = MmuService.ReadByte((ushort)(regPC + 1));
-                prefixedInstructions[actualInstruction](this);
+                var actualInstruction = MmuService.ReadByte((ushort)(_cpuRegisters.ProgramCounter + 1));
+                var decodedInstruction = _prefixedInstructions[actualInstruction] ?? throw new NotImplementedException($"Prefixed instruction {actualInstruction:X2} not impemented"); 
+                decodedInstruction(_cpuRegisters);
             }
             else
             {
-                nonPrefixedInstructions[instruction](this);
+                var decodedInstruction = _prefixedInstructions[instruction] ?? throw new NotImplementedException($"NonPrefixed instruction {instruction:X2} not impemented"); 
+                decodedInstruction(_cpuRegisters);
             }
         }
     }
 
-    public void Clock(int clockIncrement = 1)
-    {
-        regT = (byte)(regT + clockIncrement);
-        regM = (byte)(regM + clockIncrement * 4);
-    }
+    private readonly Action<CpuRegisters>?[] _nonPrefixedInstructions;
+    private readonly Action<CpuRegisters>?[] _prefixedInstructions;
+    private readonly CpuRegisters _cpuRegisters;
 
-    internal Action<Cpu>[] nonPrefixedInstructions = InstructionSetMethods.CreateNonPrefixedInstructionSet();
-    internal Action<Cpu>[] prefixedInstructions = InstructionSetMethods.CreatePrefixedInstructionSet();
+    public Cpu(IByteUshortService byteUshortService, IMmuService mmuService, CpuRegisters cpuRegisters, IList<IInstructionSet> nonPrefixedInstructions, IList<IInstructionSet> prefixedInstructions)
+    {
+        _cpuRegisters = cpuRegisters;
+        ByteUshortService = byteUshortService;
+        MmuService = mmuService;
+        _nonPrefixedInstructions = new Action<CpuRegisters>[0xFF];
+        _prefixedInstructions = new Action<CpuRegisters>[0xFF];
+
+        foreach (var instructionSet in nonPrefixedInstructions)
+        {
+            foreach (var instruction in instructionSet.Instructions)
+            {
+                if (_nonPrefixedInstructions[instruction.Key] != null)
+                {
+                    throw new Exception($"Can't register non prefixed instruction {instruction.Key:X2} twice");
+                }
+
+                _nonPrefixedInstructions[instruction.Key] = instruction.Value;
+            }
+        }
+        
+        foreach (var instructionSet in prefixedInstructions)
+        {
+            foreach (var instruction in instructionSet.Instructions)
+            {
+                if (prefixedInstructions[instruction.Key] != null)
+                {
+                    throw new Exception($"Can't register prefixed instruction {instruction.Key:X2} twice");
+                }
+                _prefixedInstructions[instruction.Key] = instruction.Value;
+            }
+        }
+    }
 }
