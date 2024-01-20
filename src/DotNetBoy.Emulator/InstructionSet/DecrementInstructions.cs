@@ -1,14 +1,26 @@
-﻿namespace DotNetBoy.Emulator.InstructionSet;
+﻿using DotNetBoy.Emulator.InstructionSet.Interfaces;
 
-public class DecrementInstructions
+namespace DotNetBoy.Emulator.InstructionSet;
+
+public class DecrementInstructions : IInstructionSet
 {
-    // public static void DecrementB(Cpu cpu)
-    // {
-    //     cpu.regF.Subtract = true;
-    //     cpu.regF.HalfCarry = InstructionUtilFunctions.HalfCarryFor8Bit(cpu.regB, 0xFE);
-    //     cpu.regB--;
-    //     cpu.regF.Zero = cpu.regB == 0;
-    //     cpu.Clock();
-    //     cpu.regPC += 1;
-    // }
+    private void DecrementB(CpuRegisters cpu)
+    {
+        cpu.F.Subtract = true;
+        cpu.F.HalfCarry = InstructionUtilFunctions.HalfCarryFor8BitAddition(cpu.B, 0xFE);
+        cpu.B--;
+        cpu.F.Zero = cpu.B == 0;
+        cpu.Clock();
+        cpu.ProgramCounter += 1;
+    }
+
+    public DecrementInstructions()
+    {
+        Instructions = new Dictionary<byte, Action<CpuRegisters>>()
+        {
+            { 0x05, DecrementB }
+        };
+    }
+
+    public Dictionary<byte, Action<CpuRegisters>> Instructions { get; }
 }

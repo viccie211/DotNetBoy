@@ -1,49 +1,67 @@
-﻿namespace DotNetBoy.Emulator.InstructionSet;
+﻿using DotNetBoy.Emulator.InstructionSet.Interfaces;
+using DotNetBoy.Emulator.Services.Interfaces;
 
-public class LoadInstructions
+namespace DotNetBoy.Emulator.InstructionSet;
+
+public class LoadInstructions :IInstructionSet
 {
+    
+    private readonly IMmuService _mmuService;
+    public LoadInstructions(IMmuService mmuService)
+    {
+        Instructions = new Dictionary<byte, Action<CpuRegisters>>()
+        {
+            { 0x01, LoadD16IntoBC },
+            { 0x02, LoadAtAddressBCIntoA },
+            { 0x06, LoadD8IntoB },
+            {0x31,LoadD16IntoStackPointer},
+            { 0x0F0, LoadSomeValueIntoA }
+        };
+        _mmuService = mmuService;
+    }
+    /// <summary>
+    /// Load a word from memory into the BC ister
+    /// </summary>
+    private void LoadD16IntoBC(CpuRegisters cpu)
+    {
+        cpu.BC = _mmuService.ReadWordLittleEndian((ushort)(cpu.ProgramCounter + 1));
+        cpu.Clock(3);
+        cpu.ProgramCounter += 3;
+    }
+    
+    private void LoadD16IntoStackPointer(CpuRegisters cpu)
+    {
+        cpu.StackPointer = _mmuService.ReadWordLittleEndian((ushort)(cpu.ProgramCounter + 1));
+        cpu.Clock(3);
+        cpu.ProgramCounter += 3;
+    }
+    
     // /// <summary>
-    // /// Load a word from memory into the BC register
+    // /// Load a byte at the address in the BC ister into the A ister
     // /// </summary>
-    // public static void LoadD16IntoBC(Cpu cpu)
-    // {
-    //     cpu.regBC = cpu.MmuService.ReadWordLittleEndian((ushort)(cpu.regPC + 1));
-    //     cpu.Clock(3);
-    //     cpu.regPC += 3;
-    // }
-    //
-    // public static void LoadD16IntoSP(Cpu cpu)
-    // {
-    //     cpu.regSP = cpu.MmuService.ReadWordLittleEndian((ushort)(cpu.regPC + 1));
-    //     cpu.Clock(3);
-    //     cpu.regPC += 3;
-    // }
-    //
-    // /// <summary>
-    // /// Load a byte at the address in the BC register into the A register
-    // /// </summary>
-    // public static void LoadAtAddressBCIntoA(Cpu cpu)
-    // {
-    //     cpu.regA = cpu.MmuService.ReadByte(cpu.regBC);
-    //     cpu.Clock(2);
-    //     cpu.regPC += 1;
-    // }
-    //
-    // public static void LoadD8IntoB(Cpu cpu)
-    // {
-    //     cpu.regB = cpu.MmuService.ReadByte((ushort)(cpu.regPC + 1));
-    //     cpu.Clock(2);
-    //     cpu.regPC += 2;
-    // }
-    //
-    // /// <summary>
-    // /// Load into register A the contents of the internal RAM, port register, or mode register at the address in the range 0xFF00-0xFFFF specified by the next byte
-    // /// </summary>
-    // public static void LoadSomeValueIntoA(Cpu cpu)
-    // {
-    //     var address = (ushort)(0xFF00 + cpu.MmuService.ReadByte((ushort)(cpu.regPC + 1)));
-    //     cpu.regA = cpu.MmuService.ReadByte(address);
-    //     cpu.Clock(3);
-    //     cpu.regPC += 2;
-    // }
+    private void LoadAtAddressBCIntoA(CpuRegisters cpu)
+    {
+        cpu.A = _mmuService.ReadByte(cpu.BC);
+        cpu.Clock(2);
+        cpu.ProgramCounter += 1;
+    }
+    
+    private void LoadD8IntoB(CpuRegisters cpu)
+    {
+        cpu.B = _mmuService.ReadByte((ushort)(cpu.ProgramCounter + 1));
+        cpu.Clock(2);
+        cpu.ProgramCounter += 2;
+    }
+    
+    /// <summary>
+    /// Load into register A the contents of the internal RAM, port register, or mode register at the address in the range 0xFF00-0xFFFF specified by the next byte
+    /// </summary>
+    private void LoadSomeValueIntoA(CpuRegisters cpu)
+    {
+        var address = (ushort)(0xFF00 + _mmuService.ReadByte((ushort)(cpu.ProgramCounter + 1)));
+        cpu.A = _mmuService.ReadByte(address);
+        cpu.Clock(3);
+        cpu.ProgramCounter += 2;
+    }
+    public Dictionary<byte, Action<CpuRegisters>> Instructions { get; }
 }

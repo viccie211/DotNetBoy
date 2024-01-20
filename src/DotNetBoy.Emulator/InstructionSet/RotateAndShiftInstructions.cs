@@ -1,16 +1,26 @@
-﻿namespace DotNetBoy.Emulator.InstructionSet;
+﻿using DotNetBoy.Emulator.InstructionSet.Interfaces;
 
-public class RotateAndShiftInstructions
+namespace DotNetBoy.Emulator.InstructionSet;
+
+public class RotateAndShiftInstructions :IInstructionSet
 {
-    // public static void RotateLeftWithCarryA(Cpu cpu)
-    // {
-    //     cpu.regF.Carry = (cpu.regA & 0x80) == 0x80;
-    //     var tempByte = (byte)(cpu.regA << 1);
-    //     cpu.regA = cpu.regF.Carry ? (byte)(tempByte | 0x01) : (byte)(tempByte ^ 0x01);
-    //     cpu.regF.Zero = false;
-    //     cpu.regF.HalfCarry = false;
-    //     cpu.regF.Subtract = false;
-    //     cpu.Clock();
-    //     cpu.regPC += 1;
-    // }
+    public RotateAndShiftInstructions()
+    {
+        Instructions = new Dictionary<byte, Action<CpuRegisters>>()
+        {
+            { 0x07, RotateLeftWithCarryA }
+        };
+    }
+    private void RotateLeftWithCarryA(CpuRegisters cpu)
+    {
+        cpu.F.Carry = (cpu.A & 0x80) == 0x80;
+        var tempByte = (byte)(cpu.A << 1);
+        cpu.A = cpu.F.Carry ? (byte)(tempByte | 0x01) : (byte)(tempByte ^ 0x01);
+        cpu.F.Zero = false;
+        cpu.F.HalfCarry = false;
+        cpu.F.Subtract = false;
+        cpu.Clock();
+        cpu.ProgramCounter += 1;
+    }
+    public Dictionary<byte, Action<CpuRegisters>> Instructions { get; }
 }

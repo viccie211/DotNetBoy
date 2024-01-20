@@ -1,28 +1,42 @@
-﻿namespace DotNetBoy.Emulator.InstructionSet;
+﻿using DotNetBoy.Emulator.InstructionSet.Interfaces;
 
-public class IncrementInstructions
+namespace DotNetBoy.Emulator.InstructionSet;
+
+public class IncrementInstructions : IInstructionSet
 {
-    // public static void IncrementBC(Cpu cpu)
-    // {
-    //     cpu.regBC++;
-    //     cpu.Clock(2);
-    //     cpu.regPC += 1;
-    // }
-    //
-    // public static void IncrementB(Cpu cpu)
-    // {
-    //     cpu.regF.Subtract = false;
-    //     cpu.regF.HalfCarry = InstructionUtilFunctions.HalfCarryFor8Bit(cpu.regB, 1);
-    //     cpu.regB++;
-    //     cpu.regF.Zero = cpu.regB == 0;
-    //     cpu.Clock();
-    //     cpu.regPC += 1;
-    // }
-    //
-    // public static void IncrementSP(Cpu cpu)
-    // {
-    //     cpu.regSP++;
-    //     cpu.Clock(2);
-    //     cpu.regPC += 1;
-    // }
+    public IncrementInstructions()
+    {
+        Instructions = new Dictionary<byte, Action<CpuRegisters>>()
+        {
+            { 0x03, IncrementBC },
+            { 0x04, IncrementB },
+            { 0x33, IncrementStackPointer }
+        };
+    }
+
+    private void IncrementBC(CpuRegisters cpu)
+    {
+        cpu.BC++;
+        cpu.Clock(2);
+        cpu.ProgramCounter += 1;
+    }
+
+    private void IncrementB(CpuRegisters cpu)
+    {
+        cpu.F.Subtract = false;
+        cpu.F.HalfCarry = InstructionUtilFunctions.HalfCarryFor8BitAddition(cpu.B, 1);
+        cpu.B++;
+        cpu.F.Zero = cpu.B == 0;
+        cpu.Clock();
+        cpu.ProgramCounter += 1;
+    }
+
+    private void IncrementStackPointer(CpuRegisters cpu)
+    {
+        cpu.StackPointer++;
+        cpu.Clock(2);
+        cpu.ProgramCounter += 1;
+    }
+
+    public Dictionary<byte, Action<CpuRegisters>> Instructions { get; }
 }
