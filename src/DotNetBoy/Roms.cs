@@ -50,5 +50,5 @@ public class Roms
     public static byte[] TestRom => LoadFromHexString(testRom);
 
 
-    public static byte[] BgbTestRom = File.ReadAllBytes("C:\\Users\\vremmerswaal.AUXILIUM\\Persoonlijk\\Gameboy\\bgbw64\\bgbtest.gb");
+    public static byte[] BgbTestRom = File.ReadAllBytes("..\\..\\..\\DebugAssets\\bgbw64\\bgbtest.gb");
 }

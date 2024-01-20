@@ -6,8 +6,9 @@ namespace DotNetBoy.Emulator.InstructionSet;
 public class LogicInstructions : IInstructionSet
 {
     private readonly IMmuService _mmuService;
+    private readonly IClockService _clockService;
 
-    public LogicInstructions(IMmuService mmuService)
+    public LogicInstructions(IMmuService mmuService, IClockService clockService)
     {
         _mmuService = mmuService;
         Instructions = new Dictionary<byte, Action<CpuRegisters>>()
@@ -15,6 +16,7 @@ public class LogicInstructions : IInstructionSet
             { 0xFE, CompareAToD8 },
             { 0xAF, XORAWithA }
         };
+        _clockService = clockService;
     }
 
     private void CompareAToD8(CpuRegisters cpu)
@@ -25,7 +27,7 @@ public class LogicInstructions : IInstructionSet
         cpu.F.Zero = result == 0;
         cpu.F.HalfCarry = InstructionUtilFunctions.HalfCarryFor8BitSubtraction(cpu.A, d8);
         cpu.F.Carry = InstructionUtilFunctions.CarryFor8BitSubtract(cpu.A, d8);
-        cpu.Clock(2);
+        _clockService.Clock(2);
         cpu.ProgramCounter += 2;
     }
 
@@ -36,7 +38,7 @@ public class LogicInstructions : IInstructionSet
         cpu.F.Subtract = false;
         cpu.F.Carry = false;
         cpu.F.HalfCarry = false;
-        cpu.Clock();
+        _clockService.Clock();
         cpu.ProgramCounter += 1;
     }
 

@@ -5,22 +5,24 @@ using DotNetBoy.Emulator.Services.Implementations;
 using DotNetBoy.Emulator.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
-var serviceServiceCollection = new ServiceCollection();
-serviceServiceCollection.AddScoped<IByteUshortService, ByteUshortService>();
-serviceServiceCollection.AddScoped<IMmuService, MmuService>();
-serviceServiceCollection.AddScoped<CpuRegisters>();
-serviceServiceCollection.AddScoped<JumpInstructions>();
-serviceServiceCollection.AddScoped<MiscellaneousInstructions>();
-serviceServiceCollection.AddScoped<LoadInstructions>();
-serviceServiceCollection.AddScoped<IncrementInstructions>();
-serviceServiceCollection.AddScoped<DecrementInstructions>();
-serviceServiceCollection.AddScoped<LogicInstructions>();
-serviceServiceCollection.AddScoped<StoreInstructions>();
-serviceServiceCollection.AddScoped<RotateAndShiftInstructions>();
-serviceServiceCollection.AddScoped<IInstructionSetService, InstructionSetService>();
-serviceServiceCollection.AddScoped<Cpu>();
+var serviceCollection = new ServiceCollection();
+serviceCollection.AddScoped<IByteUshortService, ByteUshortService>();
+serviceCollection.AddScoped<IMmuService, MmuService>();
+serviceCollection.AddScoped<IClockService,ClockService>();
+serviceCollection.AddScoped<IPpuService,PpuService>();
+serviceCollection.AddScoped<CpuRegisters>();
+serviceCollection.AddScoped<JumpInstructions>();
+serviceCollection.AddScoped<MiscellaneousInstructions>();
+serviceCollection.AddScoped<LoadInstructions>();
+serviceCollection.AddScoped<IncrementInstructions>();
+serviceCollection.AddScoped<DecrementInstructions>();
+serviceCollection.AddScoped<LogicInstructions>();
+serviceCollection.AddScoped<StoreInstructions>();
+serviceCollection.AddScoped<RotateAndShiftInstructions>();
+serviceCollection.AddScoped<IInstructionSetService, InstructionSetService>();
+serviceCollection.AddScoped<Cpu>();
 
-var serviceProvider = serviceServiceCollection.BuildServiceProvider();
+var serviceProvider = serviceCollection.BuildServiceProvider();
 var scope = serviceProvider.CreateScope();
 
 var cpuRegisters = scope.ServiceProvider.GetService<CpuRegisters>()!;
@@ -30,5 +32,6 @@ var rom = Roms.BgbTestRom;
 var mmuService = scope.ServiceProvider.GetService<IMmuService>()!;
 mmuService.LoadRom(rom);
 
+var ppuService = scope.ServiceProvider.GetService<IPpuService>();
 var cpu = scope.ServiceProvider.GetService<Cpu>()!;
 cpu.Loop();

@@ -11,8 +11,6 @@ public class CpuRegisters(IByteUshortService byteUshortService)
     internal byte E;
     internal byte H;
     internal byte L;
-    internal byte M;
-    internal byte T;
     internal FlagsRegister F = 0x00;
     internal bool InteruptMasterEnable = false;
 
@@ -76,13 +74,5 @@ public class CpuRegisters(IByteUshortService byteUshortService)
         L = 0x0D;
         ProgramCounter = 0x100;
         StackPointer = 0;
-        T = 0;
-        M = 0;
-    }
-    
-    public void Clock(int clockIncrement = 1)
-    {
-        T = (byte)(T + clockIncrement);
-        M = (byte)(M + clockIncrement * 4);
     }
 }

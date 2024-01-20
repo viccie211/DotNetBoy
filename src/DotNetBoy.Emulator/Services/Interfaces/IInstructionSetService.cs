@@ -1,6 +1,4 @@
-﻿using DotNetBoy.Emulator.InstructionSet.Interfaces;
-
-namespace DotNetBoy.Emulator.Services.Implementations;
+﻿namespace DotNetBoy.Emulator.Services.Interfaces;
 
 public interface IInstructionSetService
 {

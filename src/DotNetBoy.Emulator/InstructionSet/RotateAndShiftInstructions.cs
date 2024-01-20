@@ -4,12 +4,14 @@ namespace DotNetBoy.Emulator.InstructionSet;
 
 public class RotateAndShiftInstructions :IInstructionSet
 {
-    public RotateAndShiftInstructions()
+    private readonly IClockService _clockService;
+    public RotateAndShiftInstructions(IClockService clockService)
     {
         Instructions = new Dictionary<byte, Action<CpuRegisters>>()
         {
             { 0x07, RotateLeftWithCarryA }
         };
+        _clockService = clockService;
     }
     private void RotateLeftWithCarryA(CpuRegisters cpu)
     {
@@ -19,7 +21,7 @@ public class RotateAndShiftInstructions :IInstructionSet
         cpu.F.Zero = false;
         cpu.F.HalfCarry = false;
         cpu.F.Subtract = false;
-        cpu.Clock();
+        _clockService.Clock();
         cpu.ProgramCounter += 1;
     }
     public Dictionary<byte, Action<CpuRegisters>> Instructions { get; }
