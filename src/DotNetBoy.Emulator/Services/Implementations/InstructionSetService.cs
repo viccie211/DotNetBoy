@@ -13,7 +13,8 @@ public class InstructionSetService : IInstructionSetService
         DecrementInstructions decrementInstructions,
         LogicInstructions logicInstructions,
         RotateAndShiftInstructions rotateAndShiftInstructions,
-        StoreInstructions storeInstructions
+        StoreInstructions storeInstructions,
+        PushPopInstructions pushPopInstructions
     )
     {
         var nonPrefixedInstructions = new List<IInstructionSet>()
@@ -25,7 +26,8 @@ public class InstructionSetService : IInstructionSetService
             decrementInstructions,
             logicInstructions,
             rotateAndShiftInstructions,
-            storeInstructions
+            storeInstructions,
+            pushPopInstructions
         };
 
         var prefixedInstructions = new List<IInstructionSet>()

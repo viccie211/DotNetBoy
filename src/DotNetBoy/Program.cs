@@ -19,6 +19,7 @@ serviceCollection.AddScoped<DecrementInstructions>();
 serviceCollection.AddScoped<LogicInstructions>();
 serviceCollection.AddScoped<StoreInstructions>();
 serviceCollection.AddScoped<RotateAndShiftInstructions>();
+serviceCollection.AddScoped<PushPopInstructions>();
 serviceCollection.AddScoped<IInstructionSetService, InstructionSetService>();
 serviceCollection.AddScoped<Cpu>();
 

@@ -13,8 +13,9 @@ public class LogicInstructions : IInstructionSet
         _mmuService = mmuService;
         Instructions = new Dictionary<byte, Action<CpuRegisters>>()
         {
+            { 0xB7, ORAWithA },
+            { 0xAF, XORAWithA },
             { 0xFE, CompareAToD8 },
-            { 0xAF, XORAWithA }
         };
         _clockService = clockService;
     }
@@ -40,6 +41,17 @@ public class LogicInstructions : IInstructionSet
         cpu.F.HalfCarry = false;
         _clockService.Clock();
         cpu.ProgramCounter += 1;
+    }
+
+    private void ORAWithA(CpuRegisters cpu)
+    {
+        cpu.A = (byte)(cpu.A | cpu.A);
+        cpu.F.Zero = cpu.A == 0;
+        cpu.F.Subtract = false;
+        cpu.F.Carry = false;
+        cpu.F.HalfCarry = false;
+        cpu.ProgramCounter += 1;
+        _clockService.Clock();
     }
 
     public Dictionary<byte, Action<CpuRegisters>> Instructions { get; }
