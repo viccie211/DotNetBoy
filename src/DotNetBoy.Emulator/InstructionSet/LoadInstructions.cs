@@ -5,9 +5,9 @@ namespace DotNetBoy.Emulator.InstructionSet;
 
 public class LoadInstructions : IInstructionSet
 {
-
     private readonly IMmuService _mmuService;
     private readonly IClockService _clockService;
+
     public LoadInstructions(IMmuService mmuService, IClockService clockService)
     {
         Instructions = new Dictionary<byte, Action<CpuRegisters>>()
@@ -24,6 +24,7 @@ public class LoadInstructions : IInstructionSet
         _mmuService = mmuService;
         _clockService = clockService;
     }
+
     /// <summary>
     /// Load a word from memory into the BC ister
     /// </summary>
@@ -85,7 +86,6 @@ public class LoadInstructions : IInstructionSet
         cpu.ProgramCounter += 3;
     }
 
-
     /// <summary>
     /// Load the next word in memory into the HL register
     /// </summary>
@@ -98,7 +98,9 @@ public class LoadInstructions : IInstructionSet
 
     private void LoadEIntoA(CpuRegisters cpu)
     {
-        throw new NotImplementedException("LoadEIntoA not implemented yet");
+        cpu.A = cpu.E;
+        _clockService.Clock();
+        cpu.ProgramCounter += 1;
     }
 
     public Dictionary<byte, Action<CpuRegisters>> Instructions { get; }

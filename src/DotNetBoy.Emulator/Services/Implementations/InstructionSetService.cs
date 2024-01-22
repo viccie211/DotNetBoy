@@ -34,8 +34,8 @@ public class InstructionSetService : IInstructionSetService
         {
         };
 
-        NonPrefixedInstructions = new Action<CpuRegisters>[0xFF];
-        PrefixedInstructions = new Action<CpuRegisters>[0xFF];
+        NonPrefixedInstructions = new Action<CpuRegisters>[0x100];
+        PrefixedInstructions = new Action<CpuRegisters>[0x100];
 
         foreach (var instructionSet in nonPrefixedInstructions)
         {
