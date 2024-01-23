@@ -1,6 +1,6 @@
 using DotNetBoy.Emulator.Services.Implementations;
 
-namespace DotNetBoy.Emulator.Tests;
+namespace DotNetBoy.Emulator.Tests.ServiceTests;
 
 public class ByteUshortServiceTests
 {

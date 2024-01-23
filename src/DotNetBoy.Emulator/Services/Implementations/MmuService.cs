@@ -11,11 +11,11 @@ public class MmuService : IMmuService
         _byteUshortService = byteUshortService;
     }
 
-    private byte[] mappedMemory = new byte[ushort.MaxValue];
+    public byte[] MappedMemory { get; } = new byte[ushort.MaxValue];
 
     public byte ReadByte(ushort address)
     {
-        return mappedMemory[address];
+        return MappedMemory[address];
     }
 
     public ushort ReadWordLittleEndian(ushort address)
@@ -28,13 +28,13 @@ public class MmuService : IMmuService
         if (address <= 0x7FFF)
             //Can't write to ROM
             return;
-        mappedMemory[address] = value;
+        MappedMemory[address] = value;
         if(address is >= 0xC000 and <= 0xDDFF)
             //Also write to echo WRAM
-            mappedMemory[(ushort)(address+0x2000)] = value;
+            MappedMemory[(ushort)(address+0x2000)] = value;
         if(address is >= 0xE000 and <= 0xFDFF)
             //Also write to normal WRAM
-            mappedMemory[(ushort)(address-0x2000)] = value;
+            MappedMemory[(ushort)(address-0x2000)] = value;
     }
 
     public void LoadRom(byte[] rom)
@@ -42,7 +42,7 @@ public class MmuService : IMmuService
         //Rom length is max 0x7FFF
         for (int i = 0; i < rom.Length && i < 0x7FFF; i++)
         {
-            mappedMemory[i] = rom[i];
+            MappedMemory[i] = rom[i];
         }
     }
 }
