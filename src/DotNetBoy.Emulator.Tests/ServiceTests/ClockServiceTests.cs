@@ -1,7 +1,6 @@
 namespace DotNetBoy.Emulator.Tests.ServiceTests;
 public class ClockServiceTests
 {
-    
     [Test]
     public void Reset()
     {

@@ -4,31 +4,32 @@ public class PpuService : IPpuService
 {
     private readonly IClockService _clockService;
     private readonly IMmuService _mmuService;
-    private int scanLine = 0;
-    private int dot = 0;
+    public int ScanLine { get; set; } = 0;
+    public int Dot { get; set; } = 0;
 
-    //T-Clock should be devided into two for the Ppu Clock So we just flip this bool every clock and only act when true
-    private bool shouldActOnTClock = false;
+    //M-Clock should be devided into two for the Ppu Clock So we just flip this bool every clock and only act when true
+    public bool shouldActOnMClock {get;set;} = false;
 
     public PpuService(IClockService clockService, IMmuService mmuService)
     {
         _clockService = clockService;
         _mmuService = mmuService;
-        _clockService.TClock += OnTClock;
+        _clockService.MClock += OnMClock;
     }
 
-    public void OnTClock(object? sender, ClockEventArgs e)
+    public void OnMClock(object? sender, ClockEventArgs e)
     {
-        if (shouldActOnTClock)
+        if (shouldActOnMClock)
         {
-            dot = dot == 456 ? 0 : dot + 1;
-            
-            if (dot == 0)
+            Dot = Dot == 455 ? 0 : Dot + 1;
+
+            if (Dot == 0)
             {
-                scanLine = scanLine == 154 ? 0 : scanLine + 1;
-                _mmuService.WriteByte(0xff44, (byte)scanLine);
+                ScanLine = ScanLine == 153 ? 0 : ScanLine + 1;
+                _mmuService.WriteByte(0xff44, (byte)ScanLine);
             }
         }
-        shouldActOnTClock = !shouldActOnTClock;
+
+        shouldActOnMClock = !shouldActOnMClock;
     }
 }
