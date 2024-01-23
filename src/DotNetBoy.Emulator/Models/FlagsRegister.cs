@@ -1,4 +1,4 @@
-﻿namespace DotNetBoy.Emulator;
+﻿namespace DotNetBoy.Emulator.Models;
 
 public class FlagsRegister
 {

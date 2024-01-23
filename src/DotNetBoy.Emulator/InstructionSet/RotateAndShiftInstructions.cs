@@ -1,28 +1,32 @@
 ﻿using DotNetBoy.Emulator.InstructionSet.Interfaces;
+using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.InstructionSet;
 
-public class RotateAndShiftInstructions :IInstructionSet
+public class RotateAndShiftInstructions : IInstructionSet
 {
     private readonly IClockService _clockService;
+
     public RotateAndShiftInstructions(IClockService clockService)
     {
-        Instructions = new Dictionary<byte, Action<CpuRegisters>>()
+        Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
         {
             { 0x07, RotateLeftWithCarryA }
         };
         _clockService = clockService;
     }
-    private void RotateLeftWithCarryA(CpuRegisters cpu)
+
+    public void RotateLeftWithCarryA(ICpuRegistersService registers)
     {
-        cpu.F.Carry = (cpu.A & 0x80) == 0x80;
-        var tempByte = (byte)(cpu.A << 1);
-        cpu.A = cpu.F.Carry ? (byte)(tempByte | 0x01) : (byte)(tempByte ^ 0x01);
-        cpu.F.Zero = false;
-        cpu.F.HalfCarry = false;
-        cpu.F.Subtract = false;
+        registers.F.Carry = (registers.A & 0x80) == 0x80;
+        var tempByte = (byte)(registers.A << 1);
+        registers.A = registers.F.Carry ? (byte)(tempByte | 0x01) : (byte)(tempByte ^ 0x01);
+        registers.F.Zero = false;
+        registers.F.HalfCarry = false;
+        registers.F.Subtract = false;
         _clockService.Clock();
-        cpu.ProgramCounter += 1;
+        registers.ProgramCounter += 1;
     }
-    public Dictionary<byte, Action<CpuRegisters>> Instructions { get; }
+
+    public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
 }

@@ -7,9 +7,10 @@ public class PushPopInstructions : IInstructionSet
 {
     private readonly IClockService _clockService;
     private readonly IMmuService _mmuService;
+
     public PushPopInstructions(IClockService clockService, IMmuService mmuService)
     {
-        Instructions = new Dictionary<byte, Action<CpuRegisters>>
+        Instructions = new Dictionary<byte, Action<ICpuRegistersService>>
         {
             { 0xF5, PushAF },
         };
@@ -17,15 +18,15 @@ public class PushPopInstructions : IInstructionSet
         _mmuService = mmuService;
     }
 
-    private void PushAF(CpuRegisters cpu)
+    public void PushAF(ICpuRegistersService registers)
     {
-        cpu.StackPointer--;
-        _mmuService.WriteByte(cpu.StackPointer, cpu.A);
-        cpu.StackPointer--;
-        _mmuService.WriteByte(cpu.StackPointer, cpu.F);
-        cpu.ProgramCounter+=1;
+        registers.StackPointer--;
+        _mmuService.WriteByte(registers.StackPointer, registers.A);
+        registers.StackPointer--;
+        _mmuService.WriteByte(registers.StackPointer, registers.F);
+        registers.ProgramCounter += 1;
         _clockService.Clock(4);
     }
 
-    public Dictionary<byte, Action<CpuRegisters>> Instructions { get; }
+    public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
 }

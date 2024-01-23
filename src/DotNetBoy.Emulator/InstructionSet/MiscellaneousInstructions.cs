@@ -1,13 +1,15 @@
 ﻿using DotNetBoy.Emulator.InstructionSet.Interfaces;
+using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.InstructionSet;
 
 public class MiscellaneousInstructions : IInstructionSet
 {
     private readonly IClockService _clockService;
+
     public MiscellaneousInstructions(IClockService clockService)
     {
-        Instructions = new Dictionary<byte, Action<CpuRegisters>>
+        Instructions = new Dictionary<byte, Action<ICpuRegistersService>>
         {
             { 0x00, NOP },
             { 0xF3, DisableInterrupts }
@@ -15,18 +17,18 @@ public class MiscellaneousInstructions : IInstructionSet
         _clockService = clockService;
     }
 
-    private void NOP(CpuRegisters cpu)
+    public void NOP(ICpuRegistersService registers)
     {
-        cpu.ProgramCounter++;
+        registers.ProgramCounter++;
         _clockService.Clock();
     }
 
-    private void DisableInterrupts(CpuRegisters cpu)
+    public void DisableInterrupts(ICpuRegistersService registers)
     {
-        cpu.InteruptMasterEnable = false;
+        registers.InterruptMasterEnable = false;
         _clockService.Clock();
-        cpu.ProgramCounter += 1;
+        registers.ProgramCounter += 1;
     }
 
-    public Dictionary<byte, Action<CpuRegisters>> Instructions { get; }
+    public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
 }

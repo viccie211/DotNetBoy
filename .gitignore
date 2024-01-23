@@ -11,3 +11,6 @@ src/DotNetBoy/obj
 src/DotNetBoy.Emulator/bin
 src/DotNetBoy.Emulator/obj
 src/DotNetBoy/DebugAssets
+src/DotNetBoy.Emulator.Tests/bin
+src/DotNetBoy.Emulator.Tests/obj
+src/DotNetBoy.sln.DotSettings.user

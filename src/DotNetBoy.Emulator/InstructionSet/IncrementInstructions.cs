@@ -1,13 +1,16 @@
 ﻿using DotNetBoy.Emulator.InstructionSet.Interfaces;
+using DotNetBoy.Emulator.Services.Implementations;
+using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.InstructionSet;
 
 public class IncrementInstructions : IInstructionSet
 {
     private readonly IClockService _clockService;
+
     public IncrementInstructions(IClockService clockService)
     {
-        Instructions = new Dictionary<byte, Action<CpuRegisters>>()
+        Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
         {
             { 0x03, IncrementBC },
             { 0x04, IncrementB },
@@ -16,29 +19,29 @@ public class IncrementInstructions : IInstructionSet
         _clockService = clockService;
     }
 
-    private void IncrementBC(CpuRegisters cpu)
+    public void IncrementBC(ICpuRegistersService registers)
     {
-        cpu.BC++;
+        registers.BC++;
         _clockService.Clock(2);
-        cpu.ProgramCounter += 1;
+        registers.ProgramCounter += 1;
     }
 
-    private void IncrementB(CpuRegisters cpu)
+    public void IncrementB(ICpuRegistersService registers)
     {
-        cpu.F.Subtract = false;
-        cpu.F.HalfCarry = InstructionUtilFunctions.HalfCarryFor8BitAddition(cpu.B, 1);
-        cpu.B++;
-        cpu.F.Zero = cpu.B == 0;
+        registers.F.Subtract = false;
+        registers.F.HalfCarry = InstructionUtilFunctions.HalfCarryFor8BitAddition(registers.B, 1);
+        registers.B++;
+        registers.F.Zero = registers.B == 0;
         _clockService.Clock();
-        cpu.ProgramCounter += 1;
+        registers.ProgramCounter += 1;
     }
 
-    private void IncrementStackPointer(CpuRegisters cpu)
+    public void IncrementStackPointer(ICpuRegistersService registers)
     {
-        cpu.StackPointer++;
+        registers.StackPointer++;
         _clockService.Clock(2);
-        cpu.ProgramCounter += 1;
+        registers.ProgramCounter += 1;
     }
 
-    public Dictionary<byte, Action<CpuRegisters>> Instructions { get; }
+    public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
 }

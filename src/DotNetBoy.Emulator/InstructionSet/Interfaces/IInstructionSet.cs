@@ -1,6 +1,8 @@
-﻿namespace DotNetBoy.Emulator.InstructionSet.Interfaces;
+﻿using DotNetBoy.Emulator.Services.Interfaces;
+
+namespace DotNetBoy.Emulator.InstructionSet.Interfaces;
 
 public interface IInstructionSet
 {
-    Dictionary<byte,Action<CpuRegisters>> Instructions { get; }
+    Dictionary<byte,Action<ICpuRegistersService>> Instructions { get; }
 }

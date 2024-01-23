@@ -10,7 +10,7 @@ public class LoadInstructions : IInstructionSet
 
     public LoadInstructions(IMmuService mmuService, IClockService clockService)
     {
-        Instructions = new Dictionary<byte, Action<CpuRegisters>>()
+        Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
         {
             { 0x01, LoadD16IntoBC },
             { 0x02, LoadAtAddressBCIntoA },
@@ -28,80 +28,80 @@ public class LoadInstructions : IInstructionSet
     /// <summary>
     /// Load a word from memory into the BC ister
     /// </summary>
-    private void LoadD16IntoBC(CpuRegisters cpu)
+    public void LoadD16IntoBC(ICpuRegistersService registers)
     {
-        cpu.BC = _mmuService.ReadWordLittleEndian((ushort)(cpu.ProgramCounter + 1));
+        registers.BC = _mmuService.ReadWordLittleEndian((ushort)(registers.ProgramCounter + 1));
         _clockService.Clock(3);
-        cpu.ProgramCounter += 3;
+        registers.ProgramCounter += 3;
     }
 
     /// <summary>
     /// Load the next word in memory into the Stack pointer
     /// </summary>
-    private void LoadD16IntoStackPointer(CpuRegisters cpu)
+    public void LoadD16IntoStackPointer(ICpuRegistersService registers)
     {
-        cpu.StackPointer = _mmuService.ReadWordLittleEndian((ushort)(cpu.ProgramCounter + 1));
+        registers.StackPointer = _mmuService.ReadWordLittleEndian((ushort)(registers.ProgramCounter + 1));
         _clockService.Clock(3);
-        cpu.ProgramCounter += 3;
+        registers.ProgramCounter += 3;
     }
 
     // /// <summary>
     // /// Load a byte at the address in the BC register into the A register
     // /// </summary>
-    private void LoadAtAddressBCIntoA(CpuRegisters cpu)
+    public void LoadAtAddressBCIntoA(ICpuRegistersService registers)
     {
-        cpu.A = _mmuService.ReadByte(cpu.BC);
+        registers.A = _mmuService.ReadByte(registers.BC);
         _clockService.Clock(2);
-        cpu.ProgramCounter += 1;
+        registers.ProgramCounter += 1;
     }
 
     /// <summary>
     /// Load the next byte into the B register
     /// </summary>
-    private void LoadD8IntoB(CpuRegisters cpu)
+    public void LoadD8IntoB(ICpuRegistersService registers)
     {
-        cpu.B = _mmuService.ReadByte((ushort)(cpu.ProgramCounter + 1));
+        registers.B = _mmuService.ReadByte((ushort)(registers.ProgramCounter + 1));
         _clockService.Clock(2);
-        cpu.ProgramCounter += 2;
+        registers.ProgramCounter += 2;
     }
 
     /// <summary>
     /// Load into register A the contents of the internal RAM, port register, or mode register at the address in the range 0xFF00-0xFFFF specified by the next byte
     /// </summary>
-    private void LoadAtAddressFF00PlusD8IntoA(CpuRegisters cpu)
+    public void LoadAtAddressFF00PlusD8IntoA(ICpuRegistersService registers)
     {
-        var address = (ushort)(0xFF00 + _mmuService.ReadByte((ushort)(cpu.ProgramCounter + 1)));
-        cpu.A = _mmuService.ReadByte(address);
+        var address = (ushort)(0xFF00 + _mmuService.ReadByte((ushort)(registers.ProgramCounter + 1)));
+        registers.A = _mmuService.ReadByte(address);
         _clockService.Clock(3);
-        cpu.ProgramCounter += 2;
+        registers.ProgramCounter += 2;
     }
 
     /// <summary>
     /// Load the next word in memory into the HL Register
     /// </summary>
-    private void LoadD16IntoHL(CpuRegisters cpu)
+    public void LoadD16IntoHL(ICpuRegistersService registers)
     {
-        cpu.HL = _mmuService.ReadWordLittleEndian((ushort)(cpu.ProgramCounter + 1));
+        registers.HL = _mmuService.ReadWordLittleEndian((ushort)(registers.ProgramCounter + 1));
         _clockService.Clock(3);
-        cpu.ProgramCounter += 3;
+        registers.ProgramCounter += 3;
     }
 
     /// <summary>
     /// Load the next word in memory into the HL register
     /// </summary>
-    private void LoadD16IntoDE(CpuRegisters cpu)
+    public void LoadD16IntoDE(ICpuRegistersService registers)
     {
-        cpu.DE = _mmuService.ReadWordLittleEndian((ushort)(cpu.ProgramCounter + 1));
+        registers.DE = _mmuService.ReadWordLittleEndian((ushort)(registers.ProgramCounter + 1));
         _clockService.Clock(3);
-        cpu.ProgramCounter += 3;
+        registers.ProgramCounter += 3;
     }
 
-    private void LoadEIntoA(CpuRegisters cpu)
+    public void LoadEIntoA(ICpuRegistersService registers)
     {
-        cpu.A = cpu.E;
+        registers.A = registers.E;
         _clockService.Clock();
-        cpu.ProgramCounter += 1;
+        registers.ProgramCounter += 1;
     }
 
-    public Dictionary<byte, Action<CpuRegisters>> Instructions { get; }
+    public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
 }

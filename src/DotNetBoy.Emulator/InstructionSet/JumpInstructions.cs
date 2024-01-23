@@ -11,7 +11,7 @@ public class JumpInstructions : IInstructionSet
 
     public JumpInstructions(IMmuService mmuService, IClockService clockService, IByteUshortService byteUshortService)
     {
-        Instructions = new Dictionary<byte, Action<CpuRegisters>>()
+        Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
         {
             { 0xC3, Jump },
             { 0x20, JumpRelative8BitsIfNotZero },
@@ -24,60 +24,60 @@ public class JumpInstructions : IInstructionSet
         _byteUshortService = byteUshortService;
     }
 
-    private void Jump(CpuRegisters cpu)
+    public void Jump(ICpuRegistersService registers)
     {
-        cpu.ProgramCounter = _mmuService.ReadWordLittleEndian((ushort)(cpu.ProgramCounter + 1));
+        registers.ProgramCounter = _mmuService.ReadWordLittleEndian((ushort)(registers.ProgramCounter + 1));
         _clockService.Clock(4);
     }
 
-    private void JumpRelative8BitsIfNotZero(CpuRegisters cpu)
+    public void JumpRelative8BitsIfNotZero(ICpuRegistersService registers)
     {
-        if (!cpu.F.Zero)
+        if (!registers.F.Zero)
         {
-            cpu.ProgramCounter = InstructionUtilFunctions.SignedAdd(cpu.ProgramCounter, _mmuService.ReadByte((ushort)(cpu.ProgramCounter + 1)));
+            registers.ProgramCounter = InstructionUtilFunctions.SignedAdd(registers.ProgramCounter, _mmuService.ReadByte((ushort)(registers.ProgramCounter + 1)));
             _clockService.Clock(3);
             return;
         }
 
-        cpu.ProgramCounter += 2;
+        registers.ProgramCounter += 2;
         _clockService.Clock(2);
     }
 
-    private void JumpRelative8BitsIfZero(CpuRegisters cpu)
+    public void JumpRelative8BitsIfZero(ICpuRegistersService registers)
     {
-        if (cpu.F.Zero)
+        if (registers.F.Zero)
         {
-            cpu.ProgramCounter = InstructionUtilFunctions.SignedAdd(cpu.ProgramCounter, _mmuService.ReadByte((ushort)(cpu.ProgramCounter + 1)));
+            registers.ProgramCounter = InstructionUtilFunctions.SignedAdd(registers.ProgramCounter, _mmuService.ReadByte((ushort)(registers.ProgramCounter + 1)));
             _clockService.Clock(3);
             return;
         }
 
-        cpu.ProgramCounter += 2;
+        registers.ProgramCounter += 2;
         _clockService.Clock(2);
     }
 
-    private void CallA16(CpuRegisters cpu)
+    public void CallA16(ICpuRegistersService registers)
     {
-        var toStore = (ushort)(cpu.ProgramCounter + 3);
+        var toStore = (ushort)(registers.ProgramCounter + 3);
         var lower = _byteUshortService.LowerByteOfSixteenBits(toStore);
         var upper = _byteUshortService.UpperByteOfSixteenBits(toStore);
-        cpu.StackPointer--;
-        _mmuService.WriteByte(cpu.StackPointer, upper);
-        cpu.StackPointer--;
-        _mmuService.WriteByte(cpu.StackPointer, lower);
-        cpu.ProgramCounter = _mmuService.ReadWordLittleEndian((ushort)(cpu.ProgramCounter + 1));
+        registers.StackPointer--;
+        _mmuService.WriteByte(registers.StackPointer, upper);
+        registers.StackPointer--;
+        _mmuService.WriteByte(registers.StackPointer, lower);
+        registers.ProgramCounter = _mmuService.ReadWordLittleEndian((ushort)(registers.ProgramCounter + 1));
         _clockService.Clock(6);
     }
 
-    private void Return(CpuRegisters cpu)
+    public void Return(ICpuRegistersService registers)
     {
-        var lower = _mmuService.ReadByte(cpu.StackPointer);
-        cpu.StackPointer++;
-        var upper = _mmuService.ReadByte(cpu.StackPointer);
-        cpu.StackPointer++;
-        cpu.ProgramCounter = _byteUshortService.CombineBytes(upper, lower);
+        var lower = _mmuService.ReadByte(registers.StackPointer);
+        registers.StackPointer++;
+        var upper = _mmuService.ReadByte(registers.StackPointer);
+        registers.StackPointer++;
+        registers.ProgramCounter = _byteUshortService.CombineBytes(upper, lower);
         _clockService.Clock(4);
     }
 
-    public Dictionary<byte, Action<CpuRegisters>> Instructions { get; init; }
+    public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; init; }
 }

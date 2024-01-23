@@ -1,4 +1,5 @@
 ﻿using DotNetBoy.Emulator.InstructionSet.Interfaces;
+using DotNetBoy.Emulator.Services.Implementations;
 using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.InstructionSet;
@@ -11,7 +12,7 @@ public class LogicInstructions : IInstructionSet
     public LogicInstructions(IMmuService mmuService, IClockService clockService)
     {
         _mmuService = mmuService;
-        Instructions = new Dictionary<byte, Action<CpuRegisters>>()
+        Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
         {
             { 0xB7, ORAWithA },
             { 0xAF, XORAWithA },
@@ -20,39 +21,39 @@ public class LogicInstructions : IInstructionSet
         _clockService = clockService;
     }
 
-    private void CompareAToD8(CpuRegisters cpu)
+    public void CompareAToD8(ICpuRegistersService registers)
     {
-        var d8 = _mmuService.ReadByte((ushort)(cpu.ProgramCounter + 1));
-        var result = (byte)(cpu.A - d8);
-        cpu.F.Subtract = true;
-        cpu.F.Zero = result == 0;
-        cpu.F.HalfCarry = InstructionUtilFunctions.HalfCarryFor8BitSubtraction(cpu.A, d8);
-        cpu.F.Carry = InstructionUtilFunctions.CarryFor8BitSubtract(cpu.A, d8);
+        var d8 = _mmuService.ReadByte((ushort)(registers.ProgramCounter + 1));
+        var result = (byte)(registers.A - d8);
+        registers.F.Subtract = true;
+        registers.F.Zero = result == 0;
+        registers.F.HalfCarry = InstructionUtilFunctions.HalfCarryFor8BitSubtraction(registers.A, d8);
+        registers.F.Carry = InstructionUtilFunctions.CarryFor8BitSubtract(registers.A, d8);
         _clockService.Clock(2);
-        cpu.ProgramCounter += 2;
+        registers.ProgramCounter += 2;
     }
 
-    private void XORAWithA(CpuRegisters cpu)
+    public void XORAWithA(ICpuRegistersService registers)
     {
-        cpu.A = (byte)(cpu.A ^ cpu.A);
-        cpu.F.Zero = cpu.A == 0;
-        cpu.F.Subtract = false;
-        cpu.F.Carry = false;
-        cpu.F.HalfCarry = false;
+        registers.A = (byte)(registers.A ^ registers.A);
+        registers.F.Zero = registers.A == 0;
+        registers.F.Subtract = false;
+        registers.F.Carry = false;
+        registers.F.HalfCarry = false;
         _clockService.Clock();
-        cpu.ProgramCounter += 1;
+        registers.ProgramCounter += 1;
     }
 
-    private void ORAWithA(CpuRegisters cpu)
+    public void ORAWithA(ICpuRegistersService registers)
     {
-        cpu.A = (byte)(cpu.A | cpu.A);
-        cpu.F.Zero = cpu.A == 0;
-        cpu.F.Subtract = false;
-        cpu.F.Carry = false;
-        cpu.F.HalfCarry = false;
-        cpu.ProgramCounter += 1;
+        registers.A = (byte)(registers.A | registers.A);
+        registers.F.Zero = registers.A == 0;
+        registers.F.Subtract = false;
+        registers.F.Carry = false;
+        registers.F.HalfCarry = false;
+        registers.ProgramCounter += 1;
         _clockService.Clock();
     }
 
-    public Dictionary<byte, Action<CpuRegisters>> Instructions { get; }
+    public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
 }

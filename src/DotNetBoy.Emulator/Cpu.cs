@@ -3,31 +3,31 @@ using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator;
 
-public class Cpu(IMmuService mmuService, CpuRegisters cpuRegisters, IInstructionSetService instructionSetService)
+public class Cpu(IMmuService mmuService, ICpuRegistersService cpuRegistersService, IInstructionSetService instructionSetService)
 {
     private const byte INSTRUCTION_PREFIX = 0xCB;
 
     public void Loop()
     {
-        while (!cpuRegisters.Halted)
+        while (!cpuRegistersService.Halted)
         {
             //Fetch
-            var instruction = mmuService.ReadByte(cpuRegisters.ProgramCounter);
+            var instruction = mmuService.ReadByte(cpuRegistersService.ProgramCounter);
 
             if (instruction == INSTRUCTION_PREFIX)
             {
-                var actualInstruction = mmuService.ReadByte((ushort)(cpuRegisters.ProgramCounter + 1));
+                var actualInstruction = mmuService.ReadByte((ushort)(cpuRegistersService.ProgramCounter + 1));
                 // Console.Write($"Prefixed instruction: {actualInstruction:X2}");
-                var decodedInstruction = instructionSetService.PrefixedInstructions[actualInstruction] ?? throw new NotImplementedException($"\nPrefixed instruction {actualInstruction:X2} not impemented");
+                var decodedInstruction = instructionSetService.PrefixedInstructions[actualInstruction] ?? throw new NotImplementedException($"\nPrefixed instruction {actualInstruction:X2} not implemented");
                 // Console.Write($" decoded as {decodedInstruction.Target!.GetType().Name}.{decodedInstruction.Method.Name}\n");
-                decodedInstruction(cpuRegisters);
+                decodedInstruction(cpuRegistersService);
             }
             else
             {
                 // Console.Write($"NonPrefixed instruction: {instruction:X2}");
-                var decodedInstruction = instructionSetService.NonPrefixedInstructions[instruction] ?? throw new NotImplementedException($"\nNonPrefixed instruction {instruction:X2} not impemented");
+                var decodedInstruction = instructionSetService.NonPrefixedInstructions[instruction] ?? throw new NotImplementedException($"\nNonPrefixed instruction {instruction:X2} not implemented");
                 // Console.Write($" decoded as {decodedInstruction.Target!.GetType().Name}.{decodedInstruction.Method.Name}\n");
-                decodedInstruction(cpuRegisters);
+                decodedInstruction(cpuRegistersService);
             }
         }
     }

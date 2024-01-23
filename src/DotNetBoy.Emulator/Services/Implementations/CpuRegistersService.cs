@@ -1,22 +1,23 @@
-﻿using DotNetBoy.Emulator.Services.Interfaces;
+﻿using DotNetBoy.Emulator.Models;
+using DotNetBoy.Emulator.Services.Interfaces;
 
-namespace DotNetBoy.Emulator;
+namespace DotNetBoy.Emulator.Services.Implementations;
 
-public class CpuRegisters(IByteUshortService byteUshortService)
+public class CpuRegistersService(IByteUshortService byteUshortService) : ICpuRegistersService
 {
-    internal byte A;
-    internal byte B;
-    internal byte C;
-    internal byte D;
-    internal byte E;
-    internal byte H;
-    internal byte L;
-    internal FlagsRegister F = 0x00;
-    internal bool InteruptMasterEnable = false;
+    public byte A { get; set; }
+    public byte B { get; set; }
+    public byte C { get; set; }
+    public byte D { get; set; }
+    public byte E { get; set; }
+    public byte H { get; set; }
+    public byte L { get; set; }
+    public FlagsRegister F { get; set; } = 0x00;
+    public bool InterruptMasterEnable { get; set; } = false;
 
     #region 16 Bit Register Views
 
-    internal ushort AF
+    public ushort AF
     {
         get => byteUshortService.CombineBytes(A, F);
         set
@@ -26,7 +27,7 @@ public class CpuRegisters(IByteUshortService byteUshortService)
         }
     }
 
-    internal ushort BC
+    public ushort BC
     {
         get => byteUshortService.CombineBytes(B, C);
         set
@@ -36,7 +37,7 @@ public class CpuRegisters(IByteUshortService byteUshortService)
         }
     }
 
-    internal ushort DE
+    public ushort DE
     {
         get => byteUshortService.CombineBytes(D, E);
         set
@@ -46,7 +47,7 @@ public class CpuRegisters(IByteUshortService byteUshortService)
         }
     }
 
-    internal ushort HL
+    public ushort HL
     {
         get => byteUshortService.CombineBytes(H, L);
         set
@@ -58,9 +59,9 @@ public class CpuRegisters(IByteUshortService byteUshortService)
 
     #endregion
 
-    internal ushort ProgramCounter { get; set; }
-    internal ushort StackPointer { get; set; }
-    internal bool Halted { get; set; }
+    public ushort ProgramCounter { get; set; }
+    public ushort StackPointer { get; set; }
+    public bool Halted { get; set; }
 
     public void Reset()
     {

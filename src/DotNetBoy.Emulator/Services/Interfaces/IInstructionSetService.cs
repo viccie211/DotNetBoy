@@ -1,7 +1,10 @@
-﻿namespace DotNetBoy.Emulator.Services.Interfaces;
+﻿using DotNetBoy.Emulator.Services.Implementations;
+
+namespace DotNetBoy.Emulator.Services.Interfaces;
 
 public interface IInstructionSetService
 {
-    public Action<CpuRegisters>[] NonPrefixedInstructions { get; }
-    public Action<CpuRegisters>[] PrefixedInstructions { get; }
+    public Action<ICpuRegistersService>[] NonPrefixedInstructions { get; }
+
+    public Action<ICpuRegistersService>[] PrefixedInstructions { get; }
 }

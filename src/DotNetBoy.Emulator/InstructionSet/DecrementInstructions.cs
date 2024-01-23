@@ -1,14 +1,16 @@
 ﻿using DotNetBoy.Emulator.InstructionSet.Interfaces;
+using DotNetBoy.Emulator.Services.Implementations;
+using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.InstructionSet;
 
 public class DecrementInstructions : IInstructionSet
 {
-    public Dictionary<byte, Action<CpuRegisters>> Instructions { get; }
+    public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
     private readonly IClockService _clockService;
     public DecrementInstructions(IClockService clockService)
     {
-        Instructions = new Dictionary<byte, Action<CpuRegisters>>()
+        Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
         {
             { 0x05, DecrementB }
         };
@@ -16,14 +18,14 @@ public class DecrementInstructions : IInstructionSet
     }
 
 
-    private void DecrementB(CpuRegisters cpu)
+    public void DecrementB(ICpuRegistersService registers)
     {
-        cpu.F.Subtract = true;
-        cpu.F.HalfCarry = InstructionUtilFunctions.HalfCarryFor8BitAddition(cpu.B, 0xFE);
-        cpu.B--;
-        cpu.F.Zero = cpu.B == 0;
+        registers.F.Subtract = true;
+        registers.F.HalfCarry = InstructionUtilFunctions.HalfCarryFor8BitAddition(registers.B, 0xFE);
+        registers.B--;
+        registers.F.Zero = registers.B == 0;
         _clockService.Clock();
-        cpu.ProgramCounter += 1;
+        registers.ProgramCounter += 1;
     }
 
 
