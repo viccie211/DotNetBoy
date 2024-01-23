@@ -10,13 +10,14 @@ public class ClockService : IClockService
     {
         for (int i = 0; i < clockIncrement * 4; i++)
         {
-            if (i % 4 == 0)
+            M++;
+            OnMClock(this, new ClockEventArgs() { ClockValue = M });
+            
+            if (i % 4 == 3)
             {
-                T = (byte)(T + i);
+                T++;
                 OnTClock(this, new ClockEventArgs { ClockValue = T });
             }
-            M = (byte)(M + i);
-            OnMClock(this, new ClockEventArgs() { ClockValue = M });
         }
     }
 
