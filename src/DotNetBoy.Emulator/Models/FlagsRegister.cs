@@ -19,11 +19,13 @@ public class FlagsRegister
 
     public static implicit operator FlagsRegister(byte input)
     {
-        FlagsRegister result = new FlagsRegister();
-        result.Zero = ((0b10000000 & input) != 0);
-        result.Subtract = ((0b01000000 & input) != 0);
-        result.HalfCarry = ((0b00100000 & input) != 0);
-        result.Carry = ((0b00010000 & input) != 0);
+        FlagsRegister result = new FlagsRegister
+        {
+            Zero = (0b10000000 & input) != 0,
+            Subtract = (0b01000000 & input) != 0,
+            HalfCarry = (0b00100000 & input) != 0,
+            Carry = (0b00010000 & input) != 0
+        };
         return result;
     }
 }
