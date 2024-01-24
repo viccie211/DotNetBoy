@@ -70,7 +70,7 @@ public class CpuRegistersService(IByteUshortService byteUshortService) : ICpuReg
         C = 0;
         D = 0xFF;
         E = 0X56;
-        F = 0x80;
+        F = 0xB0;
         H = 0;
         L = 0x0D;
         ProgramCounter = 0x100;
