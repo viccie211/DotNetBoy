@@ -1,4 +1,6 @@
-﻿namespace DotNetBoy.Emulator.Models;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace DotNetBoy.Emulator.Models;
 
 public class FlagsRegister
 {
@@ -27,5 +29,42 @@ public class FlagsRegister
             Carry = (0b00010000 & input) != 0
         };
         return result;
+    }
+
+    public override bool Equals(object? toEqual)
+    {
+        if (!(toEqual is FlagsRegister) && !(toEqual is byte))
+        {
+            return false;
+        }
+
+        if (toEqual is FlagsRegister asRegister)
+        {
+            return Equals(asRegister);
+        }
+
+        if (toEqual is byte asByte)
+        {
+            return asByte == (byte)this;
+        }
+
+        return false;
+    }
+
+    [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Zero, Subtract, HalfCarry, Carry);
+    }
+
+    protected bool Equals(FlagsRegister other)
+    {
+        return Zero == other.Zero && Subtract == other.Subtract && HalfCarry == other.HalfCarry && Carry == other.Carry;
+    }
+
+    public override string ToString()
+    {
+        var asByte = (byte)this;
+        return $"0x{asByte:X2}: {(Zero?"Z":"!Z")} {(Subtract?"S":"!S")} {(HalfCarry?"H":"!H")} {(Carry?"C":"!C")}";
     }
 }

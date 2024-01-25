@@ -25,6 +25,7 @@ public class FlagsRegisterTests
         Assert.That(actualCarry.HalfCarry, Is.EqualTo(expectedCarry.HalfCarry));
         Assert.That(actualCarry.Subtract, Is.EqualTo(expectedCarry.Subtract));
         Assert.That(actualCarry.Zero, Is.EqualTo(expectedCarry.Zero));
+        Assert.That(actualCarry,Is.EqualTo(expectedCarry));
 
         var expectedHalfCarry = new FlagsRegister
         {
@@ -38,6 +39,7 @@ public class FlagsRegisterTests
         Assert.That(actualHalfCarry.HalfCarry, Is.EqualTo(expectedHalfCarry.HalfCarry));
         Assert.That(actualHalfCarry.Subtract, Is.EqualTo(expectedHalfCarry.Subtract));
         Assert.That(actualHalfCarry.Zero, Is.EqualTo(expectedHalfCarry.Zero));
+        Assert.That(actualHalfCarry,Is.EqualTo(expectedHalfCarry));
 
         var expectedSubtract = new FlagsRegister
         {
@@ -51,6 +53,7 @@ public class FlagsRegisterTests
         Assert.That(actualSubtract.HalfCarry, Is.EqualTo(expectedSubtract.HalfCarry));
         Assert.That(actualSubtract.Subtract, Is.EqualTo(expectedSubtract.Subtract));
         Assert.That(actualSubtract.Zero, Is.EqualTo(expectedSubtract.Zero));
+        Assert.That(actualSubtract,Is.EqualTo(expectedSubtract));
 
         var expectedZero = new FlagsRegister
         {
@@ -64,6 +67,7 @@ public class FlagsRegisterTests
         Assert.That(actualZero.HalfCarry, Is.EqualTo(expectedZero.HalfCarry));
         Assert.That(actualZero.Subtract, Is.EqualTo(expectedZero.Subtract));
         Assert.That(actualZero.Zero, Is.EqualTo(expectedZero.Zero));
+        Assert.That(actualZero,Is.EqualTo(expectedZero));
 
         var expectedAll = new FlagsRegister
         {
