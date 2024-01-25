@@ -16,17 +16,14 @@ public class DecrementInstructions : IInstructionSet
         };
         _clockService = clockService;
     }
-
-
+    
     public void DecrementB(ICpuRegistersService registers)
     {
         registers.F.Subtract = true;
-        registers.F.HalfCarry = InstructionUtilFunctions.HalfCarryFor8BitAddition(registers.B, 0xFE);
+        registers.F.HalfCarry = InstructionUtilFunctions.HalfCarryFor8BitSubtraction(registers.B, 0x01);
         registers.B--;
         registers.F.Zero = registers.B == 0;
         _clockService.Clock();
         registers.ProgramCounter += 1;
     }
-
-
 }

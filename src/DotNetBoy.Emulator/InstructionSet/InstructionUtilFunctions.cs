@@ -22,8 +22,7 @@ public class InstructionUtilFunctions
     /// <returns>Whether half carry should be set</returns>
     public static bool HalfCarryFor8BitSubtraction(byte a, byte b)
     {
-        var subtract = (byte)(0xFF-b);
-        return HalfCarryFor8BitAddition(a, subtract);
+        return (((a & 0xF) - (b & 0xF)) & 0x10) == 0x10;
     }
 
     public static bool CarryFor8BitSubtract(byte a, byte b)
