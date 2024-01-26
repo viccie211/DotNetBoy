@@ -1,7 +1,4 @@
 ﻿using DotNetBoy.Emulator.InstructionSet;
-using DotNetBoy.Emulator.Models;
-using DotNetBoy.Emulator.Services.Interfaces;
-using Moq;
 
 namespace DotNetBoy.Emulator.Tests.InstructionTests;
 
@@ -36,7 +33,7 @@ public class IncrementInstructionTests
         registerServiceMock.SetupGet(c => c.ProgramCounter).Returns(() => _programCounter);
         registerServiceMock.SetupSet(c => c.ProgramCounter = It.IsAny<ushort>()).Callback<ushort>(value => _programCounter = value);
 
-        _programCounter = 0;
+        _stackPointer = 0;
         registerServiceMock.SetupGet(c => c.StackPointer).Returns(() => _stackPointer);
         registerServiceMock.SetupSet(c => c.StackPointer = It.IsAny<ushort>()).Callback<ushort>(value => _stackPointer = value);
         registers = registerServiceMock.Object;

@@ -1,6 +1,4 @@
 ﻿using DotNetBoy.Emulator.Services.Implementations;
-using DotNetBoy.Emulator.Services.Interfaces;
-using Moq;
 
 namespace DotNetBoy.Emulator.Tests.ServiceTests;
 

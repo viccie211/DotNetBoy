@@ -1,9 +1,4 @@
 ﻿using DotNetBoy.Emulator.InstructionSet;
-using DotNetBoy.Emulator.Models;
-using DotNetBoy.Emulator.Services.Implementations;
-using DotNetBoy.Emulator.Services.Interfaces;
-using Moq;
-
 namespace DotNetBoy.Emulator.Tests.InstructionTests;
 
 public class DecrementInstructionTests

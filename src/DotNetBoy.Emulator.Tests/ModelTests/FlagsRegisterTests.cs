@@ -1,5 +1,3 @@
-using DotNetBoy.Emulator.Models;
-
 namespace DotNetBoy.Emulator.Tests.ModelTests;
 
 public class FlagsRegisterTests

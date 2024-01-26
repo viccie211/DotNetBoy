@@ -1,6 +1,3 @@
-using DotNetBoy.Emulator.Services.Interfaces;
-using Moq;
-
 namespace DotNetBoy.Emulator.Tests.ServiceTests;
 public class PpuServiceTests
 {
