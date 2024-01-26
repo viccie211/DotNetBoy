@@ -24,6 +24,8 @@ public class JumpInstructions : IInstructionSet
         _byteUshortService = byteUshortService;
     }
 
+    public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; init; }
+
     public void Jump(ICpuRegistersService registers)
     {
         registers.ProgramCounter = _mmuService.ReadWordLittleEndian((ushort)(registers.ProgramCounter + 1));
@@ -32,28 +34,12 @@ public class JumpInstructions : IInstructionSet
 
     public void JumpRelative8BitsIfNotZero(ICpuRegistersService registers)
     {
-        if (!registers.F.Zero)
-        {
-            registers.ProgramCounter = InstructionUtilFunctions.SignedAdd(registers.ProgramCounter, _mmuService.ReadByte((ushort)(registers.ProgramCounter + 1)));
-            _clockService.Clock(3);
-            return;
-        }
-
-        registers.ProgramCounter += 2;
-        _clockService.Clock(2);
+        JumpRelative8BitsIfTrue(!registers.F.Zero, registers);
     }
 
     public void JumpRelative8BitsIfZero(ICpuRegistersService registers)
     {
-        if (registers.F.Zero)
-        {
-            registers.ProgramCounter = InstructionUtilFunctions.SignedAdd(registers.ProgramCounter, _mmuService.ReadByte((ushort)(registers.ProgramCounter + 1)));
-            _clockService.Clock(3);
-            return;
-        }
-
-        registers.ProgramCounter += 2;
-        _clockService.Clock(2);
+        JumpRelative8BitsIfTrue(registers.F.Zero, registers);
     }
 
     public void CallA16(ICpuRegistersService registers)
@@ -79,5 +65,16 @@ public class JumpInstructions : IInstructionSet
         _clockService.Clock(4);
     }
 
-    public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; init; }
+    private void JumpRelative8BitsIfTrue(bool shouldJump, ICpuRegistersService registers)
+    {
+        if (shouldJump)
+        {
+            registers.ProgramCounter = InstructionUtilFunctions.SignedAdd(registers.ProgramCounter, _mmuService.ReadByte((ushort)(registers.ProgramCounter + 1)));
+            _clockService.Clock(3);
+            return;
+        }
+
+        registers.ProgramCounter += 2;
+        _clockService.Clock(2);
+    }
 }
