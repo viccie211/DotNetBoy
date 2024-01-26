@@ -33,8 +33,7 @@ public class InstructionUtilFunctions
 
     public static ushort SignedAdd(ushort target, byte add)
     {
-        byte b = 0xfc;
-        sbyte s = unchecked((sbyte)b);
+        sbyte s = unchecked((sbyte)add);
         return (ushort)(target + s);
     }
 }
