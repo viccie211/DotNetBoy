@@ -74,6 +74,6 @@ public class CpuRegistersService(IByteUshortService byteUshortService) : ICpuReg
         H = 0;
         L = 0x0D;
         ProgramCounter = 0x100;
-        StackPointer = 0;
+        StackPointer = 0xFFFE;
     }
 }

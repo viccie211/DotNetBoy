@@ -34,7 +34,7 @@ public class CpuRegistersServiceTests
         byte expectedH = 0;
         byte expectedL = 0x0D;
         ushort expectedProgramCounter = 0x100;
-        ushort expectedStackPointer = 0;
+        ushort expectedStackPointer = 0xFFFE;
         service.Reset();
         Assert.That(service.A, Is.EqualTo(expectedA));
         Assert.That(service.B, Is.EqualTo(expectedB));
