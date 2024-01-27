@@ -2,7 +2,6 @@ namespace DotNetBoy.Emulator.Tests.ServiceTests;
 public class PpuServiceTests
 {
     private PpuService service;
-    private Mock<IClockService> clockServiceMock;
     private Mock<IMmuService> mmuServiceMock;
 
     [SetUp]
