@@ -1,7 +1,5 @@
 #nullable disable
 using DotNetBoy.Emulator.InstructionSet;
-using DotNetBoy.Emulator.Services.Implementations;
-using Microsoft.VisualBasic;
 
 namespace DotNetBoy.Emulator.Tests.InstructionTests;
 
@@ -16,6 +14,7 @@ public class LoadInstructionTests
         var mmuServiceMock = new Mock<IMmuService>();
         mmuServiceMock.Setup(m => m.ReadWordLittleEndian(0x0001)).Returns(0xFFAA);
         mmuServiceMock.Setup(m => m.ReadByte(0x1010)).Returns(0xAB);
+        mmuServiceMock.Setup(m => m.ReadByte(0xFFAB)).Returns(0x12);
 
         var clockServiceMock = new Mock<IClockService>();
 
@@ -29,8 +28,8 @@ public class LoadInstructionTests
     [Test]
     public void LoadD16IntoBC()
     {
-        var expectedBC = 0xFFAA;
-        var expectedProgramCounter = 0x0003;
+        const ushort expectedBC = 0xFFAA;
+        const ushort expectedProgramCounter = 0x0003;
         _instructions.LoadD16IntoBC(_registers);
         Assert.That(_registers.BC, Is.EqualTo(expectedBC));
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
@@ -39,8 +38,8 @@ public class LoadInstructionTests
     [Test]
     public void LoadD16IntoStackPointer()
     {
-        var expectedStackPointer = 0xFFAA;
-        var expectedProgramCounter = 0x0003;
+        const ushort expectedStackPointer = 0xFFAA;
+        const ushort expectedProgramCounter = 0x0003;
         _instructions.LoadD16IntoStackPointer(_registers);
         Assert.That(_registers.StackPointer, Is.EqualTo(expectedStackPointer));
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
@@ -49,8 +48,8 @@ public class LoadInstructionTests
     [Test]
     public void LoadD16IntoHL()
     {
-        var expectedHL = 0xFFAA;
-        var expectedProgramCounter = 0x0003;
+        const ushort expectedHL = 0xFFAA;
+        const ushort expectedProgramCounter = 0x0003;
         _instructions.LoadD16IntoHL(_registers);
         Assert.That(_registers.HL, Is.EqualTo(expectedHL));
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
@@ -59,8 +58,8 @@ public class LoadInstructionTests
     [Test]
     public void LoadD16IntoDE()
     {
-        var expectedDE = 0xFFAA;
-        var expectedProgramCounter = 0x0003;
+        const ushort expectedDE = 0xFFAA;
+        const ushort expectedProgramCounter = 0x0003;
         _instructions.LoadD16IntoDE(_registers);
         Assert.That(_registers.DE, Is.EqualTo(expectedDE));
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
@@ -69,12 +68,44 @@ public class LoadInstructionTests
     [Test]
     public void LoadAtAddressBCIntoA()
     {
-        var expectedA = 0xAB;
-        var expectedProgramCounter = 0x0001;
+        const byte expectedA = 0xAB;
+        const ushort expectedProgramCounter = 0x0001;
         _registers.BC = 0x1010;
         _instructions.LoadAtAddressBCIntoA(_registers);
-        Assert.That(_registers.A,Is.EqualTo(expectedA));
+        Assert.That(_registers.A, Is.EqualTo(expectedA));
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
     }
 
+    [Test]
+    public void LoadAtAddressFF00PlusD8IntoA()
+    {
+        const byte expectedA = 0x12;
+        const ushort expectedProgramCounter = 0x1011;
+        _registers.ProgramCounter = 0x100F;
+        _instructions.LoadAtAddressFF00PlusD8IntoA(_registers);
+        Assert.That(_registers.A, Is.EqualTo(expectedA));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+    }
+
+    [Test]
+    public void LoadEIntoA()
+    {
+        const byte expectedA = 0x45;
+        const ushort expectedProgramCounter = 0x0001;
+        _registers.E = 0x45;
+        _instructions.LoadEIntoA(_registers);
+        Assert.That(_registers.A, Is.EqualTo(expectedA));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+    }
+
+    [Test]
+    public void LoadD8IntoB()
+    {
+        const byte expectedB = 0xAB;
+        const ushort expectedProgramCounter = 0x1011;
+        _registers.ProgramCounter=0x100F;
+        _instructions.LoadD8IntoB(_registers);
+        Assert.That(_registers.B,Is.EqualTo(expectedB));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+    }
 }

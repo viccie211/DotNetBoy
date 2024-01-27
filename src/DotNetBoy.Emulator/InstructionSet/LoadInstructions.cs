@@ -8,6 +8,8 @@ public class LoadInstructions : IInstructionSet
     private readonly IMmuService _mmuService;
     private readonly IClockService _clockService;
 
+    public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
+
     public LoadInstructions(IMmuService mmuService, IClockService clockService)
     {
         Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
@@ -30,9 +32,7 @@ public class LoadInstructions : IInstructionSet
     /// </summary>
     public void LoadD16IntoBC(ICpuRegistersService registers)
     {
-        registers.BC = _mmuService.ReadWordLittleEndian((ushort)(registers.ProgramCounter + 1));
-        _clockService.Clock(3);
-        registers.ProgramCounter += 3;
+        registers.BC = LoadD16(registers);
     }
 
     /// <summary>
@@ -40,9 +40,23 @@ public class LoadInstructions : IInstructionSet
     /// </summary>
     public void LoadD16IntoStackPointer(ICpuRegistersService registers)
     {
-        registers.StackPointer = _mmuService.ReadWordLittleEndian((ushort)(registers.ProgramCounter + 1));
-        _clockService.Clock(3);
-        registers.ProgramCounter += 3;
+        registers.StackPointer = LoadD16(registers);
+    }
+
+    /// <summary>
+    /// Load the next word in memory into the HL Register
+    /// </summary>
+    public void LoadD16IntoHL(ICpuRegistersService registers)
+    {
+        registers.HL = LoadD16(registers);
+    }
+
+    /// <summary>
+    /// Load the next word in memory into the HL register
+    /// </summary>
+    public void LoadD16IntoDE(ICpuRegistersService registers)
+    {
+        registers.DE = LoadD16(registers);
     }
 
     // /// <summary>
@@ -60,9 +74,7 @@ public class LoadInstructions : IInstructionSet
     /// </summary>
     public void LoadD8IntoB(ICpuRegistersService registers)
     {
-        registers.B = _mmuService.ReadByte((ushort)(registers.ProgramCounter + 1));
-        _clockService.Clock(2);
-        registers.ProgramCounter += 2;
+        registers.B = LoadD8(registers);
     }
 
     /// <summary>
@@ -76,26 +88,6 @@ public class LoadInstructions : IInstructionSet
         registers.ProgramCounter += 2;
     }
 
-    /// <summary>
-    /// Load the next word in memory into the HL Register
-    /// </summary>
-    public void LoadD16IntoHL(ICpuRegistersService registers)
-    {
-        registers.HL = _mmuService.ReadWordLittleEndian((ushort)(registers.ProgramCounter + 1));
-        _clockService.Clock(3);
-        registers.ProgramCounter += 3;
-    }
-
-    /// <summary>
-    /// Load the next word in memory into the HL register
-    /// </summary>
-    public void LoadD16IntoDE(ICpuRegistersService registers)
-    {
-        registers.DE = _mmuService.ReadWordLittleEndian((ushort)(registers.ProgramCounter + 1));
-        _clockService.Clock(3);
-        registers.ProgramCounter += 3;
-    }
-
     public void LoadEIntoA(ICpuRegistersService registers)
     {
         registers.A = registers.E;
@@ -103,5 +95,19 @@ public class LoadInstructions : IInstructionSet
         registers.ProgramCounter += 1;
     }
 
-    public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
+    private ushort LoadD16(ICpuRegistersService registers)
+    {
+        var result = _mmuService.ReadWordLittleEndian((ushort)(registers.ProgramCounter + 1));
+        _clockService.Clock(3);
+        registers.ProgramCounter += 3;
+        return result;
+    }
+
+    private byte LoadD8(ICpuRegistersService registers)
+    {
+        var result = _mmuService.ReadByte((ushort)(registers.ProgramCounter + 1));
+        _clockService.Clock(2);
+        registers.ProgramCounter += 2;
+        return result;
+    }
 }
