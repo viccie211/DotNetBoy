@@ -20,7 +20,7 @@ public class RotateAndShiftInstructions : IInstructionSet
     {
         registers.F.Carry = (registers.A & 0x80) == 0x80;
         var tempByte = (byte)(registers.A << 1);
-        registers.A = registers.F.Carry ? (byte)(tempByte | 0x01) : (byte)(tempByte ^ 0x01);
+        registers.A = registers.F.Carry ? (byte)(tempByte | 0x01) : (byte)(tempByte & 0xFE);
         registers.F.Zero = false;
         registers.F.HalfCarry = false;
         registers.F.Subtract = false;
