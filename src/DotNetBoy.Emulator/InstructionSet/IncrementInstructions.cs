@@ -26,6 +26,10 @@ public class IncrementInstructions : IInstructionSet
         registers.BC = Increment16Bits(registers.BC, registers);
     }
 
+    /// <summary>
+    /// Increment the B register by one. Sets Z 0 H - 
+    /// </summary>
+    /// Verified with BGB
     public void IncrementB(ICpuRegistersService registers)
     {
         registers.B = Increment8Bits(registers.B, registers);

@@ -12,13 +12,10 @@ serviceCollection.AddEmulator();
 var serviceProvider = serviceCollection.BuildServiceProvider();
 var scope = serviceProvider.CreateScope();
 
-var cpuRegisters = scope.ServiceProvider.GetService<ICpuRegistersService
-
-
->()!;
+var cpuRegisters = scope.ServiceProvider.GetService<ICpuRegistersService>()!;
 cpuRegisters.Reset();
 
-var rom = Roms.BgbTestRom;
+var rom = Roms.CustomTest;
 var mmuService = scope.ServiceProvider.GetService<IMmuService>()!;
 mmuService.LoadRom(rom);
 

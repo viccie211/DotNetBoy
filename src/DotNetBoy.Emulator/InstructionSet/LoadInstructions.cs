@@ -72,6 +72,7 @@ public class LoadInstructions : IInstructionSet
     /// <summary>
     /// Load the next byte into the B register
     /// </summary>
+    /// Verified with BGB
     public void LoadD8IntoB(ICpuRegistersService registers)
     {
         registers.B = LoadD8(registers);

@@ -4,51 +4,8 @@ namespace DotNetBoy;
 
 public class Roms
 {
-    public static byte[] LoadFromHexString(string hexString)
-    {
-        hexString = hexString.ReplaceLineEndings("");
-        hexString = Regex.Replace(hexString,"/\\w/g","");
-        return Convert.FromHexString(hexString);
-    }
-
-    private static string testRom = @"
-1000000000000000
-0000000000000000
-0000000000000000
-0000000000000000
-0000000000000000
-0000000000000000
-0000000000000000
-0000000000000000
-0000000000000000
-0000000000000000
-0000000000000000
-0000000000000000
-0000000000000000
-0000000000000000
-0000000000000000
-0000000000000000
-0000000000000000
-0000000000000000
-0000000000000000
-0000000000000000
-0000000000000000
-0000000000000000
-0000000000000000
-0000000000000000
-0000000000000000
-0000000000000000
-0000000000000000
-0000000000000000
-0000000000000000
-0000000000000000
-0000000000000000
-0000000000000000
-0001000003040505
-06FE070000000000";
-
-    public static byte[] TestRom => LoadFromHexString(testRom);
-
 
     public static byte[] BgbTestRom = File.ReadAllBytes("..\\..\\..\\DebugAssets\\bgbw64\\bgbtest.gb");
+
+    public static byte[] CustomTest = File.ReadAllBytes("..\\..\\..\\Assets\\CustomTest.gb");
 }

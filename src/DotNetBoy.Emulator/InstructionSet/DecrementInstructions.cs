@@ -18,6 +18,7 @@ public class DecrementInstructions : IInstructionSet
         _clockService = clockService;
     }
 
+    //Verified with BGB
     public void DecrementB(ICpuRegistersService registers)
     {
         registers.B = Decrement8Bits(registers.B, registers);

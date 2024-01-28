@@ -24,9 +24,9 @@ public class Cpu(IMmuService mmuService, ICpuRegistersService cpuRegistersServic
             }
             else
             {
-                // Console.Write($"NonPrefixed instruction: {instruction:X2}");
+                Console.Write($"NonPrefixed instruction: {instruction:X2}");
                 var decodedInstruction = instructionSetService.NonPrefixedInstructions[instruction] ?? throw new NotImplementedException($"\nNonPrefixed instruction {instruction:X2} not implemented");
-                // Console.Write($" decoded as {decodedInstruction.Target!.GetType().Name}.{decodedInstruction.Method.Name}\n");
+                Console.Write($" decoded as {decodedInstruction.Target!.GetType().Name}.{decodedInstruction.Method.Name}\n");
                 decodedInstruction(cpuRegistersService);
             }
         }
