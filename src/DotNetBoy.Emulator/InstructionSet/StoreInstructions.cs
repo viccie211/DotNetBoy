@@ -15,14 +15,14 @@ public class StoreInstructions : IInstructionSet
         _mmuService = mmuService;
         Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
         {
-            { 0x08, StoreStackPointerAtAddress },
+            { 0x08, StoreStackPointerAtAddressD16 },
             { 0xE0, StoreAtAddressFF00PlusD8FromA}
         };
         _clockService = clockService;
     }
     public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
 
-    public void StoreStackPointerAtAddress(ICpuRegistersService registers)
+    public void StoreStackPointerAtAddressD16(ICpuRegistersService registers)
     {
         var lower = _byteUshortService.LowerByteOfSixteenBits(registers.StackPointer);
         var upper = _byteUshortService.UpperByteOfSixteenBits(registers.StackPointer);
