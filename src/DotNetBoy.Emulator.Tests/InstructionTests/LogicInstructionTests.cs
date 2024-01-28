@@ -12,6 +12,10 @@ public class LogicInstructionsTests
     public void SetUp()
     {
         var mmuServiceMock = new Mock<IMmuService>();
+        mmuServiceMock.Setup(m => m.ReadByte(0x0001)).Returns(0x00);
+        mmuServiceMock.Setup(m => m.ReadByte(0x0010)).Returns(0x01);
+        mmuServiceMock.Setup(m => m.ReadByte(0x0020)).Returns(0x10);
+        mmuServiceMock.Setup(m => m.ReadByte(0x0030)).Returns(0x0F);
         var clockServiceMock = new Mock<IClockService>();
 
         _registers = new TestCpuRegisterService();
@@ -36,7 +40,7 @@ public class LogicInstructionsTests
         _instructions.ORAWithA(_registers);
         Assert.That(_registers.A, Is.EqualTo(expectedA));
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
-        Assert.That(_registers.F,Is.EqualTo(expectedF));
+        Assert.That(_registers.F, Is.EqualTo(expectedF));
     }
     [Test]
     public void ORAWithA88()
@@ -54,7 +58,7 @@ public class LogicInstructionsTests
         _instructions.ORAWithA(_registers);
         Assert.That(_registers.A, Is.EqualTo(expectedA));
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
-        Assert.That(_registers.F,Is.EqualTo(expectedF));
+        Assert.That(_registers.F, Is.EqualTo(expectedF));
     }
 
     [Test]
@@ -73,7 +77,7 @@ public class LogicInstructionsTests
         _instructions.ORAWithA(_registers);
         Assert.That(_registers.A, Is.EqualTo(expectedA));
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
-        Assert.That(_registers.F,Is.EqualTo(expectedF));
+        Assert.That(_registers.F, Is.EqualTo(expectedF));
     }
 
     [Test]
@@ -93,7 +97,7 @@ public class LogicInstructionsTests
         _instructions.XORAWithA(_registers);
         Assert.That(_registers.A, Is.EqualTo(expectedA));
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
-        Assert.That(_registers.F,Is.EqualTo(expectedF));
+        Assert.That(_registers.F, Is.EqualTo(expectedF));
     }
     [Test]
     public void XORAWithA88()
@@ -111,7 +115,7 @@ public class LogicInstructionsTests
         _instructions.XORAWithA(_registers);
         Assert.That(_registers.A, Is.EqualTo(expectedA));
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
-        Assert.That(_registers.F,Is.EqualTo(expectedF));
+        Assert.That(_registers.F, Is.EqualTo(expectedF));
     }
 
     [Test]
@@ -130,6 +134,78 @@ public class LogicInstructionsTests
         _instructions.XORAWithA(_registers);
         Assert.That(_registers.A, Is.EqualTo(expectedA));
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
-        Assert.That(_registers.F,Is.EqualTo(expectedF));
+        Assert.That(_registers.F, Is.EqualTo(expectedF));
+    }
+
+    [Test]
+    public void CompareAToD8_A_0_D8_0()
+    {
+        const ushort expectedProgramCounter = 0x0002;
+        var expectedF = new FlagsRegister()
+        {
+            Zero = true,
+            Subtract = true,
+            Carry = false,
+            HalfCarry = false
+        };
+        _registers.A = 0x00;
+        _registers.ProgramCounter = 0x0000;
+        _instructions.CompareAToD8(_registers);
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+        Assert.That(_registers.F, Is.EqualTo(expectedF));
+    }
+
+    [Test]
+    public void CompareAToD8_A_0_D8_1()
+    {
+        const ushort expectedProgramCounter = 0x0011;
+        var expectedF = new FlagsRegister()
+        {
+            Zero = false,
+            Subtract = true,
+            Carry = true,
+            HalfCarry = true
+        };
+        _registers.A = 0x00;
+        _registers.ProgramCounter = 0x000F;
+        _instructions.CompareAToD8(_registers);
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+        Assert.That(_registers.F, Is.EqualTo(expectedF));
+    }
+
+    [Test]
+    public void CompareAToD8_Carry()
+    {
+        const ushort expectedProgramCounter = 0x0021;
+        var expectedF = new FlagsRegister()
+        {
+            Zero = false,
+            Subtract = true,
+            Carry = true,
+            HalfCarry = false
+        };
+        _registers.A = 0x0F;
+        _registers.ProgramCounter = 0x001F;
+        _instructions.CompareAToD8(_registers);
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+        Assert.That(_registers.F, Is.EqualTo(expectedF));
+    }
+
+    [Test]
+    public void CompareAToD8HalfCarry()
+    {
+        const ushort expectedProgramCounter = 0x0031;
+        var expectedF = new FlagsRegister()
+        {
+            Zero = false,
+            Subtract = true,
+            Carry = false,
+            HalfCarry = true
+        };
+        _registers.A = 0x10;
+        _registers.ProgramCounter = 0x002F;
+        _instructions.CompareAToD8(_registers);
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+        Assert.That(_registers.F, Is.EqualTo(expectedF));
     }
 }
