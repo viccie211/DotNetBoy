@@ -25,23 +25,39 @@ public class JumpInstructions : IInstructionSet
     }
 
     public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; init; }
-
+    
+    /// <summary>
+    /// Jump to the address written next in memory.
+    /// </summary>
+    /// Verified against BGB
     public void Jump(ICpuRegistersService registers)
     {
         registers.ProgramCounter = _mmuService.ReadWordLittleEndian((ushort)(registers.ProgramCounter + 1));
         _clockService.Clock(4);
     }
-
+    
+    /// <summary>
+    /// If the zero flag is set jump relative according to the next (signed) byte in memory
+    /// </summary>
+    /// Verified against BGB
     public void JumpRelative8BitsIfNotZero(ICpuRegistersService registers)
     {
         JumpRelative8BitsIfTrue(!registers.F.Zero, registers);
     }
 
+    /// <summary>
+    /// If the zero flag is not set jump relative according to the next (signed) byte in memory
+    /// </summary>
+    /// Verified against BGB
     public void JumpRelative8BitsIfZero(ICpuRegistersService registers)
     {
         JumpRelative8BitsIfTrue(registers.F.Zero, registers);
     }
 
+    /// <summary>
+    /// Call the subroutine on the address next in memory. It pushes the return address to the stack and then jumps to the new address
+    /// </summary>
+    /// Verified against BGB
     public void CallA16(ICpuRegistersService registers)
     {
         var toStore = (ushort)(registers.ProgramCounter + 3);
@@ -55,6 +71,10 @@ public class JumpInstructions : IInstructionSet
         _clockService.Clock(6);
     }
 
+    /// <summary>
+    /// Returns from a subroutine. It pops the return address from the stack and then jumps to that address
+    /// </summary>
+    /// Verified against BGB
     public void Return(ICpuRegistersService registers)
     {
         var lower = _mmuService.ReadByte(registers.StackPointer);
@@ -69,7 +89,9 @@ public class JumpInstructions : IInstructionSet
     {
         if (shouldJump)
         {
-            registers.ProgramCounter = InstructionUtilFunctions.SignedAdd(registers.ProgramCounter, _mmuService.ReadByte((ushort)(registers.ProgramCounter + 1)));
+            var relative = _mmuService.ReadByte((ushort)(registers.ProgramCounter+1));
+            registers.ProgramCounter+=2;
+            registers.ProgramCounter = InstructionUtilFunctions.SignedAdd(registers.ProgramCounter, relative);
             _clockService.Clock(3);
             return;
         }

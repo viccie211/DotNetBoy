@@ -46,7 +46,7 @@ public class JumpInstructionTests
         _instructions.Jump(_registers);
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
     }
-
+    
     [Test]
     public void JumpRelative8BitsIfNonZeroZero()
     {
@@ -59,7 +59,7 @@ public class JumpInstructionTests
     [Test]
     public void JumpRelative8BitsIfNonZeroForwardNonZero()
     {
-        const ushort expectedProgramCounter = 0x0008;
+        const ushort expectedProgramCounter = 0x000A;
         _registers.F.Zero = false;
         _instructions.JumpRelative8BitsIfNotZero(_registers);
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
@@ -68,7 +68,7 @@ public class JumpInstructionTests
     [Test]
     public void JumpRelative8BitsIfNonZeroBackwardNonZero()
     {
-        const ushort expectedProgramCounter = 0x000E;
+        const ushort expectedProgramCounter = 0x0010;
         _registers.ProgramCounter = 0x000F;
         _registers.F.Zero = false;
         _instructions.JumpRelative8BitsIfNotZero(_registers);
@@ -87,7 +87,7 @@ public class JumpInstructionTests
     [Test]
     public void JumpRelative8BitsIfZeroForwardZero()
     {
-        const ushort expectedProgramCounter = 0x0008;
+        const ushort expectedProgramCounter = 0x000A;
         _registers.F.Zero = true;
         _instructions.JumpRelative8BitsIfZero(_registers);
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
@@ -96,7 +96,7 @@ public class JumpInstructionTests
     [Test]
     public void JumpRelative8BitsIfZeroBackwardZero()
     {
-        const ushort expectedProgramCounter = 0x000E;
+        const ushort expectedProgramCounter = 0x0010;
         _registers.ProgramCounter = 0x000F;
         _registers.F.Zero = true;
         _instructions.JumpRelative8BitsIfZero(_registers);

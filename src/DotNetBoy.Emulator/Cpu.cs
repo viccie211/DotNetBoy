@@ -17,18 +17,19 @@ public class Cpu(IMmuService mmuService, ICpuRegistersService cpuRegistersServic
             if (instruction == INSTRUCTION_PREFIX)
             {
                 var actualInstruction = mmuService.ReadByte((ushort)(cpuRegistersService.ProgramCounter + 1));
-                // Console.Write($"Prefixed instruction: {actualInstruction:X2}");
+                Console.Write($"{cpuRegistersService.ProgramCounter:X4}: Pi: {actualInstruction:X2}");
                 var decodedInstruction = instructionSetService.PrefixedInstructions[actualInstruction] ?? throw new NotImplementedException($"\nPrefixed instruction {actualInstruction:X2} not implemented");
-                // Console.Write($" decoded as {decodedInstruction.Target!.GetType().Name}.{decodedInstruction.Method.Name}\n");
+                Console.Write($" decoded as {decodedInstruction.Target!.GetType().Name}.{decodedInstruction.Method.Name}\n");
                 decodedInstruction(cpuRegistersService);
             }
             else
             {
-                Console.Write($"NonPrefixed instruction: {instruction:X2}");
+                Console.Write($"{cpuRegistersService.ProgramCounter:X4}: NPi: {instruction:X2}");
                 var decodedInstruction = instructionSetService.NonPrefixedInstructions[instruction] ?? throw new NotImplementedException($"\nNonPrefixed instruction {instruction:X2} not implemented");
                 Console.Write($" decoded as {decodedInstruction.Target!.GetType().Name}.{decodedInstruction.Method.Name}\n");
                 decodedInstruction(cpuRegistersService);
             }
         }
+        Console.WriteLine("Halted");
     }
 }

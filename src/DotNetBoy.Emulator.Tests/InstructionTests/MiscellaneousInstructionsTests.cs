@@ -30,7 +30,17 @@ public class MiscellaneousInstructionsTests
         const bool expectedInterruptMasterEnable = false;
         const ushort expectedProgramCounter = 0x0001;
         _instructions.DisableInterrupts(_registers);
-        Assert.That(_registers.InterruptMasterEnable,Is.EqualTo(expectedInterruptMasterEnable));
+        Assert.That(_registers.InterruptMasterEnable, Is.EqualTo(expectedInterruptMasterEnable));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+    }
+
+    [Test]
+    public void Halt()
+    {
+        const bool expectedHalted = true;
+        const ushort expectedProgramCounter = 0x0001;
+        _instructions.Halt(_registers);
+        Assert.That(_registers.Halted, Is.EqualTo(expectedHalted));
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
     }
 }

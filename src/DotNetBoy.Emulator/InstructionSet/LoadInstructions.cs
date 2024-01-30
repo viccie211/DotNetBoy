@@ -28,8 +28,9 @@ public class LoadInstructions : IInstructionSet
     }
 
     /// <summary>
-    /// Load a word from memory into the BC ister
+    /// Load the next word from memory into the BC register
     /// </summary>
+    /// Verified against BGB
     public void LoadD16IntoBC(ICpuRegistersService registers)
     {
         registers.BC = LoadD16(registers);
@@ -38,6 +39,7 @@ public class LoadInstructions : IInstructionSet
     /// <summary>
     /// Load the next word in memory into the Stack pointer
     /// </summary>
+    /// Verified against BGB
     public void LoadD16IntoStackPointer(ICpuRegistersService registers)
     {
         registers.StackPointer = LoadD16(registers);
@@ -52,7 +54,7 @@ public class LoadInstructions : IInstructionSet
     }
 
     /// <summary>
-    /// Load the next word in memory into the HL register
+    /// Load the next word in memory into the DE register
     /// </summary>
     public void LoadD16IntoDE(ICpuRegistersService registers)
     {
