@@ -17,8 +17,10 @@ public class LoadInstructions : IInstructionSet
             { 0x01, LoadD16IntoBC },
             { 0x02, LoadAtAddressBCIntoA },
             { 0x06, LoadD8IntoB },
+            { 0x0E, LoadD8IntoC },
             { 0x11, LoadD16IntoDE },
             { 0x21, LoadD16IntoHL },
+            { 0x47, LoadAIntoB },
             { 0x7B, LoadEIntoA },
             { 0x31, LoadD16IntoStackPointer },
             { 0xF0, LoadAtAddressFF00PlusD8IntoA },
@@ -81,6 +83,15 @@ public class LoadInstructions : IInstructionSet
     }
 
     /// <summary>
+    /// Load the next byte into the C register
+    /// </summary>
+    /// Verified with BGB
+    public void LoadD8IntoC(ICpuRegistersService registers)
+    {
+        registers.C = LoadD8(registers);
+    }
+
+    /// <summary>
     /// Load into register A the contents of the internal RAM, port register, or mode register at the address in the range 0xFF00-0xFFFF specified by the next byte
     /// </summary>
     public void LoadAtAddressFF00PlusD8IntoA(ICpuRegistersService registers)
@@ -93,7 +104,19 @@ public class LoadInstructions : IInstructionSet
 
     public void LoadEIntoA(ICpuRegistersService registers)
     {
-        registers.A = registers.E;
+        LoadByteIntoA(registers.E, registers);
+    }
+
+    public void LoadAIntoB(ICpuRegistersService registers)
+    {
+        registers.B=registers.A;
+        _clockService.Clock();
+        registers.ProgramCounter += 1;   
+    }
+
+    private void LoadByteIntoA(byte toLoad, ICpuRegistersService registers)
+    {
+        registers.A = toLoad;
         _clockService.Clock();
         registers.ProgramCounter += 1;
     }

@@ -103,9 +103,32 @@ public class LoadInstructionTests
     {
         const byte expectedB = 0xAB;
         const ushort expectedProgramCounter = 0x1011;
-        _registers.ProgramCounter=0x100F;
+        _registers.ProgramCounter = 0x100F;
         _instructions.LoadD8IntoB(_registers);
-        Assert.That(_registers.B,Is.EqualTo(expectedB));
+        Assert.That(_registers.B, Is.EqualTo(expectedB));
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
     }
+
+    [Test]
+    public void LoadAintoB()
+    {
+        const byte expectedB = 0xFF;
+        const ushort expectedProgramCounter = 0x0001;
+        _registers.A = 0xFF;
+        _instructions.LoadAIntoB(_registers);
+        Assert.That(_registers.B, Is.EqualTo(expectedB));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+    }
+
+    [Test]
+    public void LoadD8IntoC()
+    {
+        const byte expectedC = 0xAB;
+        const ushort expectedProgramCounter = 0x1011;
+        _registers.ProgramCounter = 0x100F;
+        _instructions.LoadD8IntoC(_registers);
+        Assert.That(_registers.C, Is.EqualTo(expectedC));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+    }
+
 }
