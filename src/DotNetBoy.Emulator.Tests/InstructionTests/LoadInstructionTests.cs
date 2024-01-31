@@ -110,6 +110,18 @@ public class LoadInstructionTests
     }
 
     [Test]
+    public void LoadLIntoA()
+    {
+        const byte expectedA = 0x45;
+        const ushort expectedProgramCounter = 0x0001;
+        _registers.L = 0x45;
+        _instructions.LoadLIntoA(_registers);
+        Assert.That(_registers.A, Is.EqualTo(expectedA));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+    }
+
+
+    [Test]
     public void LoadD8IntoB()
     {
         const byte expectedB = 0xAB;
