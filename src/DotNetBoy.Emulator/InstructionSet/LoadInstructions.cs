@@ -20,6 +20,8 @@ public class LoadInstructions : IInstructionSet
             { 0x0E, LoadD8IntoC },
             { 0x11, LoadD16IntoDE },
             { 0x21, LoadD16IntoHL },
+            { 0x2A, LoadAtAddressHLIntoAIncrementHL },
+            { 0x42, LoadDIntoB },
             { 0x47, LoadAIntoB },
             { 0x7B, LoadEIntoA },
             { 0x31, LoadD16IntoStackPointer },
@@ -109,9 +111,32 @@ public class LoadInstructions : IInstructionSet
 
     public void LoadAIntoB(ICpuRegistersService registers)
     {
-        registers.B=registers.A;
+        registers.B = registers.A;
         _clockService.Clock();
-        registers.ProgramCounter += 1;   
+        registers.ProgramCounter += 1;
+    }
+
+    /// <summary>
+    /// Load the contents of register D in to register B
+    /// </summary>
+    /// 
+    public void LoadDIntoB(ICpuRegistersService registers)
+    {
+        registers.B = registers.D;
+        _clockService.Clock();
+        registers.ProgramCounter += 1;
+    }
+
+    /// <summary>
+    /// Loads the byte located at the address in memory specified by the HL register into the A register and afterwards increment the HL register.
+    /// </summary>
+    /// 
+    public void LoadAtAddressHLIntoAIncrementHL(ICpuRegistersService registers)
+    {
+        registers.A = _mmuService.ReadByte(registers.HL);
+        registers.HL++;
+        registers.ProgramCounter += 1;
+        _clockService.Clock(2);
     }
 
     private void LoadByteIntoA(byte toLoad, ICpuRegistersService registers)

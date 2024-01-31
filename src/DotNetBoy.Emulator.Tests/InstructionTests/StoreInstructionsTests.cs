@@ -56,8 +56,23 @@ public class StoreInstructionsTests
         _mmuServiceMock.Setup(m => m.WriteByte(0xFFAA, It.IsAny<byte>())).Callback((ushort address, byte value) => writtenByte = value);
         _registers.A = 0xFF;
         _instructions.StoreAtAddressFF00PlusD8FromA(_registers);
-        
+
         Assert.That(writtenByte, Is.EqualTo(expectedWrittenByte));
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+    }
+
+    [Test]
+    public void StoreAtAddressDEFromA()
+    {
+        const byte expectedWrittenByte = 0xFF;
+        const ushort expectedProgramCounter = 0x0001;
+        byte writtenByte = 0x00;
+        _registers.DE = 0xFFAA;
+        _registers.A = 0xFF;
+        _mmuServiceMock.Setup(m => m.WriteByte(0xFFAA, It.IsAny<byte>())).Callback((ushort address, byte value) => writtenByte = value);
+        _instructions.StoreAtAddressDEFromA(_registers);
+        Assert.That(writtenByte, Is.EqualTo(expectedWrittenByte));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+        
     }
 }

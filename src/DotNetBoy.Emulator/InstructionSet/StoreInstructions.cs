@@ -16,10 +16,12 @@ public class StoreInstructions : IInstructionSet
         Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
         {
             { 0x08, StoreStackPointerAtAddressD16 },
-            { 0xE0, StoreAtAddressFF00PlusD8FromA}
+            { 0x12, StoreAtAddressDEFromA },
+            { 0xE0, StoreAtAddressFF00PlusD8FromA }
         };
         _clockService = clockService;
     }
+
     public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
 
     public void StoreStackPointerAtAddressD16(ICpuRegistersService registers)
@@ -34,7 +36,7 @@ public class StoreInstructions : IInstructionSet
     }
 
     /// <summary>
-    /// Load into register A the contents of the internal RAM, port register, or mode register at the address in the range 0xFF00-0xFFFF specified by the next byte
+    /// Store from register A the to internal RAM, port register, or mode register at the address in the range 0xFF00-0xFFFF specified by the next byte
     /// </summary>
     public void StoreAtAddressFF00PlusD8FromA(ICpuRegistersService registers)
     {
@@ -42,5 +44,16 @@ public class StoreInstructions : IInstructionSet
         _mmuService.WriteByte(address, registers.A);
         _clockService.Clock(3);
         registers.ProgramCounter += 2;
+    }
+
+    /// <summary>
+    /// Store the contents of the A register at the address in memory specified by the DE register
+    /// </summary>
+    /// 
+    public void StoreAtAddressDEFromA(ICpuRegistersService registers)
+    {
+        _mmuService.WriteByte(registers.DE, registers.A);
+        registers.ProgramCounter += 1;
+        _clockService.Clock(2);
     }
 }
