@@ -11,7 +11,7 @@ public class MmuService : IMmuService
         _byteUshortService = byteUshortService;
     }
 
-    public byte[] MappedMemory { get; } = new byte[ushort.MaxValue];
+    public byte[] MappedMemory { get; } = new byte[ushort.MaxValue + 1];
 
     public byte ReadByte(ushort address)
     {
@@ -20,7 +20,7 @@ public class MmuService : IMmuService
 
     public ushort ReadWordLittleEndian(ushort address)
     {
-        return _byteUshortService.CombineBytes(ReadByte((ushort)(address + 1)),ReadByte(address));
+        return _byteUshortService.CombineBytes(ReadByte((ushort)(address + 1)), ReadByte(address));
     }
 
     public void WriteByte(ushort address, byte value)
@@ -29,12 +29,12 @@ public class MmuService : IMmuService
             //Can't write to ROM
             return;
         MappedMemory[address] = value;
-        if(address is >= 0xC000 and <= 0xDDFF)
+        if (address is >= 0xC000 and <= 0xDDFF)
             //Also write to echo WRAM
-            MappedMemory[(ushort)(address+0x2000)] = value;
-        if(address is >= 0xE000 and <= 0xFDFF)
+            MappedMemory[(ushort)(address + 0x2000)] = value;
+        if (address is >= 0xE000 and <= 0xFDFF)
             //Also write to normal WRAM
-            MappedMemory[(ushort)(address-0x2000)] = value;
+            MappedMemory[(ushort)(address - 0x2000)] = value;
     }
 
     public void LoadRom(byte[] rom)

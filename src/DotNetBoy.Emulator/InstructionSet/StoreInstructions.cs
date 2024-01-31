@@ -17,7 +17,8 @@ public class StoreInstructions : IInstructionSet
         {
             { 0x08, StoreStackPointerAtAddressD16 },
             { 0x12, StoreAtAddressDEFromA },
-            { 0xE0, StoreAtAddressFF00PlusD8FromA }
+            { 0xE0, StoreAtAddressFF00PlusD8FromA },
+            { 0xEA, StoreAtA16FromA }
         };
         _clockService = clockService;
     }
@@ -55,5 +56,17 @@ public class StoreInstructions : IInstructionSet
         _mmuService.WriteByte(registers.DE, registers.A);
         registers.ProgramCounter += 1;
         _clockService.Clock(2);
+    }
+
+    /// <summary>
+    /// Store the contents of the A register at the address specified by the next word in memory
+    /// </summary>
+    /// Verified against BGB
+    public void StoreAtA16FromA(ICpuRegistersService registers)
+    {
+        var address = _mmuService.ReadWordLittleEndian((ushort)(registers.ProgramCounter + 1));
+        _mmuService.WriteByte(address, registers.A);
+        registers.ProgramCounter += 3;
+        _clockService.Clock(4);
     }
 }

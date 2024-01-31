@@ -21,8 +21,10 @@ public class LoadInstructions : IInstructionSet
             { 0x11, LoadD16IntoDE },
             { 0x21, LoadD16IntoHL },
             { 0x2A, LoadAtAddressHLIntoAIncrementHL },
+            { 0x3E, LoadD8IntoA },
             { 0x42, LoadDIntoB },
             { 0x47, LoadAIntoB },
+            { 0x78, LoadBIntoA },
             { 0x7B, LoadEIntoA },
             { 0x31, LoadD16IntoStackPointer },
             { 0xF0, LoadAtAddressFF00PlusD8IntoA },
@@ -78,6 +80,15 @@ public class LoadInstructions : IInstructionSet
     }
 
     /// <summary>
+    /// Load the next byte into the A register
+    /// </summary>
+    /// Verified with BGB
+    public void LoadD8IntoA(ICpuRegistersService registers)
+    {
+        registers.A = LoadD8(registers);
+    }
+
+    /// <summary>
     /// Load the next byte into the B register
     /// </summary>
     /// Verified with BGB
@@ -106,9 +117,22 @@ public class LoadInstructions : IInstructionSet
         registers.ProgramCounter += 2;
     }
 
+    /// <summary>
+    /// Load the contents of the E register into the A register 
+    /// </summary>
+    /// 
     public void LoadEIntoA(ICpuRegistersService registers)
     {
         LoadByteIntoA(registers.E, registers);
+    }
+
+    /// <summary>
+    /// Load the contents of the B register into the A register 
+    /// </summary>
+    /// 
+    public void LoadBIntoA(ICpuRegistersService registers)
+    {
+        LoadByteIntoA(registers.B, registers);
     }
 
     /// <summary>
