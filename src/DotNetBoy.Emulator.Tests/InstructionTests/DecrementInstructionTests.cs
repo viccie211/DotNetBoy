@@ -1,5 +1,6 @@
 ﻿#nullable disable
 using DotNetBoy.Emulator.InstructionSet;
+
 namespace DotNetBoy.Emulator.Tests.InstructionTests;
 
 public class DecrementInstructionTests
@@ -20,6 +21,8 @@ public class DecrementInstructionTests
             F = new FlagsRegister()
         };
     }
+
+    #region Decrement 8 bit register
 
     [Test]
     public void DecrementB()
@@ -100,4 +103,86 @@ public class DecrementInstructionTests
         Assert.That(_registers.F, Is.EqualTo(expectedFlagsRegister));
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
     }
+    
+    [Test]
+    public void DecrementC()
+    {
+        _registers.C = 0x02;
+        const byte expectedC = 0x01;
+        var expectedFlagsRegister = new FlagsRegister()
+        {
+            Zero = false,
+            Subtract = true,
+            HalfCarry = false,
+            Carry = false
+        };
+        const ushort expectedProgramCounter = 0x0001;
+
+        _instructions.DecrementC(_registers!);
+        Assert.That(_registers.C, Is.EqualTo(expectedC));
+        Assert.That(_registers.F, Is.EqualTo(expectedFlagsRegister));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+    }
+
+    [Test]
+    public void DecrementCToZero()
+    {
+        _registers.C = 1;
+        const int expectedC = 0;
+        var expectedFlagsRegister = new FlagsRegister()
+        {
+            Zero = true,
+            Subtract = true,
+            HalfCarry = false,
+            Carry = false
+        };
+        const ushort expectedProgramCounter = 0x0001;
+
+        _instructions.DecrementC(_registers!);
+        Assert.That(_registers.C, Is.EqualTo(expectedC));
+        Assert.That(_registers.F, Is.EqualTo(expectedFlagsRegister));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+    }
+
+    [Test]
+    public void DecrementCHalfCarry()
+    {
+        _registers.C = 0x10;
+        const int expectedC = 0x0F;
+        var expectedFlagsRegister = new FlagsRegister()
+        {
+            Zero = false,
+            Subtract = true,
+            HalfCarry = true,
+            Carry = false
+        };
+        const ushort expectedProgramCounter = 0x0001;
+
+        _instructions.DecrementC(_registers!);
+        Assert.That(_registers.C, Is.EqualTo(expectedC));
+        Assert.That(_registers.F, Is.EqualTo(expectedFlagsRegister));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+    }
+
+    [Test]
+    public void DecrementCUnderflow()
+    {
+        _registers.C = 0x00;
+        const int expectedC = 0xFF;
+        var expectedFlagsRegister = new FlagsRegister()
+        {
+            Zero = false,
+            Subtract = true,
+            HalfCarry = true,
+            Carry = false
+        };
+        const ushort expectedProgramCounter = 0x0001;
+
+        _instructions.DecrementC(_registers!);
+        Assert.That(_registers.C, Is.EqualTo(expectedC));
+        Assert.That(_registers.F, Is.EqualTo(expectedFlagsRegister));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+    }
+
+    #endregion
 }

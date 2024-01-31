@@ -13,15 +13,28 @@ public class DecrementInstructions : IInstructionSet
     {
         Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
         {
-            { 0x05, DecrementB }
+            { 0x05, DecrementB },
+            { 0x0D, DecrementC }
         };
         _clockService = clockService;
     }
 
-    //Verified with BGB
+    /// <summary>
+    /// Decrement the contents of the B register Z 1 H - 
+    /// </summary>
+    /// Verified against BGB 
     public void DecrementB(ICpuRegistersService registers)
     {
         registers.B = Decrement8Bits(registers.B, registers);
+    }
+    
+    /// <summary>
+    /// Decrement the contents of the C register Z 1 H - 
+    /// </summary>
+    /// Verified against BGB 
+    public void DecrementC(ICpuRegistersService registers)
+    {
+        registers.C = Decrement8Bits(registers.C, registers);
     }
 
     private byte Decrement8Bits(byte initial, ICpuRegistersService registers)
