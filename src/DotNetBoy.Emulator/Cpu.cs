@@ -29,6 +29,7 @@ public class Cpu(IMmuService mmuService, ICpuRegistersService cpuRegistersServic
                 Console.Write($" decoded as {decodedInstruction.Target!.GetType().Name}.{decodedInstruction.Method.Name}\n");
                 decodedInstruction(cpuRegistersService);
             }
+            Console.WriteLine(cpuRegistersService.ToString());
         }
         Console.WriteLine("Halted");
     }

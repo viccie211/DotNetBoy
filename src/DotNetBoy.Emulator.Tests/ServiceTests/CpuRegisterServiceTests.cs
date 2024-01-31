@@ -23,12 +23,12 @@ public class CpuRegistersServiceTests
         byte expectedC = 0;
         byte expectedD = 0xFF;
         byte expectedE = 0X56;
-        byte expectedFByte = 0xB0;
+        byte expectedFByte = 0x80;
         FlagsRegister expectedF = new FlagsRegister
         {
             Zero = true,
-            HalfCarry = true,
-            Carry = true,
+            HalfCarry = false,
+            Carry = false,
             Subtract = false,
         };
         byte expectedH = 0;

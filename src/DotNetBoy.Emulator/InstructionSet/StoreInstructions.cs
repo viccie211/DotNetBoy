@@ -49,7 +49,7 @@ public class StoreInstructions : IInstructionSet
     /// <summary>
     /// Store the contents of the A register at the address in memory specified by the DE register
     /// </summary>
-    /// 
+    /// Verified against BGB
     public void StoreAtAddressDEFromA(ICpuRegistersService registers)
     {
         _mmuService.WriteByte(registers.DE, registers.A);

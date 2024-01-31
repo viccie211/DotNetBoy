@@ -1,4 +1,5 @@
-﻿using DotNetBoy.Emulator.Models;
+﻿using System.Text;
+using DotNetBoy.Emulator.Models;
 using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.Services.Implementations;
@@ -70,10 +71,23 @@ public class CpuRegistersService(IByteUshortService byteUshortService) : ICpuReg
         C = 0;
         D = 0xFF;
         E = 0X56;
-        F = 0xB0;
+        F = 0x80;
         H = 0;
         L = 0x0D;
         ProgramCounter = 0x100;
         StackPointer = 0xFFFE;
+    }
+
+    public override string ToString()
+    {
+        var stringBuilder = new StringBuilder();
+        stringBuilder.Append($"AF= {AF:X4} | ");
+        stringBuilder.Append($"BC= {BC:X4} | ");
+        stringBuilder.Append($"DE= {DE:X4} | ");
+        stringBuilder.Append($"HL= {HL:X4} | ");
+        stringBuilder.Append($"SP= {StackPointer:X4} | ");
+        stringBuilder.Append($"PC= {ProgramCounter:X4}| ");
+        stringBuilder.Append($"F= {F}");
+        return stringBuilder.ToString();
     }
 }

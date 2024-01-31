@@ -52,6 +52,7 @@ public class LoadInstructions : IInstructionSet
     /// <summary>
     /// Load the next word in memory into the HL Register
     /// </summary>
+    /// Verified against BGB
     public void LoadD16IntoHL(ICpuRegistersService registers)
     {
         registers.HL = LoadD16(registers);
@@ -60,6 +61,7 @@ public class LoadInstructions : IInstructionSet
     /// <summary>
     /// Load the next word in memory into the DE register
     /// </summary>
+    /// Verified against BGB
     public void LoadD16IntoDE(ICpuRegistersService registers)
     {
         registers.DE = LoadD16(registers);
@@ -109,6 +111,10 @@ public class LoadInstructions : IInstructionSet
         LoadByteIntoA(registers.E, registers);
     }
 
+    /// <summary>
+    /// Load the contents of the A Register into the B register
+    /// </summary>
+    /// verified against BGB
     public void LoadAIntoB(ICpuRegistersService registers)
     {
         registers.B = registers.A;
@@ -130,7 +136,7 @@ public class LoadInstructions : IInstructionSet
     /// <summary>
     /// Loads the byte located at the address in memory specified by the HL register into the A register and afterwards increment the HL register.
     /// </summary>
-    /// 
+    /// Verified against BGB
     public void LoadAtAddressHLIntoAIncrementHL(ICpuRegistersService registers)
     {
         registers.A = _mmuService.ReadByte(registers.HL);

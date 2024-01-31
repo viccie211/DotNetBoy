@@ -22,4 +22,6 @@ public interface ICpuRegistersService
     bool Halted { get; set; }
 
     void Reset();
+
+    string ToString();
 }
