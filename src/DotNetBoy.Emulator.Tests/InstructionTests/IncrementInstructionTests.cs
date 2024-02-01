@@ -32,6 +32,17 @@ public class IncrementInstructionTests
         Assert.That(_registers.BC, Is.EqualTo(expectedBC));
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
     }
+    
+    [Test]
+    public void IncrementHL()
+    {
+        _registers.BC = 0x0000;
+        const ushort expectedHL = 0x0001;
+        const ushort expectedProgramCounter = 0x0001;
+        _instructions.IncrementHL(_registers);
+        Assert.That(_registers.HL, Is.EqualTo(expectedHL));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+    }
 
     [Test]
     public void IncrementBCOverflow()

@@ -86,6 +86,10 @@ public class JumpInstructions : IInstructionSet
         _clockService.Clock(4);
     }
 
+    /// <summary>
+    /// Jump relative according to the next (signed) byte in memory
+    /// </summary>
+    /// Verified against BGB
     public void JumpRelative8Bits(ICpuRegistersService registers)
     {
         JumpRelative(registers);

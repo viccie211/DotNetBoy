@@ -16,6 +16,7 @@ public class IncrementInstructions : IInstructionSet
             { 0x04, IncrementB },
             { 0x14, IncrementD },
             { 0x1C, IncrementE },
+            { 0x23, IncrementHL },
             { 0x33, IncrementStackPointer }
         };
         _clockService = clockService;
@@ -23,9 +24,22 @@ public class IncrementInstructions : IInstructionSet
 
     public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
 
+    /// <summary>
+    /// Increment the BC register by one. 
+    /// </summary>
+    /// Verified with BGB
     public void IncrementBC(ICpuRegistersService registers)
     {
         registers.BC = Increment16Bits(registers.BC, registers);
+    }
+
+    /// <summary>
+    /// Increment the HL register by one. 
+    /// </summary>
+    /// Verified with BGB
+    public void IncrementHL(ICpuRegistersService registers)
+    {
+        registers.HL = Increment16Bits(registers.HL, registers);
     }
 
     /// <summary>
