@@ -119,6 +119,17 @@ public class LoadInstructionTests
         Assert.That(_registers.A, Is.EqualTo(expectedA));
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
     }
+    
+    [Test]
+    public void LoadHIntoA()
+    {
+        const byte expectedA = 0x45;
+        const ushort expectedProgramCounter = 0x0001;
+        _registers.H = 0x45;
+        _instructions.LoadHIntoA(_registers);
+        Assert.That(_registers.A, Is.EqualTo(expectedA));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+    }
 
 
     [Test]

@@ -26,6 +26,7 @@ public class LoadInstructions : IInstructionSet
             { 0x47, LoadAIntoB },
             { 0x78, LoadBIntoA },
             { 0x7B, LoadEIntoA },
+            { 0x7C, LoadHIntoA },
             { 0x7D, LoadLIntoA },
             { 0x31, LoadD16IntoStackPointer },
             { 0xF0, LoadAtAddressFF00PlusD8IntoA },
@@ -134,6 +135,15 @@ public class LoadInstructions : IInstructionSet
     public void LoadEIntoA(ICpuRegistersService registers)
     {
         LoadByteIntoA(registers.E, registers);
+    }
+    
+    /// <summary>
+    /// Load the contents of the H register into the A register 
+    /// </summary>
+    /// 
+    public void LoadHIntoA(ICpuRegistersService registers)
+    {
+        LoadByteIntoA(registers.H, registers);
     }
 
     /// <summary>

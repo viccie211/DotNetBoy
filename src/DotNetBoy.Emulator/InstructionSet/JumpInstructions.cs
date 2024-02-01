@@ -14,6 +14,7 @@ public class JumpInstructions : IInstructionSet
         Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
         {
             { 0xC3, Jump },
+            { 0x18, JumpRelative8Bits },
             { 0x20, JumpRelative8BitsIfNotZero },
             { 0x28, JumpRelative8BitsIfZero },
             { 0xC9, Return },
@@ -25,7 +26,7 @@ public class JumpInstructions : IInstructionSet
     }
 
     public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; init; }
-    
+
     /// <summary>
     /// Jump to the address written next in memory.
     /// </summary>
@@ -35,7 +36,7 @@ public class JumpInstructions : IInstructionSet
         registers.ProgramCounter = _mmuService.ReadWordLittleEndian((ushort)(registers.ProgramCounter + 1));
         _clockService.Clock(4);
     }
-    
+
     /// <summary>
     /// If the zero flag is set jump relative according to the next (signed) byte in memory
     /// </summary>
@@ -85,18 +86,28 @@ public class JumpInstructions : IInstructionSet
         _clockService.Clock(4);
     }
 
+    public void JumpRelative8Bits(ICpuRegistersService registers)
+    {
+        JumpRelative(registers);
+    }
+
     private void JumpRelative8BitsIfTrue(bool shouldJump, ICpuRegistersService registers)
     {
         if (shouldJump)
         {
-            var relative = _mmuService.ReadByte((ushort)(registers.ProgramCounter+1));
-            registers.ProgramCounter+=2;
-            registers.ProgramCounter = InstructionUtilFunctions.SignedAdd(registers.ProgramCounter, relative);
-            _clockService.Clock(3);
+            JumpRelative(registers);
             return;
         }
 
         registers.ProgramCounter += 2;
         _clockService.Clock(2);
+    }
+
+    private void JumpRelative(ICpuRegistersService registers)
+    {
+        var relative = _mmuService.ReadByte((ushort)(registers.ProgramCounter + 1));
+        registers.ProgramCounter += 2;
+        registers.ProgramCounter = InstructionUtilFunctions.SignedAdd(registers.ProgramCounter, relative);
+        _clockService.Clock(3);
     }
 }
