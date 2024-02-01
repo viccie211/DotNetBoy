@@ -14,6 +14,7 @@ public class LogicInstructions : IInstructionSet
         _mmuService = mmuService;
         Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
         {
+            { 0xB1, ORCWithA },
             { 0xB7, ORAWithA },
             { 0xAF, XORAWithA },
             { 0xFE, CompareAToD8 },
@@ -44,9 +45,28 @@ public class LogicInstructions : IInstructionSet
         registers.ProgramCounter += 1;
     }
 
+    
+    /// <summary>
+    /// Perform a bit wise OR operation with the contents of the A register and the contents of the A register and store it in the A register
+    /// </summary>
+    /// Verified with BGB
     public void ORAWithA(ICpuRegistersService registers)
     {
-        registers.A = (byte)(registers.A | registers.A);
+        ORByteWithA(registers.A, registers);
+    }
+
+    /// <summary>
+    /// Perform a bit wise OR operation with the contents of the C register and the contents of the A register and store it in the A register
+    /// </summary>
+    /// Verified with BGB
+    public void ORCWithA(ICpuRegistersService registers)
+    {
+        ORByteWithA(registers.C, registers);
+    }
+
+    private void ORByteWithA(byte toOr, ICpuRegistersService registers)
+    {
+        registers.A = (byte)(toOr | registers.A);
         registers.F.Zero = registers.A == 0;
         registers.F.Subtract = false;
         registers.F.Carry = false;

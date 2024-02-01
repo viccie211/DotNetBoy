@@ -15,6 +15,8 @@ public class PushPopInstructions : IInstructionSet
     {
         Instructions = new Dictionary<byte, Action<ICpuRegistersService>>
         {
+            { 0xC1, PopBC },
+            { 0xC5, PushBC },
             { 0xE1, PopHL },
             { 0xE5, PushHL },
             { 0xF1, PopAF },
@@ -23,6 +25,24 @@ public class PushPopInstructions : IInstructionSet
         _clockService = clockService;
         _mmuService = mmuService;
         _byteUshortService = byteUshortService;
+    }
+    
+    /// <summary>
+    /// Pop the first word of the stack and store it in the BC register
+    /// </summary>
+    /// Verified against BGB
+    public void PopBC(ICpuRegistersService registers)
+    {
+        registers.BC = PopWord(registers);
+    }
+    
+    /// <summary>
+    /// Push the contents of the BC register to the stack
+    /// </summary>
+    /// Verified against BGB
+    public void PushBC(ICpuRegistersService registers)
+    {
+        PushWord(registers.BC, registers);
     }
 
     /// <summary>
