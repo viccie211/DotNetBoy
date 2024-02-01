@@ -30,6 +30,7 @@ public class LoadInstructions : IInstructionSet
             { 0x7D, LoadLIntoA },
             { 0x31, LoadD16IntoStackPointer },
             { 0xF0, LoadAtAddressFF00PlusD8IntoA },
+            { 0xFA, LoadAtAddressA16IntoA }
         };
         _mmuService = mmuService;
         _clockService = clockService;
@@ -136,7 +137,7 @@ public class LoadInstructions : IInstructionSet
     {
         LoadByteIntoA(registers.E, registers);
     }
-    
+
     /// <summary>
     /// Load the contents of the H register into the A register 
     /// </summary>
@@ -187,6 +188,17 @@ public class LoadInstructions : IInstructionSet
         registers.HL++;
         registers.ProgramCounter += 1;
         _clockService.Clock(2);
+    }
+
+    /// <summary>
+    /// Loads the byte located at the address specified by the next word in memory into the A register
+    /// </summary>
+    public void LoadAtAddressA16IntoA(ICpuRegistersService registers)
+    {
+        var address = _mmuService.ReadWordLittleEndian((ushort)(registers.ProgramCounter + 1));
+        registers.A = _mmuService.ReadByte(address);
+        registers.ProgramCounter += 3;
+        _clockService.Clock(4);
     }
 
     private void LoadByteIntoA(byte toLoad, ICpuRegistersService registers)

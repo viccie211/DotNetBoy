@@ -13,6 +13,7 @@ public class LoadInstructionTests
     {
         var mmuServiceMock = new Mock<IMmuService>();
         mmuServiceMock.Setup(m => m.ReadWordLittleEndian(0x0001)).Returns(0xFFAA);
+        mmuServiceMock.Setup(m => m.ReadByte(0xFFAA)).Returns(0x88);
         mmuServiceMock.Setup(m => m.ReadByte(0x1010)).Returns(0xAB);
         mmuServiceMock.Setup(m => m.ReadByte(0xFFAB)).Returns(0x12);
 
@@ -198,6 +199,16 @@ public class LoadInstructionTests
         _instructions.LoadAtAddressHLIntoAIncrementHL(_registers);
         Assert.That(_registers.A, Is.EqualTo(expectedA));
         Assert.That(_registers.HL, Is.EqualTo(expectedHL));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+    }
+
+    [Test]
+    public void LoadAtAddressA16IntoA()
+    {
+        const byte expectedA = 0x88;
+        const ushort expectedProgramCounter = 0x0003;
+        _instructions.LoadAtAddressA16IntoA(_registers);
+        Assert.That(_registers.A, Is.EqualTo(expectedA));
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
     }
 
