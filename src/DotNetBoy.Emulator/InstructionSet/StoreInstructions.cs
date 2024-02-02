@@ -29,7 +29,7 @@ public class StoreInstructions : IInstructionSet
     {
         var lower = _byteUshortService.LowerByteOfSixteenBits(registers.StackPointer);
         var upper = _byteUshortService.UpperByteOfSixteenBits(registers.StackPointer);
-        var targetAddress = _mmuService.ReadWordLittleEndian((ushort)(registers.ProgramCounter + 1));
+        var targetAddress = _mmuService.ReadWordLittleEndian(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
         _mmuService.WriteByte(targetAddress, lower);
         _mmuService.WriteByte((ushort)(targetAddress + 1), upper);
         _clockService.Clock(5);
@@ -41,7 +41,7 @@ public class StoreInstructions : IInstructionSet
     /// </summary>
     public void StoreAtAddressFF00PlusD8FromA(ICpuRegistersService registers)
     {
-        var address = (ushort)(0xFF00 + _mmuService.ReadByte((ushort)(registers.ProgramCounter + 1)));
+        var address = (ushort)(0xFF00 + _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter)));
         _mmuService.WriteByte(address, registers.A);
         _clockService.Clock(3);
         registers.ProgramCounter += 2;
@@ -64,7 +64,7 @@ public class StoreInstructions : IInstructionSet
     /// Verified against BGB
     public void StoreAtA16FromA(ICpuRegistersService registers)
     {
-        var address = _mmuService.ReadWordLittleEndian((ushort)(registers.ProgramCounter + 1));
+        var address = _mmuService.ReadWordLittleEndian(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
         _mmuService.WriteByte(address, registers.A);
         registers.ProgramCounter += 3;
         _clockService.Clock(4);

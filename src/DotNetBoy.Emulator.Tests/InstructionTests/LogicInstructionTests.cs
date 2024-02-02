@@ -16,6 +16,7 @@ public class LogicInstructionsTests
         mmuServiceMock.Setup(m => m.ReadByte(0x0010)).Returns(0x01);
         mmuServiceMock.Setup(m => m.ReadByte(0x0020)).Returns(0x10);
         mmuServiceMock.Setup(m => m.ReadByte(0x0030)).Returns(0x0F);
+        mmuServiceMock.Setup(m => m.ReadByte(0x0041)).Returns(0xFF);
         var clockServiceMock = new Mock<IClockService>();
 
         _registers = new TestCpuRegisterService();
@@ -79,7 +80,7 @@ public class LogicInstructionsTests
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
         Assert.That(_registers.F, Is.EqualTo(expectedF));
     }
-    
+
     [Test]
     public void ORCWithAZero()
     {
@@ -118,7 +119,7 @@ public class LogicInstructionsTests
         Assert.That(_registers.A, Is.EqualTo(expectedA));
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
         Assert.That(_registers.F, Is.EqualTo(expectedF));
-        
+
         expectedF = new FlagsRegister()
         {
             Zero = false,
@@ -133,7 +134,7 @@ public class LogicInstructionsTests
         Assert.That(_registers.A, Is.EqualTo(expectedA));
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
         Assert.That(_registers.F, Is.EqualTo(expectedF));
-        
+
         expectedF = new FlagsRegister()
         {
             Zero = false,
@@ -168,7 +169,7 @@ public class LogicInstructionsTests
         Assert.That(_registers.A, Is.EqualTo(expectedA));
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
         Assert.That(_registers.F, Is.EqualTo(expectedF));
-        
+
         expectedF = new FlagsRegister()
         {
             Zero = false,
@@ -183,7 +184,7 @@ public class LogicInstructionsTests
         Assert.That(_registers.A, Is.EqualTo(expectedA));
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
         Assert.That(_registers.F, Is.EqualTo(expectedF));
-        
+
         expectedF = new FlagsRegister()
         {
             Zero = false,
@@ -195,6 +196,84 @@ public class LogicInstructionsTests
         _registers.C = 0x00;
         _registers.ProgramCounter = 0x0000;
         _instructions.ORCWithA(_registers);
+        Assert.That(_registers.A, Is.EqualTo(expectedA));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+        Assert.That(_registers.F, Is.EqualTo(expectedF));
+    }
+
+    [Test]
+    public void ANDD8WithAZeroZero()
+    {
+        const byte expectedA = 0x00;
+        const ushort expectedProgramCounter = 0x0002;
+        var expectedF = new FlagsRegister()
+        {
+            Zero = true,
+            Subtract = false,
+            HalfCarry = true,
+            Carry = false,
+        };
+        _registers.A = 0;
+        _instructions.ANDD8WithA(_registers);
+        Assert.That(_registers.A, Is.EqualTo(expectedA));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+        Assert.That(_registers.F, Is.EqualTo(expectedF));
+    }
+
+    [Test]
+    public void ANDD8WithAZeroFF()
+    {
+        const byte expectedA = 0x00;
+        const ushort expectedProgramCounter = 0x0002;
+        var expectedF = new FlagsRegister()
+        {
+            Zero = true,
+            Subtract = false,
+            HalfCarry = true,
+            Carry = false,
+        };
+        _registers.A = 0xFF;
+        _instructions.ANDD8WithA(_registers);
+        Assert.That(_registers.A, Is.EqualTo(expectedA));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+        Assert.That(_registers.F, Is.EqualTo(expectedF));
+    }
+
+    [Test]
+    public void ANDD8WithAFFZero()
+    {
+        const byte expectedA = 0x00;
+        const ushort expectedProgramCounter = 0x0042;
+        var expectedF = new FlagsRegister()
+        {
+            Zero = true,
+            Subtract = false,
+            HalfCarry = true,
+            Carry = false,
+        };
+        _registers.ProgramCounter = 0x0040;
+        _registers.A = 0x00;
+        _instructions.ANDD8WithA(_registers);
+        Assert.That(_registers.A, Is.EqualTo(expectedA));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+        Assert.That(_registers.F, Is.EqualTo(expectedF));
+    }
+
+    [Test]
+    public void ANDD8WithAFFFF()
+    {
+        const byte expectedA = 0xFF;
+        const ushort expectedProgramCounter = 0x0042;
+        var expectedF = new FlagsRegister()
+        {
+            Zero = false,
+            Subtract = false,
+            HalfCarry = true,
+            Carry = false,
+        };
+        _registers.ProgramCounter = 0x0040;
+        _registers.A = 0xFF;
+        _instructions.ANDD8WithA(_registers);
         Assert.That(_registers.A, Is.EqualTo(expectedA));
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
         Assert.That(_registers.F, Is.EqualTo(expectedF));

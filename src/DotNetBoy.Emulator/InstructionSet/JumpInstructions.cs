@@ -33,7 +33,7 @@ public class JumpInstructions : IInstructionSet
     /// Verified against BGB
     public void Jump(ICpuRegistersService registers)
     {
-        registers.ProgramCounter = _mmuService.ReadWordLittleEndian((ushort)(registers.ProgramCounter + 1));
+        registers.ProgramCounter = _mmuService.ReadWordLittleEndian(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
         _clockService.Clock(4);
     }
 
@@ -68,7 +68,7 @@ public class JumpInstructions : IInstructionSet
         _mmuService.WriteByte(registers.StackPointer, upper);
         registers.StackPointer--;
         _mmuService.WriteByte(registers.StackPointer, lower);
-        registers.ProgramCounter = _mmuService.ReadWordLittleEndian((ushort)(registers.ProgramCounter + 1));
+        registers.ProgramCounter = _mmuService.ReadWordLittleEndian(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
         _clockService.Clock(6);
     }
 
@@ -109,7 +109,7 @@ public class JumpInstructions : IInstructionSet
 
     private void JumpRelative(ICpuRegistersService registers)
     {
-        var relative = _mmuService.ReadByte((ushort)(registers.ProgramCounter + 1));
+        var relative = _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
         registers.ProgramCounter += 2;
         registers.ProgramCounter = InstructionUtilFunctions.SignedAdd(registers.ProgramCounter, relative);
         _clockService.Clock(3);

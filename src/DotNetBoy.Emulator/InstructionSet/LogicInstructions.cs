@@ -17,6 +17,7 @@ public class LogicInstructions : IInstructionSet
             { 0xB1, ORCWithA },
             { 0xB7, ORAWithA },
             { 0xAF, XORAWithA },
+            { 0xE6, ANDD8WithA },
             { 0xFE, CompareAToD8 },
         };
         _clockService = clockService;
@@ -24,7 +25,7 @@ public class LogicInstructions : IInstructionSet
 
     public void CompareAToD8(ICpuRegistersService registers)
     {
-        var d8 = _mmuService.ReadByte((ushort)(registers.ProgramCounter + 1));
+        var d8 = _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
         var result = (byte)(registers.A - d8);
         registers.F.Subtract = true;
         registers.F.Zero = result == 0;
@@ -45,7 +46,7 @@ public class LogicInstructions : IInstructionSet
         registers.ProgramCounter += 1;
     }
 
-    
+
     /// <summary>
     /// Perform a bit wise OR operation with the contents of the A register and the contents of the A register and store it in the A register
     /// </summary>
@@ -64,6 +65,21 @@ public class LogicInstructions : IInstructionSet
         ORByteWithA(registers.C, registers);
     }
 
+    /// <summary>
+    /// Perform a bit wise AND with the next byte in memory and the contents of the A register and store it in the A register
+    /// Flags Z 0 H:1 0
+    /// </summary>
+    /// Verified against BGB
+    public void ANDD8WithA(ICpuRegistersService registers)
+    {
+        var toAnd = _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
+        //Since it's a D8 we need to add one extra to the PC and pump the clock once more than normal
+        registers.ProgramCounter += 1;
+        _clockService.Clock();
+        ANDByteWithA(toAnd, registers);
+    }
+
+
     private void ORByteWithA(byte toOr, ICpuRegistersService registers)
     {
         registers.A = (byte)(toOr | registers.A);
@@ -71,6 +87,17 @@ public class LogicInstructions : IInstructionSet
         registers.F.Subtract = false;
         registers.F.Carry = false;
         registers.F.HalfCarry = false;
+        registers.ProgramCounter += 1;
+        _clockService.Clock();
+    }
+
+    private void ANDByteWithA(byte toAnd, ICpuRegistersService registers)
+    {
+        registers.A = (byte)(toAnd & registers.A);
+        registers.F.Zero = registers.A == 0;
+        registers.F.Subtract = false;
+        registers.F.HalfCarry = true;
+        registers.F.Carry = false;
         registers.ProgramCounter += 1;
         _clockService.Clock();
     }

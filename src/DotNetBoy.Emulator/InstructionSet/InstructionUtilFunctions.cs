@@ -2,7 +2,7 @@
 
 public class InstructionUtilFunctions
 {
-    
+
     /// <summary>
     /// Calculate the HalfCarry for an 8 bit addition
     /// </summary>
@@ -13,7 +13,7 @@ public class InstructionUtilFunctions
     {
         return (((a & 0xF) + (b & 0xF)) & 0x10) == 0x10;
     }
-    
+
     /// <summary>
     /// Calculate the half carry for an 8 bit subtraction
     /// </summary>
@@ -36,4 +36,10 @@ public class InstructionUtilFunctions
         sbyte s = unchecked((sbyte)add);
         return (ushort)(target + s);
     }
+
+    public static ushort NextAddress(ushort programCounter)
+    {
+        return (ushort)(programCounter + 1);
+    }
+
 }
