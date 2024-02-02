@@ -13,10 +13,11 @@ public class JumpInstructions : IInstructionSet
     {
         Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
         {
-            { 0xC3, Jump },
             { 0x18, JumpRelative8Bits },
             { 0x20, JumpRelative8BitsIfNotZero },
             { 0x28, JumpRelative8BitsIfZero },
+            { 0xC3, Jump },
+            { 0xC4, CallA16NonZero },
             { 0xC9, Return },
             { 0xCD, CallA16 }
         };
@@ -43,7 +44,7 @@ public class JumpInstructions : IInstructionSet
     /// Verified against BGB
     public void JumpRelative8BitsIfNotZero(ICpuRegistersService registers)
     {
-        JumpRelative8BitsIfTrue(!registers.F.Zero, registers);
+        JumpRelative8BitsOnCondition(!registers.F.Zero, registers);
     }
 
     /// <summary>
@@ -52,7 +53,7 @@ public class JumpInstructions : IInstructionSet
     /// Verified against BGB
     public void JumpRelative8BitsIfZero(ICpuRegistersService registers)
     {
-        JumpRelative8BitsIfTrue(registers.F.Zero, registers);
+        JumpRelative8BitsOnCondition(registers.F.Zero, registers);
     }
 
     /// <summary>
@@ -61,15 +62,7 @@ public class JumpInstructions : IInstructionSet
     /// Verified against BGB
     public void CallA16(ICpuRegistersService registers)
     {
-        var toStore = (ushort)(registers.ProgramCounter + 3);
-        var lower = _byteUshortService.LowerByteOfSixteenBits(toStore);
-        var upper = _byteUshortService.UpperByteOfSixteenBits(toStore);
-        registers.StackPointer--;
-        _mmuService.WriteByte(registers.StackPointer, upper);
-        registers.StackPointer--;
-        _mmuService.WriteByte(registers.StackPointer, lower);
-        registers.ProgramCounter = _mmuService.ReadWordLittleEndian(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
-        _clockService.Clock(6);
+        Call(registers);
     }
 
     /// <summary>
@@ -95,7 +88,13 @@ public class JumpInstructions : IInstructionSet
         JumpRelative(registers);
     }
 
-    private void JumpRelative8BitsIfTrue(bool shouldJump, ICpuRegistersService registers)
+    //TODO: Write unit tests
+    public void CallA16NonZero(ICpuRegistersService registers)
+    {
+        CallA16OnCondition(!registers.F.Zero, registers);
+    }
+
+    private void JumpRelative8BitsOnCondition(bool shouldJump, ICpuRegistersService registers)
     {
         if (shouldJump)
         {
@@ -113,5 +112,30 @@ public class JumpInstructions : IInstructionSet
         registers.ProgramCounter += 2;
         registers.ProgramCounter = InstructionUtilFunctions.SignedAdd(registers.ProgramCounter, relative);
         _clockService.Clock(3);
+    }
+
+    private void CallA16OnCondition(bool shouldCall, ICpuRegistersService registers)
+    {
+        if (shouldCall)
+        {
+            Call(registers);
+            return;
+        }
+
+        registers.ProgramCounter += 3;
+        _clockService.Clock(3);
+    }
+
+    private void Call(ICpuRegistersService registers)
+    {
+        var toStore = (ushort)(registers.ProgramCounter + 3);
+        var lower = _byteUshortService.LowerByteOfSixteenBits(toStore);
+        var upper = _byteUshortService.UpperByteOfSixteenBits(toStore);
+        registers.StackPointer--;
+        _mmuService.WriteByte(registers.StackPointer, upper);
+        registers.StackPointer--;
+        _mmuService.WriteByte(registers.StackPointer, lower);
+        registers.ProgramCounter = _mmuService.ReadWordLittleEndian(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
+        _clockService.Clock(6);
     }
 }
