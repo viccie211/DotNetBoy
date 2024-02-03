@@ -1,5 +1,3 @@
-using DotNetBoy.Emulator.InstructionSet;
-
 namespace DotNetBoy.Emulator.Tests.InstructionTests.PushPopInstructionTests;
 
 public class PopInstructionsTests : PushPopInstructionsTestsBase
