@@ -18,12 +18,12 @@ public class LogicInstructions : IInstructionSet
             { 0xB7, ORAWithA },
             { 0xAF, XORAWithA },
             { 0xE6, ANDD8WithA },
-            { 0xFE, CompareAToD8 },
+            { 0xFE, CompareD8WithA },
         };
         _clockService = clockService;
     }
 
-    public void CompareAToD8(ICpuRegistersService registers)
+    public void CompareD8WithA(ICpuRegistersService registers)
     {
         var d8 = _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
         var result = (byte)(registers.A - d8);
