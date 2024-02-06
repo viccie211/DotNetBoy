@@ -17,6 +17,8 @@ public class IncrementInstructions : IInstructionSet
             { 0x14, IncrementD },
             { 0x1C, IncrementE },
             { 0x23, IncrementHL },
+            { 0x24, IncrementH },
+            { 0x2C, IncrementL },
             { 0x33, IncrementStackPointer }
         };
         _clockService = clockService;
@@ -67,6 +69,25 @@ public class IncrementInstructions : IInstructionSet
     public void IncrementE(ICpuRegistersService registers)
     {
         registers.E = Increment8Bits(registers.E, registers);
+    }
+    
+    /// <summary>
+    /// Increment the H register by one. Sets Z 0 H - 
+    /// </summary>
+    /// Verified against BGB
+    public void IncrementH(ICpuRegistersService registers)
+    {
+        registers.H = Increment8Bits(registers.H, registers);
+    }
+
+    
+    /// <summary>
+    /// Increment the L register by one. Sets Z 0 H - 
+    /// </summary>
+    /// Verified against BGB
+    public void IncrementL(ICpuRegistersService registers)
+    {
+        registers.L = Increment8Bits(registers.L, registers);
     }
 
     public void IncrementStackPointer(ICpuRegistersService registers)
