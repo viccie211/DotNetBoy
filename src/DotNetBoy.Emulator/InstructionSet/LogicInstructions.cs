@@ -16,6 +16,7 @@ public class LogicInstructions : IInstructionSet
         {
             { 0xB1, ORCWithA },
             { 0xB7, ORAWithA },
+            { 0xA9, XORCWithA },
             { 0xAF, XORAWithA },
             { 0xE6, ANDD8WithA },
             { 0xFE, CompareD8WithA },
@@ -35,17 +36,20 @@ public class LogicInstructions : IInstructionSet
         registers.ProgramCounter += 2;
     }
 
-    public void XORAWithA(ICpuRegistersService registers)
+    /// <summary>
+    /// Perform a bit wise XOR with the contents of the C register and the contents of the A register and store it in the A register
+    /// Sets Z 0 0 0
+    /// </summary>
+    /// Verified against BGB
+    public void XORCWithA(ICpuRegistersService registers)
     {
-        registers.A = (byte)(registers.A ^ registers.A);
-        registers.F.Zero = registers.A == 0;
-        registers.F.Subtract = false;
-        registers.F.Carry = false;
-        registers.F.HalfCarry = false;
-        _clockService.Clock();
-        registers.ProgramCounter += 1;
+        XORByteWithA(registers.C, registers);
     }
 
+    public void XORAWithA(ICpuRegistersService registers)
+    {
+        XORByteWithA(registers.A, registers);
+    }
 
     /// <summary>
     /// Perform a bit wise OR operation with the contents of the A register and the contents of the A register and store it in the A register
@@ -79,7 +83,6 @@ public class LogicInstructions : IInstructionSet
         ANDByteWithA(toAnd, registers);
     }
 
-
     private void ORByteWithA(byte toOr, ICpuRegistersService registers)
     {
         registers.A = (byte)(toOr | registers.A);
@@ -100,6 +103,17 @@ public class LogicInstructions : IInstructionSet
         registers.F.Carry = false;
         registers.ProgramCounter += 1;
         _clockService.Clock();
+    }
+
+    private void XORByteWithA(byte toXOR, ICpuRegistersService registers)
+    {
+        registers.A = (byte)(toXOR ^ registers.A);
+        registers.F.Zero = registers.A == 0;
+        registers.F.Subtract = false;
+        registers.F.Carry = false;
+        registers.F.HalfCarry = false;
+        _clockService.Clock();
+        registers.ProgramCounter += 1;
     }
 
     public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
