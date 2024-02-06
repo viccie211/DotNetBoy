@@ -21,4 +21,6 @@ mmuService.LoadRom(rom);
 
 var ppuService = scope.ServiceProvider.GetService<IPpuService>();
 var cpu = scope.ServiceProvider.GetService<Cpu>()!;
+var instructionSetService = scope.ServiceProvider.GetService<IInstructionSetService>()!;
+Console.WriteLine($"Implemented {instructionSetService.NonPrefixedInstructions.Count(x => x != null)} non prefixed instructions and {instructionSetService.PrefixedInstructions.Count(x => x != null)} prefixed instructions");
 cpu.Loop();
