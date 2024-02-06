@@ -19,6 +19,7 @@ public class LoadInstructions : IInstructionSet
             { 0x06, LoadD8IntoB },
             { 0x0E, LoadD8IntoC },
             { 0x11, LoadD16IntoDE },
+            { 0x1A, LoadAtAddressDEIntoA },
             { 0x21, LoadD16IntoHL },
             { 0x2A, LoadAtAddressHLIntoAIncrementHL },
             { 0x3E, LoadD8IntoA },
@@ -70,6 +71,17 @@ public class LoadInstructions : IInstructionSet
     public void LoadD16IntoDE(ICpuRegistersService registers)
     {
         registers.DE = LoadD16(registers);
+    }
+
+    /// <summary>
+    /// Load a byte at the address in the BC register into the A register
+    /// </summary>
+    /// Verified with BGB
+    public void LoadAtAddressDEIntoA(ICpuRegistersService registers)
+    {
+        registers.A = _mmuService.ReadByte(registers.DE);
+        _clockService.Clock(2);
+        registers.ProgramCounter += 1;
     }
 
     // /// <summary>

@@ -40,6 +40,17 @@ public class LoadAtAddressTests : LoadInstructionTestsBase
         Assert.That(_registers.HL, Is.EqualTo(expectedHL));
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
     }
+    
+    [Test]
+    public void AtAddressDEIntoA()
+    {
+        const byte expectedA = 0xAB;
+        const ushort expectedProgramCounter = 0x0001;
+        _registers.DE = 0x1010;
+        _instructions.LoadAtAddressDEIntoA(_registers);
+        Assert.That(_registers.A, Is.EqualTo(expectedA));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+    }
 
     [Test]
     public void AtAddressA16IntoA()

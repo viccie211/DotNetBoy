@@ -25,6 +25,28 @@ public class Increment16BitsRegisterTests : IncrementInstructionTestsBase
     }
     
     [Test]
+    public void IncrementDE()
+    {
+        _registers.BC = 0x0000;
+        const ushort expectedDE = 0x0001;
+        const ushort expectedProgramCounter = 0x0001;
+        _instructions.IncrementDE(_registers);
+        Assert.That(_registers.DE, Is.EqualTo(expectedDE));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+    }
+
+    [Test]
+    public void IncrementDEOverflow()
+    {
+        _registers.DE = 0xFFFF;
+        const ushort expectedDE = 0x0000;
+        const ushort expectedProgramCounter = 0x0001;
+        _instructions.IncrementDE(_registers);
+        Assert.That(_registers.DE, Is.EqualTo(expectedDE));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+    }
+    
+    [Test]
     public void IncrementHL()
     {
         _registers.BC = 0x0000;

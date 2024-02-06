@@ -14,6 +14,7 @@ public class IncrementInstructions : IInstructionSet
         {
             { 0x03, IncrementBC },
             { 0x04, IncrementB },
+            { 0x13, IncrementDE },
             { 0x14, IncrementD },
             { 0x1C, IncrementE },
             { 0x23, IncrementHL },
@@ -33,6 +34,15 @@ public class IncrementInstructions : IInstructionSet
     public void IncrementBC(ICpuRegistersService registers)
     {
         registers.BC = Increment16Bits(registers.BC, registers);
+    }
+
+    /// <summary>
+    /// Increment the DE register by one. 
+    /// </summary>
+    /// Verified with BGB
+    public void IncrementDE(ICpuRegistersService registers)
+    {
+        registers.DE = Increment16Bits(registers.DE, registers);
     }
 
     /// <summary>
@@ -70,7 +80,7 @@ public class IncrementInstructions : IInstructionSet
     {
         registers.E = Increment8Bits(registers.E, registers);
     }
-    
+
     /// <summary>
     /// Increment the H register by one. Sets Z 0 H - 
     /// </summary>
@@ -80,7 +90,6 @@ public class IncrementInstructions : IInstructionSet
         registers.H = Increment8Bits(registers.H, registers);
     }
 
-    
     /// <summary>
     /// Increment the L register by one. Sets Z 0 H - 
     /// </summary>
