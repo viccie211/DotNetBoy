@@ -26,8 +26,6 @@ public class LoadAtAddressTests : LoadInstructionTestsBase
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
     }
 
-
-
     [Test]
     public void AtAddressHLIntoAIncrementHL()
     {
@@ -36,6 +34,45 @@ public class LoadAtAddressTests : LoadInstructionTestsBase
         const ushort expectedProgramCounter = 0x0001;
         _registers.HL = 0x1010;
         _instructions.LoadAtAddressHLIntoAIncrementHL(_registers);
+        Assert.That(_registers.A, Is.EqualTo(expectedA));
+        Assert.That(_registers.HL, Is.EqualTo(expectedHL));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+    }
+
+    [Test]
+    public void AtAddressHLIntoAIncrementHLOverflow()
+    {
+        const byte expectedA = 0x34;
+        const ushort expectedHL = 0x0000;
+        const ushort expectedProgramCounter = 0x0001;
+        _registers.HL = 0xFFFF;
+        _instructions.LoadAtAddressHLIntoAIncrementHL(_registers);
+        Assert.That(_registers.A, Is.EqualTo(expectedA));
+        Assert.That(_registers.HL, Is.EqualTo(expectedHL));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+    }
+
+        [Test]
+    public void AtAddressHLIntoADecrementHL()
+    {
+        const byte expectedA = 0xAB;
+        const ushort expectedHL = 0x100F;
+        const ushort expectedProgramCounter = 0x0001;
+        _registers.HL = 0x1010;
+        _instructions.LoadAtAddressHLIntoADecrementHL(_registers);
+        Assert.That(_registers.A, Is.EqualTo(expectedA));
+        Assert.That(_registers.HL, Is.EqualTo(expectedHL));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+    }
+
+    [Test]
+    public void AtAddressHLIntoADecrementHLUnderflow()
+    {
+        const byte expectedA = 0x67;
+        const ushort expectedHL = 0xFFFF;
+        const ushort expectedProgramCounter = 0x0001;
+        _registers.HL = 0x0000;
+        _instructions.LoadAtAddressHLIntoADecrementHL(_registers);
         Assert.That(_registers.A, Is.EqualTo(expectedA));
         Assert.That(_registers.HL, Is.EqualTo(expectedHL));
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));

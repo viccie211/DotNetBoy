@@ -22,6 +22,7 @@ public class LoadInstructions : IInstructionSet
             { 0x1A, LoadAtAddressDEIntoA },
             { 0x21, LoadD16IntoHL },
             { 0x2A, LoadAtAddressHLIntoAIncrementHL },
+            { 0x32, LoadAtAddressHLIntoADecrementHL },
             { 0x3E, LoadD8IntoA },
             { 0x31, LoadD16IntoStackPointer },
             { 0xF0, LoadAtAddressFF00PlusD8IntoA },
@@ -114,6 +115,18 @@ public class LoadInstructions : IInstructionSet
     {
         registers.A = _mmuService.ReadByte(registers.HL);
         registers.HL++;
+        registers.ProgramCounter += 1;
+        _clockService.Clock(2);
+    }
+
+    /// <summary>
+    /// Loads the byte located at the address in memory specified by the HL register into the A register and afterwards decrement the HL register.
+    /// </summary>
+    /// 
+    public void LoadAtAddressHLIntoADecrementHL(ICpuRegistersService registers)
+    {
+        registers.A = _mmuService.ReadByte(registers.HL);
+        registers.HL--;
         registers.ProgramCounter += 1;
         _clockService.Clock(2);
     }

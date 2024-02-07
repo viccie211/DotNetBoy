@@ -30,6 +30,10 @@ public class Cpu(IMmuService mmuService, ICpuRegistersService cpuRegistersServic
                 decodedInstruction(cpuRegistersService);
             }
             Console.WriteLine(cpuRegistersService.ToString());
+            if(cpuRegistersService.ProgramCounter==0xC88F)
+            {
+                Console.WriteLine("breakpoint");
+            }
         }
         Console.WriteLine("Halted");
     }

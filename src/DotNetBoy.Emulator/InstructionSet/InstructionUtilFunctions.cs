@@ -25,7 +25,12 @@ public class InstructionUtilFunctions
         return (((a & 0xF) - (b & 0xF)) & 0x10) == 0x10;
     }
 
-    public static bool CarryFor8BitSubtract(byte a, byte b)
+    public static bool CarryFor8BitAddition(byte a, byte b)
+    {
+        return a + b > byte.MaxValue;
+    }
+
+    public static bool CarryFor8BitSubtraction(byte a, byte b)
     {
         return a < b;
     }

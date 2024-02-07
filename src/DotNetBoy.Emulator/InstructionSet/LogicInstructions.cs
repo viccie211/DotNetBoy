@@ -31,7 +31,7 @@ public class LogicInstructions : IInstructionSet
         registers.F.Subtract = true;
         registers.F.Zero = result == 0;
         registers.F.HalfCarry = InstructionUtilFunctions.HalfCarryFor8BitSubtraction(registers.A, d8);
-        registers.F.Carry = InstructionUtilFunctions.CarryFor8BitSubtract(registers.A, d8);
+        registers.F.Carry = InstructionUtilFunctions.CarryFor8BitSubtraction(registers.A, d8);
         _clockService.Clock(2);
         registers.ProgramCounter += 2;
     }

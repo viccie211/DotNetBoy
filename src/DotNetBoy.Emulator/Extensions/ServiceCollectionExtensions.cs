@@ -24,6 +24,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<StoreInstructions>();
         serviceCollection.AddScoped<RotateAndShiftInstructions>();
         serviceCollection.AddScoped<PushPopInstructions>();
+        serviceCollection.AddScoped<ArithmeticInstructions>();
         serviceCollection.AddScoped<IInstructionSetService, InstructionSetService>();
         
         serviceCollection.AddScoped<Cpu>();
