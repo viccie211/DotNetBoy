@@ -4,12 +4,11 @@ using DotNetBoy.Emulator.Services.Interfaces;
 namespace DotNetBoy.Emulator.InstructionSet;
 public class LoadBetweenRegistersInstructions : IInstructionSet
 {
-    private readonly IMmuService _mmuService;
     private readonly IClockService _clockService;
 
     public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
 
-    public LoadBetweenRegistersInstructions(IMmuService mmuService, IClockService clockService)
+    public LoadBetweenRegistersInstructions(IClockService clockService)
     {
         Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
         {
@@ -20,7 +19,7 @@ public class LoadBetweenRegistersInstructions : IInstructionSet
             { 0x7C, LoadHIntoA },
             { 0x7D, LoadLIntoA },
         };
-        _mmuService = mmuService;
+
         _clockService = clockService;
     }
     /// <summary>

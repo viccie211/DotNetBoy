@@ -2,8 +2,22 @@ using DotNetBoy.Emulator.InstructionSet;
 
 namespace DotNetBoy.Emulator.Tests.InstructionTests.LoadInstructionTests;
 
-public class LoadBetweenRegisterTests : LoadInstructionTestsBase
+public class LoadBetweenRegisterTests
 {
+    protected LoadBetweenRegistersInstructions _instructions;
+    protected ICpuRegistersService _registers;
+
+    [SetUp]
+    public void SetUp()
+    {
+        var clockServiceMock = new Mock<IClockService>();
+
+        _instructions = new LoadBetweenRegistersInstructions(clockServiceMock.Object);
+        _registers = new TestCpuRegisterService()
+        {
+            ProgramCounter = 0x0000,
+        };
+    }
     [Test]
     public void LoadEIntoA()
     {
