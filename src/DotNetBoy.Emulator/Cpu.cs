@@ -30,10 +30,6 @@ public class Cpu(IMmuService mmuService, ICpuRegistersService cpuRegistersServic
                 decodedInstruction(cpuRegistersService);
             }
             Console.WriteLine(cpuRegistersService.ToString());
-            if(instruction==0x7D)
-            {
-                Console.WriteLine("breakpoint");
-            }
         }
         Console.WriteLine("Halted");
     }
