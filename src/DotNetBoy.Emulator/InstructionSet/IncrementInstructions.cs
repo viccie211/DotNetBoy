@@ -99,11 +99,16 @@ public class IncrementInstructions : IInstructionSet
         registers.L = Increment8Bits(registers.L, registers);
     }
 
+    /// <summary>
+    /// Increment the StackPointer register by one. 
+    /// </summary>
+    /// 
     public void IncrementStackPointer(ICpuRegistersService registers)
     {
         registers.StackPointer = Increment16Bits(registers.StackPointer, registers);
     }
 
+    #region private methods
     private byte Increment8Bits(byte initial, ICpuRegistersService registers)
     {
         registers.F.Subtract = false;
@@ -122,4 +127,5 @@ public class IncrementInstructions : IInstructionSet
         registers.ProgramCounter += 1;
         return result;
     }
+    #endregion
 }

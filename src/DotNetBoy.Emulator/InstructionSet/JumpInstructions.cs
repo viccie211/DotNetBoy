@@ -9,6 +9,8 @@ public class JumpInstructions : IInstructionSet
     private readonly IByteUshortService _byteUshortService;
     private readonly IClockService _clockService;
 
+    public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; init; }
+
     public JumpInstructions(IMmuService mmuService, IClockService clockService, IByteUshortService byteUshortService)
     {
         Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
@@ -26,16 +28,13 @@ public class JumpInstructions : IInstructionSet
         _byteUshortService = byteUshortService;
     }
 
-    public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; init; }
-
     /// <summary>
-    /// Jump to the address written next in memory.
+    /// Jump relative according to the next (signed) byte in memory
     /// </summary>
     /// Verified against BGB
-    public void Jump(ICpuRegistersService registers)
+    public void JumpRelative8Bits(ICpuRegistersService registers)
     {
-        registers.ProgramCounter = _mmuService.ReadWordLittleEndian(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
-        _clockService.Clock(4);
+        JumpRelative(registers);
     }
 
     /// <summary>
@@ -57,12 +56,19 @@ public class JumpInstructions : IInstructionSet
     }
 
     /// <summary>
-    /// Call the subroutine on the address next in memory. It pushes the return address to the stack and then jumps to the new address
+    /// Jump to the address written next in memory.
     /// </summary>
     /// Verified against BGB
-    public void CallA16(ICpuRegistersService registers)
+    public void Jump(ICpuRegistersService registers)
     {
-        Call(registers);
+        registers.ProgramCounter = _mmuService.ReadWordLittleEndian(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
+        _clockService.Clock(4);
+    }
+
+    //TODO: Write unit tests
+    public void CallA16NonZero(ICpuRegistersService registers)
+    {
+        CallA16OnCondition(!registers.F.Zero, registers);
     }
 
     /// <summary>
@@ -80,20 +86,15 @@ public class JumpInstructions : IInstructionSet
     }
 
     /// <summary>
-    /// Jump relative according to the next (signed) byte in memory
+    /// Call the subroutine on the address next in memory. It pushes the return address to the stack and then jumps to the new address
     /// </summary>
     /// Verified against BGB
-    public void JumpRelative8Bits(ICpuRegistersService registers)
+    public void CallA16(ICpuRegistersService registers)
     {
-        JumpRelative(registers);
+        Call(registers);
     }
 
-    //TODO: Write unit tests
-    public void CallA16NonZero(ICpuRegistersService registers)
-    {
-        CallA16OnCondition(!registers.F.Zero, registers);
-    }
-
+    #region private methods
     private void JumpRelative8BitsOnCondition(bool shouldJump, ICpuRegistersService registers)
     {
         if (shouldJump)
@@ -138,4 +139,6 @@ public class JumpInstructions : IInstructionSet
         registers.ProgramCounter = _mmuService.ReadWordLittleEndian(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
         _clockService.Clock(6);
     }
+
+    #endregion
 }
