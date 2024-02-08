@@ -11,25 +11,7 @@ public class PpuServiceTests
         mmuServiceMock = new Mock<IMmuService>();
         service = new PpuService(clockServiceMock.Object, mmuServiceMock.Object);
     }
-
-    [Test]
-    public void DividesMClockInHalf()
-    {
-        var expectedShouldActOnMClock0 = false;
-        var shouldActOnMClock0 = service.shouldActOnMClock;
-        Assert.That(shouldActOnMClock0, Is.EqualTo(expectedShouldActOnMClock0));
-
-        service.OnMClock(null, new ClockEventArgs());
-        var expectedShouldActOnMClock1 = true;
-        var shouldActOnMClock1 = service.shouldActOnMClock;
-        Assert.That(shouldActOnMClock1, Is.EqualTo(expectedShouldActOnMClock1));
-
-        service.OnMClock(null, new ClockEventArgs());
-        var expectedShouldActOnMClock2 = false;
-        var shouldActOnMClock2 = service.shouldActOnMClock;
-        Assert.That(shouldActOnMClock2, Is.EqualTo(expectedShouldActOnMClock2));
-    }
-
+    
     [Test]
     public void IncrementsScanLineOnClockWhenDot455()
     {
@@ -39,7 +21,6 @@ public class PpuServiceTests
 
         service.Dot = 455;
         service.ScanLine = 0;
-        service.shouldActOnMClock = true;
         service.OnMClock(null, new ClockEventArgs());
 
         Assert.That(service.ScanLine, Is.EqualTo(expectedScanLine));
@@ -56,7 +37,6 @@ public class PpuServiceTests
 
         service.ScanLine = 153;
         service.Dot = 455;
-        service.shouldActOnMClock = true;
         service.OnMClock(null, new ClockEventArgs());
 
         Assert.IsTrue(calledWriteByte);

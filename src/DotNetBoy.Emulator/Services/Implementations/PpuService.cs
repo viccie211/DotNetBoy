@@ -4,7 +4,7 @@ public class PpuService : IPpuService
 {
     private readonly IClockService _clockService;
     private readonly IMmuService _mmuService;
-    public int ScanLine { get; set; } = 90;
+    public int ScanLine { get; set; } = 0x90;
     public int Dot { get; set; } = 0;
 
     // //M-Clock should be devided into two for the Ppu Clock So we just flip this bool every clock and only act when true
