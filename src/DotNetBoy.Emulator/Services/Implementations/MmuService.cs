@@ -9,9 +9,11 @@ public class MmuService : IMmuService
     public MmuService(IByteUshortService byteUshortService)
     {
         _byteUshortService = byteUshortService;
+        MappedMemory = new byte[ushort.MaxValue + 1];
+        MappedMemory[0xFF44] = 0x90;
     }
 
-    public byte[] MappedMemory { get; } = new byte[ushort.MaxValue + 1];
+    public byte[] MappedMemory { get; init; }
 
     public byte ReadByte(ushort address)
     {

@@ -18,6 +18,7 @@ public class StoreInstructions : IInstructionSet
             { 0x08, StoreStackPointerAtAddressD16 },
             { 0x12, StoreAtAddressDEFromA },
             { 0x22, StoreAtAddressHLFromAIncrementHL },
+            { 0x32, StoreAtAddressHLFromADecrementHL },
             { 0x77, StoreAtAddressHLFromA },
             { 0xE0, StoreAtAddressFF00PlusD8FromA },
             { 0xEA, StoreAtA16FromA }
@@ -60,7 +61,6 @@ public class StoreInstructions : IInstructionSet
         _clockService.Clock(2);
     }
 
-
     /// <summary>
     /// Store the contents of the A register at the address in memory specified by the HL register
     /// and afterwards increment the HL register
@@ -75,6 +75,19 @@ public class StoreInstructions : IInstructionSet
     }
 
     /// <summary>
+    /// Store the contents of the A register at the address in memory specified by the HL register
+    /// and afterwards increment the HL register
+    /// </summary>
+    /// Verified against BGB
+    public void StoreAtAddressHLFromADecrementHL(ICpuRegistersService registers)
+    {
+        _mmuService.WriteByte(registers.HL, registers.A);
+        registers.ProgramCounter += 1;
+        registers.HL--;
+        _clockService.Clock(2);
+    }
+
+    /// <summary>
     /// Store from register A the to internal RAM, port register, or mode register at the address in the range 0xFF00-0xFFFF specified by the next byte
     /// </summary>
     public void StoreAtAddressFF00PlusD8FromA(ICpuRegistersService registers)
@@ -84,7 +97,6 @@ public class StoreInstructions : IInstructionSet
         _clockService.Clock(3);
         registers.ProgramCounter += 2;
     }
-
 
     /// <summary>
     /// Store the contents of the A register at the address specified by the next word in memory

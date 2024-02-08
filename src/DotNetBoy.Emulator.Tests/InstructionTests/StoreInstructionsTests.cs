@@ -165,4 +165,52 @@ public class StoreInstructionsTests
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
         Assert.That(_registers.HL, Is.EqualTo(expectedHL));
     }
+    
+    [Test]
+    public void StoreAtAddressHLFromADecrementHL()
+    {
+        const byte expectedWrittenByte = 0xFF;
+        const ushort expectedWrittenAddress = 0x1000;
+        const ushort expectedProgramCounter = 0x0001;
+        const ushort expectedHL = 0x0FFF;
+        byte writtenByte = 0x00;
+        ushort writtenAddress = 0x0000;
+        _registers.A = 0xFF;
+        _registers.HL = 0x1000;
+
+        _mmuServiceMock.Setup(m => m.WriteByte(It.IsAny<ushort>(), It.IsAny<byte>())).Callback((ushort address, byte value) =>
+        {
+            writtenAddress = address;
+            writtenByte = value;
+        });
+        _instructions.StoreAtAddressHLFromADecrementHL(_registers);
+        Assert.That(writtenByte, Is.EqualTo(expectedWrittenByte));
+        Assert.That(writtenAddress, Is.EqualTo(expectedWrittenAddress));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+        Assert.That(_registers.HL, Is.EqualTo(expectedHL));
+    }
+
+    [Test]
+    public void StoreAtAddressHLFromADecrementHLUnderflow()
+    {
+        const byte expectedWrittenByte = 0xFF;
+        const ushort expectedWrittenAddress = 0x0000;
+        const ushort expectedProgramCounter = 0x0001;
+        const ushort expectedHL = 0xFFFF;
+        byte writtenByte = 0x00;
+        ushort writtenAddress = 0x0000;
+        _registers.A = 0xFF;
+        _registers.HL = 0x0000;
+
+        _mmuServiceMock.Setup(m => m.WriteByte(It.IsAny<ushort>(), It.IsAny<byte>())).Callback((ushort address, byte value) =>
+        {
+            writtenAddress = address;
+            writtenByte = value;
+        });
+        _instructions.StoreAtAddressHLFromADecrementHL(_registers);
+        Assert.That(writtenByte, Is.EqualTo(expectedWrittenByte));
+        Assert.That(writtenAddress, Is.EqualTo(expectedWrittenAddress));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+        Assert.That(_registers.HL, Is.EqualTo(expectedHL));
+    }
 }
