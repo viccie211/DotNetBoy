@@ -14,7 +14,8 @@ public class DecrementInstructions : IInstructionSet
         Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
         {
             { 0x05, DecrementB },
-            { 0x0D, DecrementC }
+            { 0x0D, DecrementC },
+            { 0x2D, DecrementL },
         };
         _clockService = clockService;
     }
@@ -27,7 +28,7 @@ public class DecrementInstructions : IInstructionSet
     {
         registers.B = Decrement8Bits(registers.B, registers);
     }
-    
+
     /// <summary>
     /// Decrement the contents of the C register Z 1 H - 
     /// </summary>
@@ -35,6 +36,15 @@ public class DecrementInstructions : IInstructionSet
     public void DecrementC(ICpuRegistersService registers)
     {
         registers.C = Decrement8Bits(registers.C, registers);
+    }
+
+    /// <summary>
+    /// Decrement the contents of the L register Z 1 H - 
+    /// </summary>
+    /// 
+    public void DecrementL(ICpuRegistersService registers)
+    {
+        registers.L = Decrement8Bits(registers.L, registers);
     }
 
     private byte Decrement8Bits(byte initial, ICpuRegistersService registers)

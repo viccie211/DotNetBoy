@@ -24,6 +24,7 @@ public class LoadInstructions : IInstructionSet
             { 0x2A, LoadAtAddressHLIntoAIncrementHL },
             { 0x3E, LoadD8IntoA },
             { 0x31, LoadD16IntoStackPointer },
+            { 0x46, LoadAtAddressHLIntoB },
             { 0xF0, LoadAtAddressFF00PlusD8IntoA },
             { 0xFA, LoadAtAddressA16IntoA }
         };
@@ -140,6 +141,17 @@ public class LoadInstructions : IInstructionSet
     }
 
     /// <summary>
+    /// Load the 8-bit contents of memory specified by register pair HL into register B.
+    /// </summary>
+    /// 
+    public void LoadAtAddressHLIntoB(ICpuRegistersService registers)
+    {
+        registers.B = _mmuService.ReadByte(registers.HL);
+        registers.ProgramCounter += 1;
+        _clockService.Clock(2);
+    }
+
+    /// <summary>
     /// Load into register A the contents of the internal RAM, port register, or mode register at the address in the range 0xFF00-0xFFFF specified by the next byte
     /// </summary>
     public void LoadAtAddressFF00PlusD8IntoA(ICpuRegistersService registers)
@@ -161,9 +173,7 @@ public class LoadInstructions : IInstructionSet
         _clockService.Clock(4);
     }
 
-
     #region private methods
-
 
     private ushort LoadD16(ICpuRegistersService registers)
     {
@@ -180,5 +190,6 @@ public class LoadInstructions : IInstructionSet
         registers.ProgramCounter += 2;
         return result;
     }
+
     #endregion
 }

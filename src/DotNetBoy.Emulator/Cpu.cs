@@ -11,10 +11,6 @@ public class Cpu(IMmuService mmuService, ICpuRegistersService cpuRegistersServic
     {
         while (!cpuRegistersService.Halted)
         {
-            if(cpuRegistersService.ProgramCounter==0xc88A)
-            {
-                Console.WriteLine("breakpoint");
-            }
             //Fetch
             var instruction = mmuService.ReadByte(cpuRegistersService.ProgramCounter);
 

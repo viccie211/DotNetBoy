@@ -98,4 +98,15 @@ public class LoadAtAddressTests : LoadInstructionTestsBase
         Assert.That(_registers.A, Is.EqualTo(expectedA));
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
     }
+    
+    [Test]
+    public void AtAddressHLIntoB()
+    {
+        const byte expectedB = 0xAB;
+        const ushort expectedProgramCounter = 0x0001;
+        _registers.HL = 0x1010;
+        _instructions.LoadAtAddressHLIntoB(_registers);
+        Assert.That(_registers.B, Is.EqualTo(expectedB));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+    }
 }

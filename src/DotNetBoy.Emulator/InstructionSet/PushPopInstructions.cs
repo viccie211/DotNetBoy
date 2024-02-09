@@ -17,6 +17,7 @@ public class PushPopInstructions : IInstructionSet
         {
             { 0xC1, PopBC },
             { 0xC5, PushBC },
+            { 0xD5, PushDE },
             { 0xE1, PopHL },
             { 0xE5, PushHL },
             { 0xF1, PopAF },
@@ -26,7 +27,7 @@ public class PushPopInstructions : IInstructionSet
         _mmuService = mmuService;
         _byteUshortService = byteUshortService;
     }
-    
+
     /// <summary>
     /// Pop the first word of the stack and store it in the BC register
     /// </summary>
@@ -35,7 +36,7 @@ public class PushPopInstructions : IInstructionSet
     {
         registers.BC = PopWord(registers);
     }
-    
+
     /// <summary>
     /// Push the contents of the BC register to the stack
     /// </summary>
@@ -43,6 +44,15 @@ public class PushPopInstructions : IInstructionSet
     public void PushBC(ICpuRegistersService registers)
     {
         PushWord(registers.BC, registers);
+    }
+
+    /// <summary>
+    /// Push the contents of the DE register to the stack
+    /// </summary>
+    /// 
+    public void PushDE(ICpuRegistersService registers)
+    {
+        PushWord(registers.DE, registers);
     }
 
     /// <summary>
