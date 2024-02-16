@@ -21,10 +21,13 @@ public class LoadInstructions : IInstructionSet
             { 0x11, LoadD16IntoDE },
             { 0x1A, LoadAtAddressDEIntoA },
             { 0x21, LoadD16IntoHL },
+            { 0x26, LoadD8IntoH },
             { 0x2A, LoadAtAddressHLIntoAIncrementHL },
             { 0x3E, LoadD8IntoA },
             { 0x31, LoadD16IntoStackPointer },
             { 0x46, LoadAtAddressHLIntoB },
+            { 0x4E, LoadAtAddressHLIntoC },
+            { 0x56, LoadAtAddressHLIntoD },
             { 0xF0, LoadAtAddressFF00PlusD8IntoA },
             { 0xFA, LoadAtAddressA16IntoA }
         };
@@ -57,6 +60,15 @@ public class LoadInstructions : IInstructionSet
     public void LoadD16IntoHL(ICpuRegistersService registers)
     {
         registers.HL = LoadD16(registers);
+    }
+
+    /// <summary>
+    /// Load the next byte into the H register
+    /// </summary>
+    /// 
+    public void LoadD8IntoH(ICpuRegistersService registers)
+    {
+        registers.H = LoadD8(registers);
     }
 
     /// <summary>
@@ -147,6 +159,28 @@ public class LoadInstructions : IInstructionSet
     public void LoadAtAddressHLIntoB(ICpuRegistersService registers)
     {
         registers.B = _mmuService.ReadByte(registers.HL);
+        registers.ProgramCounter += 1;
+        _clockService.Clock(2);
+    }
+
+    /// <summary>
+    /// Load the 8-bit contents of memory specified by register pair HL into register C.
+    /// </summary>
+    /// 
+    public void LoadAtAddressHLIntoC(ICpuRegistersService registers)
+    {
+        registers.C = _mmuService.ReadByte(registers.HL);
+        registers.ProgramCounter += 1;
+        _clockService.Clock(2);
+    }
+
+    /// <summary>
+    /// Load the 8-bit contents of memory specified by register pair HL into register D.
+    /// </summary>
+    /// 
+    public void LoadAtAddressHLIntoD(ICpuRegistersService registers)
+    {
+        registers.D = _mmuService.ReadByte(registers.HL);
         registers.ProgramCounter += 1;
         _clockService.Clock(2);
     }

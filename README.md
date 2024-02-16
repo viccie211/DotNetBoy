@@ -5,9 +5,9 @@ A .NET 8 Gameboy Emulator, written as a programming exercise
 It's an exercise for me to understand how computers work at the low level.
 
 ## Current progress:
-Implemented 57/244 non prefixed instructions
+Implemented 69/244 non prefixed instructions
 
-Implemented 0/255 prefixed instructions
+Implemented 1/255 prefixed instructions
 
 Not yet implemented:
 * Interrupts

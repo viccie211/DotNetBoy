@@ -14,9 +14,7 @@ public class LoadD8Tests : LoadInstructionTestsBase
         Assert.That(_registers.B, Is.EqualTo(expectedB));
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
     }
-
     
-
     [Test]
     public void IntoC()
     {
@@ -36,6 +34,17 @@ public class LoadD8Tests : LoadInstructionTestsBase
         _registers.ProgramCounter = 0x100F;
         _instructions.LoadD8IntoA(_registers);
         Assert.That(_registers.A, Is.EqualTo(expectedA));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+    }
+    
+    [Test]
+    public void IntoH()
+    {
+        const byte expectedH = 0xAB;
+        const ushort expectedProgramCounter = 0x1011;
+        _registers.ProgramCounter = 0x100F;
+        _instructions.LoadD8IntoH(_registers);
+        Assert.That(_registers.H, Is.EqualTo(expectedH));
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
     }
 }
