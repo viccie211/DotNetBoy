@@ -2,7 +2,7 @@
 
 namespace DotNetBoy.Emulator.Tests.InstructionTests.PrefixedInstructions.ShiftRightInstructionTests;
 
-public class SRLTests
+public class SRLInstructionTests
 {
     private ICpuRegistersService _registers;
     private ShiftRightInstructions _instructions;

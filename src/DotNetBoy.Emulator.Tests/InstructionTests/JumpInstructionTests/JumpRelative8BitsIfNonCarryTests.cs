@@ -1,13 +1,13 @@
 namespace DotNetBoy.Emulator.Tests.InstructionTests.JumpInstructionTests;
 
-public class JumpRelative8BitsIfCarryTests : JumpInstructionTestsBase
+public class JumpRelative8BitsIfNonCarryTests : JumpInstructionTestsBase
 {
     [Test]
-    public void NonCarry()
+    public void Carry()
     {
         const ushort expectedProgramCounter = 0x0002;
-        _registers.F.Carry = false;
-        _instructions.JumpRelative8BitsIfCarry(_registers);
+        _registers.F.Carry = true;
+        _instructions.JumpRelative8BitsIfNotCarry(_registers);
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
     }
 
@@ -15,8 +15,8 @@ public class JumpRelative8BitsIfCarryTests : JumpInstructionTestsBase
     public void Forward()
     {
         const ushort expectedProgramCounter = 0x000A;
-        _registers.F.Carry = true;
-        _instructions.JumpRelative8BitsIfCarry(_registers);
+        _registers.F.Carry = false;
+        _instructions.JumpRelative8BitsIfNotCarry(_registers);
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
     }
 
@@ -25,8 +25,8 @@ public class JumpRelative8BitsIfCarryTests : JumpInstructionTestsBase
     {
         const ushort expectedProgramCounter = 0x0010;
         _registers.ProgramCounter = 0x000F;
-        _registers.F.Carry = true;
-        _instructions.JumpRelative8BitsIfCarry(_registers);
+        _registers.F.Carry = false;
+        _instructions.JumpRelative8BitsIfNotCarry(_registers);
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
     }
 }

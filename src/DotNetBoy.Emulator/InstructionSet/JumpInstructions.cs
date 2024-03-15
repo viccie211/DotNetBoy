@@ -18,6 +18,7 @@ public class JumpInstructions : IInstructionSet
             { 0x18, JumpRelative8Bits },
             { 0x20, JumpRelative8BitsIfNotZero },
             { 0x28, JumpRelative8BitsIfZero },
+            { 0x30, JumpRelative8BitsIfNotCarry },
             { 0x38, JumpRelative8BitsIfCarry },
             { 0xC3, Jump },
             { 0xC4, CallA16NonZero },
@@ -54,6 +55,14 @@ public class JumpInstructions : IInstructionSet
     public void JumpRelative8BitsIfZero(ICpuRegistersService registers)
     {
         JumpRelative8BitsOnCondition(registers.F.Zero, registers);
+    }
+
+    /// <summary>
+    /// If the carry flag is set jump relative according to the next (signed) byte in memory
+    /// </summary>
+    public void JumpRelative8BitsIfNotCarry(ICpuRegistersService registers)
+    {
+        JumpRelative8BitsOnCondition(!registers.F.Carry, registers);
     }
 
     /// <summary>

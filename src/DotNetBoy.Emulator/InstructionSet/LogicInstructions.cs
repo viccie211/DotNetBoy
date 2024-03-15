@@ -20,6 +20,7 @@ public class LogicInstructions : IInstructionSet
             { 0xAE, XORAtAddressHLWithA },
             { 0xAF, XORAWithA },
             { 0xE6, ANDD8WithA },
+            { 0xEE, XORD8WithA },
             { 0xFE, CompareD8WithA },
         };
         _clockService = clockService;
@@ -94,6 +95,20 @@ public class LogicInstructions : IInstructionSet
         registers.ProgramCounter += 1;
         _clockService.Clock();
         ANDByteWithA(toAnd, registers);
+    }
+
+    /// <summary>
+    /// Perform a bit wise XOR with the next byte in memory and the contents of the A register and store it in the A register
+    /// Flags Z 0 0 0
+    /// </summary>
+    /// Verified against BGB
+    public void XORD8WithA(ICpuRegistersService registers)
+    {
+        var toXor = _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
+        //Since it's a D8 we need to add one extra to the PC and pump the clock once more than normal
+        registers.ProgramCounter += 1;
+        _clockService.Clock();
+        XORByteWithA(toXor, registers);
     }
 
     private void ORByteWithA(byte toOr, ICpuRegistersService registers)

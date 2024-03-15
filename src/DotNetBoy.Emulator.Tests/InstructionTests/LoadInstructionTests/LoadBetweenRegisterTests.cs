@@ -18,16 +18,6 @@ public class LoadBetweenRegisterTests
             ProgramCounter = 0x0000,
         };
     }
-    [Test]
-    public void LoadEIntoA()
-    {
-        const byte expectedA = 0x45;
-        const ushort expectedProgramCounter = 0x0001;
-        _registers.E = 0x45;
-        _instructions.LoadEIntoA(_registers);
-        Assert.That(_registers.A, Is.EqualTo(expectedA));
-        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
-    }
 
     [Test]
     public void LoadBIntoA()
@@ -36,6 +26,39 @@ public class LoadBetweenRegisterTests
         const ushort expectedProgramCounter = 0x0001;
         _registers.B = 0x45;
         _instructions.LoadBIntoA(_registers);
+        Assert.That(_registers.A, Is.EqualTo(expectedA));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+    }
+    
+    [Test]
+    public void LoadCIntoA()
+    {
+        const byte expectedA = 0x45;
+        const ushort expectedProgramCounter = 0x0001;
+        _registers.C = 0x45;
+        _instructions.LoadCIntoA(_registers);
+        Assert.That(_registers.A, Is.EqualTo(expectedA));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+    }
+    
+    [Test]
+    public void LoadDIntoA()
+    {
+        const byte expectedA = 0x45;
+        const ushort expectedProgramCounter = 0x0001;
+        _registers.D = 0x45;
+        _instructions.LoadDIntoA(_registers);
+        Assert.That(_registers.A, Is.EqualTo(expectedA));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+    }
+    
+    [Test]
+    public void LoadEIntoA()
+    {
+        const byte expectedA = 0x45;
+        const ushort expectedProgramCounter = 0x0001;
+        _registers.E = 0x45;
+        _instructions.LoadEIntoA(_registers);
         Assert.That(_registers.A, Is.EqualTo(expectedA));
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
     }
@@ -70,6 +93,39 @@ public class LoadBetweenRegisterTests
         _registers.A = 0xFF;
         _instructions.LoadAIntoB(_registers);
         Assert.That(_registers.B, Is.EqualTo(expectedB));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+    }
+    
+    [Test]
+    public void LoadAIntoC()
+    {
+        const byte expectedC = 0xFF;
+        const ushort expectedProgramCounter = 0x0001;
+        _registers.A = 0xFF;
+        _instructions.LoadAIntoC(_registers);
+        Assert.That(_registers.C, Is.EqualTo(expectedC));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+    }
+    
+    [Test]
+    public void LoadAIntoD()
+    {
+        const byte expectedD = 0xFF;
+        const ushort expectedProgramCounter = 0x0001;
+        _registers.A = 0xFF;
+        _instructions.LoadAIntoD(_registers);
+        Assert.That(_registers.D, Is.EqualTo(expectedD));
+        Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
+    }
+    
+    [Test]
+    public void LoadAIntoE()
+    {
+        const byte expectedE = 0xFF;
+        const ushort expectedProgramCounter = 0x0001;
+        _registers.A = 0xFF;
+        _instructions.LoadAIntoE(_registers);
+        Assert.That(_registers.E, Is.EqualTo(expectedE));
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
     }
 

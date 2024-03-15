@@ -1,5 +1,6 @@
 ﻿using DotNetBoy.Emulator.InstructionSet;
 using DotNetBoy.Emulator.InstructionSet.PrefixedInstructions;
+using DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.ResetBitInstructions;
 using DotNetBoy.Emulator.Services.Implementations;
 using DotNetBoy.Emulator.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,6 +28,8 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<PushPopInstructions>();
         serviceCollection.AddScoped<ArithmeticInstructions>();
         serviceCollection.AddScoped<ShiftRightInstructions>();
+        serviceCollection.AddScoped<ResetBitInCRegisterInstructions>();
+        serviceCollection.AddScoped<RotateRightInstructions>();
         serviceCollection.AddScoped<IInstructionSetService, InstructionSetService>();
         
         serviceCollection.AddScoped<Cpu>();

@@ -15,7 +15,9 @@ public class DecrementInstructions : IInstructionSet
         {
             { 0x05, DecrementB },
             { 0x0D, DecrementC },
+            { 0x25, DecrementH },
             { 0x2D, DecrementL },
+            
         };
         _clockService = clockService;
     }
@@ -37,6 +39,16 @@ public class DecrementInstructions : IInstructionSet
     {
         registers.C = Decrement8Bits(registers.C, registers);
     }
+    
+    /// <summary>
+    /// Decrement the contents of the H register Z 1 H - 
+    /// </summary>
+    /// 
+    public void DecrementH(ICpuRegistersService registers)
+    {
+        registers.H = Decrement8Bits(registers.H, registers);
+    }
+
 
     /// <summary>
     /// Decrement the contents of the L register Z 1 H - 
