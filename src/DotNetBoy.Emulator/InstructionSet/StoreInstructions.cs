@@ -19,6 +19,12 @@ public class StoreInstructions : IInstructionSet
             { 0x12, StoreAtAddressDEFromA },
             { 0x22, StoreAtAddressHLFromAIncrementHL },
             { 0x32, StoreAtAddressHLFromADecrementHL },
+            { 0x70, StoreAtAddressHLFromB },
+            { 0x71, StoreAtAddressHLFromC },
+            { 0x72, StoreAtAddressHLFromD },
+            { 0x73, StoreAtAddressHLFromE },
+            { 0x74, StoreAtAddressHLFromH },
+            { 0x75, StoreAtAddressHLFromL },
             { 0x77, StoreAtAddressHLFromA },
             { 0xE0, StoreAtAddressFF00PlusD8FromA },
             { 0xEA, StoreAtA16FromA }
@@ -38,6 +44,60 @@ public class StoreInstructions : IInstructionSet
         _clockService.Clock(5);
         registers.ProgramCounter += 3;
     }
+    
+    /// <summary>
+    /// Store the contents of the B register at the address in memory specified by the HL register
+    /// </summary>
+    /// Verified against BGB
+    public void StoreAtAddressHLFromB(ICpuRegistersService registers)
+    {
+        StoreByteAtAddressHL(registers.B, registers);
+    }
+    
+    /// <summary>
+    /// Store the contents of the C register at the address in memory specified by the HL register
+    /// </summary>
+    /// Verified against BGB
+    public void StoreAtAddressHLFromC(ICpuRegistersService registers)
+    {
+        StoreByteAtAddressHL(registers.C, registers);
+    }
+    
+    /// <summary>
+    /// Store the contents of the D register at the address in memory specified by the HL register
+    /// </summary>
+    /// Verified against BGB
+    public void StoreAtAddressHLFromD(ICpuRegistersService registers)
+    {
+        StoreByteAtAddressHL(registers.D, registers);
+    }
+    
+    /// <summary>
+    /// Store the contents of the A register at the address in memory specified by the HL register
+    /// </summary>
+    /// Verified against BGB
+    public void StoreAtAddressHLFromE(ICpuRegistersService registers)
+    {
+        StoreByteAtAddressHL(registers.E, registers);
+    }
+    
+    /// <summary>
+    /// Store the contents of the A register at the address in memory specified by the HL register
+    /// </summary>
+    /// Verified against BGB
+    public void StoreAtAddressHLFromH(ICpuRegistersService registers)
+    {
+        StoreByteAtAddressHL(registers.H, registers);
+    }
+    
+    /// <summary>
+    /// Store the contents of the A register at the address in memory specified by the HL register
+    /// </summary>
+    /// Verified against BGB
+    public void StoreAtAddressHLFromL(ICpuRegistersService registers)
+    {
+        StoreByteAtAddressHL(registers.L, registers);
+    }
 
     /// <summary>
     /// Store the contents of the A register at the address in memory specified by the HL register
@@ -45,9 +105,7 @@ public class StoreInstructions : IInstructionSet
     /// Verified against BGB
     public void StoreAtAddressHLFromA(ICpuRegistersService registers)
     {
-        _mmuService.WriteByte(registers.HL, registers.A);
-        registers.ProgramCounter += 1;
-        _clockService.Clock(2);
+        StoreByteAtAddressHL(registers.A, registers);
     }
 
     /// <summary>
@@ -108,5 +166,12 @@ public class StoreInstructions : IInstructionSet
         _mmuService.WriteByte(address, registers.A);
         registers.ProgramCounter += 3;
         _clockService.Clock(4);
+    }
+
+    private void StoreByteAtAddressHL(byte toStore, ICpuRegistersService registers)
+    {
+        _mmuService.WriteByte(registers.HL, toStore);
+        registers.ProgramCounter += 1;
+        _clockService.Clock(2);
     }
 }

@@ -28,6 +28,10 @@ public class LoadInstructions : IInstructionSet
             { 0x46, LoadAtAddressHLIntoB },
             { 0x4E, LoadAtAddressHLIntoC },
             { 0x56, LoadAtAddressHLIntoD },
+            { 0x5E, LoadAtAddressHLIntoE },
+            { 0x66, LoadAtAddressHLIntoH },
+            { 0x6E, LoadAtAddressHLIntoL },
+            { 0x7E, LoadAtAddressHLIntoA},
             { 0xF0, LoadAtAddressFF00PlusD8IntoA },
             { 0xFA, LoadAtAddressA16IntoA }
         };
@@ -158,9 +162,7 @@ public class LoadInstructions : IInstructionSet
     /// 
     public void LoadAtAddressHLIntoB(ICpuRegistersService registers)
     {
-        registers.B = _mmuService.ReadByte(registers.HL);
-        registers.ProgramCounter += 1;
-        _clockService.Clock(2);
+        registers.B = LoadByteAtAddressHL(registers);
     }
 
     /// <summary>
@@ -169,9 +171,7 @@ public class LoadInstructions : IInstructionSet
     /// 
     public void LoadAtAddressHLIntoC(ICpuRegistersService registers)
     {
-        registers.C = _mmuService.ReadByte(registers.HL);
-        registers.ProgramCounter += 1;
-        _clockService.Clock(2);
+        registers.C = LoadByteAtAddressHL(registers);
     }
 
     /// <summary>
@@ -180,9 +180,41 @@ public class LoadInstructions : IInstructionSet
     /// 
     public void LoadAtAddressHLIntoD(ICpuRegistersService registers)
     {
-        registers.D = _mmuService.ReadByte(registers.HL);
-        registers.ProgramCounter += 1;
-        _clockService.Clock(2);
+        registers.D = LoadByteAtAddressHL(registers);
+    }
+    
+    /// <summary>
+    /// Load the 8-bit contents of memory specified by register pair HL into register E.
+    /// </summary>
+    /// 
+    public void LoadAtAddressHLIntoE(ICpuRegistersService registers)
+    {
+        registers.E = LoadByteAtAddressHL(registers);
+    }
+    /// <summary>
+    /// Load the 8-bit contents of memory specified by register pair HL into register H.
+    /// </summary>
+    /// 
+    public void LoadAtAddressHLIntoH(ICpuRegistersService registers)
+    {
+        registers.H = LoadByteAtAddressHL(registers);
+    }
+    /// <summary>
+    /// Load the 8-bit contents of memory specified by register pair HL into register L.
+    /// </summary>
+    /// 
+    public void LoadAtAddressHLIntoL(ICpuRegistersService registers)
+    {
+        registers.L = LoadByteAtAddressHL(registers);
+    }
+    
+    /// <summary>
+    /// Load the 8-bit contents of memory specified by register pair HL into register A.
+    /// </summary>
+    /// 
+    public void LoadAtAddressHLIntoA(ICpuRegistersService registers)
+    {
+        registers.H = LoadByteAtAddressHL(registers);
     }
 
     /// <summary>
@@ -222,6 +254,14 @@ public class LoadInstructions : IInstructionSet
         var result = _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
         _clockService.Clock(2);
         registers.ProgramCounter += 2;
+        return result;
+    }
+
+    private byte LoadByteAtAddressHL(ICpuRegistersService registers)
+    {
+        var result =_mmuService.ReadByte(registers.HL);
+        registers.ProgramCounter += 1;
+        _clockService.Clock(2);
         return result;
     }
 
