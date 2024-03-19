@@ -20,15 +20,21 @@ public class JumpInstructions : IInstructionSet
             { 0x28, JumpRelative8BitsIfZero },
             { 0x30, JumpRelative8BitsIfNotCarry },
             { 0x38, JumpRelative8BitsIfCarry },
+            { 0xC0, ReturnNonZero },
             { 0xC3, Jump },
             { 0xC4, CallA16NonZero },
-            { 0xC9, Return },
-            { 0xCD, CallA16 }
+            { 0xC8, ReturnZero },
+            { 0xC9, ReturnFromSubroutine },
+            { 0xCD, CallA16 },
+            { 0xD0, ReturnNonCarry },
+            { 0xD8, ReturnCarry },
         };
         _mmuService = mmuService;
         _clockService = clockService;
         _byteUshortService = byteUshortService;
     }
+
+    #region Jumps
 
     /// <summary>
     /// Jump relative according to the next (signed) byte in memory
@@ -83,24 +89,14 @@ public class JumpInstructions : IInstructionSet
         _clockService.Clock(4);
     }
 
+    #endregion
+
+    #region Calls
+
     //TODO: Write unit tests
     public void CallA16NonZero(ICpuRegistersService registers)
     {
         CallA16OnCondition(!registers.F.Zero, registers);
-    }
-
-    /// <summary>
-    /// Returns from a subroutine. It pops the return address from the stack and then jumps to that address
-    /// </summary>
-    /// Verified against BGB
-    public void Return(ICpuRegistersService registers)
-    {
-        var lower = _mmuService.ReadByte(registers.StackPointer);
-        registers.StackPointer++;
-        var upper = _mmuService.ReadByte(registers.StackPointer);
-        registers.StackPointer++;
-        registers.ProgramCounter = _byteUshortService.CombineBytes(upper, lower);
-        _clockService.Clock(4);
     }
 
     /// <summary>
@@ -111,6 +107,41 @@ public class JumpInstructions : IInstructionSet
     {
         Call(registers);
     }
+
+    #endregion
+
+    #region Returns
+
+    public void ReturnNonZero(ICpuRegistersService registers)
+    {
+        ReturnOnCondition(!registers.F.Zero, registers);
+    }
+
+    public void ReturnZero(ICpuRegistersService registers)
+    {
+        ReturnOnCondition(registers.F.Zero, registers);
+    }
+
+    public void ReturnNonCarry(ICpuRegistersService registers)
+    {
+        ReturnOnCondition(!registers.F.Carry, registers);
+    }
+
+    public void ReturnCarry(ICpuRegistersService registers)
+    {
+        ReturnOnCondition(registers.F.Carry, registers);
+    }
+
+    /// <summary>
+    /// Returns from a subroutine. It pops the return address from the stack and then jumps to that address
+    /// </summary>
+    /// Verified against BGB
+    public void ReturnFromSubroutine(ICpuRegistersService registers)
+    {
+        Return(registers);
+    }
+
+    #endregion
 
     #region private methods
 
@@ -157,6 +188,29 @@ public class JumpInstructions : IInstructionSet
         _mmuService.WriteByte(registers.StackPointer, lower);
         registers.ProgramCounter = _mmuService.ReadWordLittleEndian(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
         _clockService.Clock(6);
+    }
+
+    private void ReturnOnCondition(bool condition, ICpuRegistersService registers)
+    {
+        if (condition)
+        {
+            _clockService.Clock();
+            Return(registers);
+            return;
+        }
+
+        _clockService.Clock(2);
+        registers.ProgramCounter += 2;
+    }
+
+    private void Return(ICpuRegistersService registers)
+    {
+        var lower = _mmuService.ReadByte(registers.StackPointer);
+        registers.StackPointer++;
+        var upper = _mmuService.ReadByte(registers.StackPointer);
+        registers.StackPointer++;
+        registers.ProgramCounter = _byteUshortService.CombineBytes(upper, lower);
+        _clockService.Clock(4);
     }
 
     #endregion

@@ -16,6 +16,7 @@ public class ArithmeticInstructions : IInstructionSet
         Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
         {
             { 0xC6, AddD8ToA },
+            { 0xCE, AddD8WithCarryToA },
             { 0xD6, SubtractD8FromA }
         };
     }
@@ -34,6 +35,19 @@ public class ArithmeticInstructions : IInstructionSet
     }
 
     /// <summary>
+    /// Adds the next byte in memory and the carry flag to the A register and stores the result in the A register
+    /// Sets Z 0 H C
+    /// </summary>
+    ///
+    public void AddD8WithCarryToA(ICpuRegistersService registers)
+    {
+        var toAdd = _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
+        _clockService.Clock();
+        registers.ProgramCounter += 1;
+        AddByteWithCarryToA(toAdd, registers);
+    }
+
+    /// <summary>
     /// Subtracts the next byte in memory from the A register and stores the result in the A register
     /// Sets Z 1 H C
     /// </summary>
@@ -48,6 +62,22 @@ public class ArithmeticInstructions : IInstructionSet
 
     private void AddByteToA(byte toAdd, ICpuRegistersService registers)
     {
+        registers.F.Carry = InstructionUtilFunctions.CarryFor8BitAddition(toAdd, registers.A);
+        registers.F.HalfCarry = InstructionUtilFunctions.HalfCarryFor8BitAddition(toAdd, registers.A);
+        registers.A += toAdd;
+        registers.F.Zero = registers.A == 0;
+        registers.F.Subtract = false;
+        registers.ProgramCounter += 1;
+        _clockService.Clock();
+    }
+
+    private void AddByteWithCarryToA(byte toAdd, ICpuRegistersService registers)
+    {
+        if (registers.F.Carry)
+        {
+            toAdd += 1;
+        }
+
         registers.F.Carry = InstructionUtilFunctions.CarryFor8BitAddition(toAdd, registers.A);
         registers.F.HalfCarry = InstructionUtilFunctions.HalfCarryFor8BitAddition(toAdd, registers.A);
         registers.A += toAdd;

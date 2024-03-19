@@ -28,13 +28,13 @@ public class MiscelaneousJumpInstructionTests : JumpInstructionTestsBase
     }
 
     [Test]
-    public void Return()
+    public void ReturnFromSubroutine()
     {
         _registers.ProgramCounter = 0xCCDD;
         _registers.StackPointer = 0xFFFC;
         const ushort expectedProgramCounter = 0x0023;
         const ushort expectedStackPointer = 0xFFFE;
-        _instructions.Return(_registers);
+        _instructions.ReturnFromSubroutine(_registers);
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
         Assert.That(_registers.StackPointer, Is.EqualTo(expectedStackPointer));
     }

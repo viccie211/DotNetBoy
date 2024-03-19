@@ -15,9 +15,11 @@ public class DecrementInstructions : IInstructionSet
         {
             { 0x05, DecrementB },
             { 0x0D, DecrementC },
+            { 0x15, DecrementD },
+            { 0x1D, DecrementE },
             { 0x25, DecrementH },
             { 0x2D, DecrementL },
-            
+            { 0x3D, DecrementA },
         };
         _clockService = clockService;
     }
@@ -39,7 +41,25 @@ public class DecrementInstructions : IInstructionSet
     {
         registers.C = Decrement8Bits(registers.C, registers);
     }
-    
+
+    /// <summary>
+    /// Decrement the contents of the D register Z 1 H - 
+    /// </summary>
+    /// 
+    public void DecrementD(ICpuRegistersService registers)
+    {
+        registers.D = Decrement8Bits(registers.D, registers);
+    }
+
+    /// <summary>
+    /// Decrement the contents of the E register Z 1 H - 
+    /// </summary>
+    /// 
+    public void DecrementE(ICpuRegistersService registers)
+    {
+        registers.E = Decrement8Bits(registers.E, registers);
+    }
+
     /// <summary>
     /// Decrement the contents of the H register Z 1 H - 
     /// </summary>
@@ -49,7 +69,6 @@ public class DecrementInstructions : IInstructionSet
         registers.H = Decrement8Bits(registers.H, registers);
     }
 
-
     /// <summary>
     /// Decrement the contents of the L register Z 1 H - 
     /// </summary>
@@ -57,6 +76,15 @@ public class DecrementInstructions : IInstructionSet
     public void DecrementL(ICpuRegistersService registers)
     {
         registers.L = Decrement8Bits(registers.L, registers);
+    }
+
+    /// <summary>
+    /// Decrement the contents of the A register Z 1 H - 
+    /// </summary>
+    /// Verified against BGB 
+    public void DecrementA(ICpuRegistersService registers)
+    {
+        registers.A = Decrement8Bits(registers.A, registers);
     }
 
     private byte Decrement8Bits(byte initial, ICpuRegistersService registers)
