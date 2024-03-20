@@ -8,8 +8,9 @@ public class DecrementInstructions : IInstructionSet
 {
     public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
     private readonly IClockService _clockService;
+    private readonly IMmuService _mmuService;
 
-    public DecrementInstructions(IClockService clockService)
+    public DecrementInstructions(IClockService clockService, IMmuService mmuService)
     {
         Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
         {
@@ -19,9 +20,11 @@ public class DecrementInstructions : IInstructionSet
             { 0x1D, DecrementE },
             { 0x25, DecrementH },
             { 0x2D, DecrementL },
+            { 0x35, DecrementAtAddressHL },
             { 0x3D, DecrementA },
         };
         _clockService = clockService;
+        _mmuService = mmuService;
     }
 
     /// <summary>
@@ -76,6 +79,17 @@ public class DecrementInstructions : IInstructionSet
     public void DecrementL(ICpuRegistersService registers)
     {
         registers.L = Decrement8Bits(registers.L, registers);
+    }
+
+    /// <summary>
+    /// Decrement the contents memory specified by the HL register register Z 1 H - 
+    /// </summary>
+    /// 
+    public void DecrementAtAddressHL(ICpuRegistersService registers)
+    {
+        var toDecrement = _mmuService.ReadByte(registers.HL);
+        _mmuService.WriteByte(registers.HL, Decrement8Bits(toDecrement, registers));
+        _clockService.Clock(3);
     }
 
     /// <summary>

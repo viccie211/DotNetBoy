@@ -10,8 +10,9 @@ public abstract class DecrementTestsBase
     [SetUp]
     public void SetUp()
     {
-        var clockServiceMock = new Mock<ClockService>();
-        _instructions = new DecrementInstructions(clockServiceMock.Object);
+        var clockServiceMock = new Mock<IClockService>();
+        var mmuserviceMock = new Mock<IMmuService>();
+        _instructions = new DecrementInstructions(clockServiceMock.Object, mmuserviceMock.Object);
 
         _registers = new TestCpuRegisterService();
     }

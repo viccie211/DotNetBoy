@@ -19,6 +19,7 @@ public class LogicInstructions : IInstructionSet
             { 0xA9, XORCWithA },
             { 0xAE, XORAtAddressHLWithA },
             { 0xAF, XORAWithA },
+            { 0xB6, ORAtAddressHLWithA },
             { 0xE6, ANDD8WithA },
             { 0xEE, XORD8WithA },
             { 0xFE, CompareD8WithA },
@@ -81,6 +82,17 @@ public class LogicInstructions : IInstructionSet
     public void ORCWithA(ICpuRegistersService registers)
     {
         ORByteWithA(registers.C, registers);
+    }
+
+    /// <summary>
+    /// Perform a bit wise OR operation with the contents of memory at the address specified by the HL register and the contents of the A register and store it in the A register
+    /// </summary>
+    /// Verified with BGB
+    public void ORAtAddressHLWithA(ICpuRegistersService registers)
+    {
+        var toOR = _mmuService.ReadByte(registers.HL);
+        _clockService.Clock();
+        ORByteWithA(toOR, registers);
     }
 
     /// <summary>
