@@ -6,6 +6,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetBoy.Emulator", "DotNe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetBoy.Emulator.Tests", "DotNetBoy.Emulator.Tests\DotNetBoy.Emulator.Tests.csproj", "{D038FC76-4511-4347-A9AA-31AD3EDE53FF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetBoy.FrontEnd", "DotNetBoy.FrontEnd\DotNetBoy.FrontEnd\DotNetBoy.FrontEnd.csproj", "{5C0E1825-39A0-4B80-88E5-8A8160FE4305}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetBoy.FrontEnd.Wpf", "DotNetBoy.FrontEnd\DotNetBoy.FrontEnd.Wpf\DotNetBoy.FrontEnd.Wpf.csproj", "{F43B20CF-275F-4274-81F0-1652C8574AF2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +28,13 @@ Global
 		{D038FC76-4511-4347-A9AA-31AD3EDE53FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D038FC76-4511-4347-A9AA-31AD3EDE53FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D038FC76-4511-4347-A9AA-31AD3EDE53FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C0E1825-39A0-4B80-88E5-8A8160FE4305}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C0E1825-39A0-4B80-88E5-8A8160FE4305}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C0E1825-39A0-4B80-88E5-8A8160FE4305}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C0E1825-39A0-4B80-88E5-8A8160FE4305}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F43B20CF-275F-4274-81F0-1652C8574AF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F43B20CF-275F-4274-81F0-1652C8574AF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F43B20CF-275F-4274-81F0-1652C8574AF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F43B20CF-275F-4274-81F0-1652C8574AF2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
