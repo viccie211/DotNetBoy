@@ -47,4 +47,14 @@ public class InstructionUtilFunctions
         return (ushort)(programCounter + 1);
     }
 
+    public static bool CarryFor16BitAddition(ushort a, ushort b)
+    {
+        return (a + b) > ushort.MaxValue;
+    }
+
+    public static bool HalfCarryFor16BitAddition(ushort a, ushort b)
+    {
+        return (((a & 0xFFF) + (b & 0xFFF)) & 0x1000) == 0x1000;
+    }
+
 }

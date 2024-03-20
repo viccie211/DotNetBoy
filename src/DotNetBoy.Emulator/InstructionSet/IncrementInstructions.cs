@@ -20,7 +20,8 @@ public class IncrementInstructions : IInstructionSet
             { 0x23, IncrementHL },
             { 0x24, IncrementH },
             { 0x2C, IncrementL },
-            { 0x33, IncrementStackPointer }
+            { 0x33, IncrementStackPointer },
+            { 0x3C, IncrementA }
         };
         _clockService = clockService;
     }
@@ -100,6 +101,15 @@ public class IncrementInstructions : IInstructionSet
     }
 
     /// <summary>
+    /// Increment the A register by one. Sets Z 0 H - 
+    /// </summary>
+    /// Verified against BGB
+    public void IncrementA(ICpuRegistersService registers)
+    {
+        registers.A = Increment8Bits(registers.A, registers);
+    }
+
+    /// <summary>
     /// Increment the StackPointer register by one. 
     /// </summary>
     /// 
@@ -109,6 +119,7 @@ public class IncrementInstructions : IInstructionSet
     }
 
     #region private methods
+
     private byte Increment8Bits(byte initial, ICpuRegistersService registers)
     {
         registers.F.Subtract = false;
@@ -127,5 +138,6 @@ public class IncrementInstructions : IInstructionSet
         registers.ProgramCounter += 1;
         return result;
     }
+
     #endregion
 }

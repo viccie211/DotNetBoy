@@ -15,10 +15,88 @@ public class ArithmeticInstructions : IInstructionSet
         _mmuService = mmuService;
         Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
         {
+            { 0x29, AddHLToHL },
+            { 0x80, AddBToA },
+            { 0x81, AddCToA },
+            { 0x82, AddDToA },
+            { 0x83, AddEToA },
+            { 0x84, AddHToA },
+            { 0x85, AddLToA },
+            { 0x87, AddAToA },
             { 0xC6, AddD8ToA },
             { 0xCE, AddD8WithCarryToA },
             { 0xD6, SubtractD8FromA }
         };
+    }
+
+    /// <summary>
+    /// Adds the contents of the B register to the A register and stores the result in the A register
+    /// Sets Z 0 H C
+    /// </summary>
+    /// 
+    public void AddBToA(ICpuRegistersService registers)
+    {
+        AddByteToA(registers.B, registers);
+    }
+
+    /// <summary>
+    /// Adds the contents of the C register to the A register and stores the result in the A register
+    /// Sets Z 0 H C
+    /// </summary>
+    /// 
+    public void AddCToA(ICpuRegistersService registers)
+    {
+        AddByteToA(registers.C, registers);
+    }
+
+    /// <summary>
+    /// Adds the contents of the D register to the A register and stores the result in the A register
+    /// Sets Z 0 H C
+    /// </summary>
+    /// 
+    public void AddDToA(ICpuRegistersService registers)
+    {
+        AddByteToA(registers.D, registers);
+    }
+
+    /// <summary>
+    /// Adds the contents of the E register to the A register and stores the result in the A register
+    /// Sets Z 0 H C
+    /// </summary>
+    /// 
+    public void AddEToA(ICpuRegistersService registers)
+    {
+        AddByteToA(registers.E, registers);
+    }
+
+    /// <summary>
+    /// Adds the contents of the H register to the A register and stores the result in the A register
+    /// Sets Z 0 H C
+    /// </summary>
+    /// 
+    public void AddHToA(ICpuRegistersService registers)
+    {
+        AddByteToA(registers.H, registers);
+    }
+
+    /// <summary>
+    /// Adds the contents of the L register to the A register and stores the result in the A register
+    /// Sets Z 0 H C
+    /// </summary>
+    /// 
+    public void AddLToA(ICpuRegistersService registers)
+    {
+        AddByteToA(registers.L, registers);
+    }
+
+    /// <summary>
+    /// Adds the contents of the A register to the A register and stores the result in the A register
+    /// Sets Z 0 H C
+    /// </summary>
+    /// 
+    public void AddAToA(ICpuRegistersService registers)
+    {
+        AddByteToA(registers.A, registers);
     }
 
     /// <summary>
@@ -87,6 +165,11 @@ public class ArithmeticInstructions : IInstructionSet
         _clockService.Clock();
     }
 
+    public void AddHLToHL(ICpuRegistersService registers)
+    {
+        registers.HL = SixteenBitAddition(registers.HL, registers.HL, registers);
+    }
+
     private void SubtractByteFromA(byte toSubtract, ICpuRegistersService registers)
     {
         registers.F.Carry = InstructionUtilFunctions.CarryFor8BitSubtraction(registers.A, toSubtract);
@@ -96,5 +179,17 @@ public class ArithmeticInstructions : IInstructionSet
         registers.F.Subtract = true;
         registers.ProgramCounter += 1;
         _clockService.Clock();
+    }
+
+    public ushort SixteenBitAddition(ushort a, ushort b, ICpuRegistersService registers)
+    {
+        registers.F.Carry = InstructionUtilFunctions.CarryFor16BitAddition(a, b);
+        registers.F.HalfCarry = InstructionUtilFunctions.HalfCarryFor16BitAddition(a, b);
+        registers.F.Subtract = false;
+        var result = (ushort)(a + b);
+        registers.F.Zero = result == 0;
+        _clockService.Clock(2);
+        registers.ProgramCounter += 1;
+        return result;
     }
 }

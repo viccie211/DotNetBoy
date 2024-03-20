@@ -1,16 +1,19 @@
-﻿namespace DotNetBoy.Emulator.Tests.InstructionTests.PrefixedInstructions.RotateRightInstructions;
+﻿using DotNetBoy.Emulator.Services.Implementations;
+
+namespace DotNetBoy.Emulator.Tests.InstructionTests.PrefixedInstructions.RotateRightInstructions;
 
 public class RotateCInstructionTests
 {
     private ICpuRegistersService _registers;
-    private InstructionSet.PrefixedInstructions.ResetBitInstructions.RotateRightInstructions _instructions;
+    private InstructionSet.PrefixedInstructions.RotateRightInstructions _instructions;
 
     [SetUp]
     public void SetUp()
     {
         _registers = new TestCpuRegisterService();
         var clockServiceMock = new Mock<IClockService>();
-        _instructions = new InstructionSet.PrefixedInstructions.ResetBitInstructions.RotateRightInstructions(clockServiceMock.Object);
+        var mmuServiceMock = new Mock<IMmuService>();
+        _instructions = new InstructionSet.PrefixedInstructions.RotateRightInstructions(clockServiceMock.Object,mmuServiceMock.Object);
     }
 
     [Test]

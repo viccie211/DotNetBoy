@@ -21,13 +21,14 @@ public class JumpInstructions : IInstructionSet
             { 0x30, JumpRelative8BitsIfNotCarry },
             { 0x38, JumpRelative8BitsIfCarry },
             { 0xC0, ReturnNonZero },
-            { 0xC3, Jump },
+            { 0xC3, JumpD16 },
             { 0xC4, CallA16NonZero },
             { 0xC8, ReturnZero },
             { 0xC9, ReturnFromSubroutine },
             { 0xCD, CallA16 },
             { 0xD0, ReturnNonCarry },
             { 0xD8, ReturnCarry },
+            { 0xE9, JumpToAddressHL }
         };
         _mmuService = mmuService;
         _clockService = clockService;
@@ -83,10 +84,21 @@ public class JumpInstructions : IInstructionSet
     /// Jump to the address written next in memory.
     /// </summary>
     /// Verified against BGB
-    public void Jump(ICpuRegistersService registers)
+    public void JumpD16(ICpuRegistersService registers)
     {
-        registers.ProgramCounter = _mmuService.ReadWordLittleEndian(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
+        registers.ProgramCounter =
+            _mmuService.ReadWordLittleEndian(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
         _clockService.Clock(4);
+    }
+
+    /// <summary>
+    /// Jump to the address specified by the HL register
+    /// </summary>
+    /// Verified against BGB
+    public void JumpToAddressHL(ICpuRegistersService registers)
+    {
+        registers.ProgramCounter = registers.HL;
+        _clockService.Clock();
     }
 
     #endregion
@@ -186,7 +198,8 @@ public class JumpInstructions : IInstructionSet
         _mmuService.WriteByte(registers.StackPointer, upper);
         registers.StackPointer--;
         _mmuService.WriteByte(registers.StackPointer, lower);
-        registers.ProgramCounter = _mmuService.ReadWordLittleEndian(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
+        registers.ProgramCounter =
+            _mmuService.ReadWordLittleEndian(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
         _clockService.Clock(6);
     }
 

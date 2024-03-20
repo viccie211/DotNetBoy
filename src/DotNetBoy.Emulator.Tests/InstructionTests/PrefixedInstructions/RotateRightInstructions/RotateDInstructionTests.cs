@@ -3,14 +3,17 @@
 public class RotateDInstructionTests
 {
     private ICpuRegistersService _registers;
-    private InstructionSet.PrefixedInstructions.ResetBitInstructions.RotateRightInstructions _instructions;
+    private InstructionSet.PrefixedInstructions.RotateRightInstructions _instructions;
 
     [SetUp]
     public void SetUp()
     {
         _registers = new TestCpuRegisterService();
         var clockServiceMock = new Mock<IClockService>();
-        _instructions = new InstructionSet.PrefixedInstructions.ResetBitInstructions.RotateRightInstructions(clockServiceMock.Object);
+        var mmuServiceMock = new Mock<IMmuService>();
+        _instructions =
+            new InstructionSet.PrefixedInstructions.RotateRightInstructions(clockServiceMock.Object,
+                mmuServiceMock.Object);
     }
 
     [Test]
@@ -31,7 +34,7 @@ public class RotateDInstructionTests
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
         Assert.That(_registers.F, Is.EqualTo(expectedF));
     }
-    
+
     [Test]
     public void RotateD_0x00_CarryTrue()
     {
@@ -121,10 +124,10 @@ public class RotateDInstructionTests
             var expectedD = (byte)(int)Math.Pow(2, i);
             var expectedF = new FlagsRegister()
             {
-                Zero = i==-1,
+                Zero = i == -1,
                 HalfCarry = false,
                 Subtract = false,
-                Carry = i==-1,
+                Carry = i == -1,
             };
             _instructions.RotateD(_registers);
             expectedProgramCounter += 2;
