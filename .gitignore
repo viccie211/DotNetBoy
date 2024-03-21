@@ -16,3 +16,4 @@ src/DotNetBoy.Emulator.Tests/obj
 src/DotNetBoy.sln.DotSettings.user
 src/**/bin
 src/**/obj
+src/.vs

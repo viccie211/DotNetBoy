@@ -1,8 +1,9 @@
-public delegate void TClockNotify();
-public delegate void MClockNotify();
+using DotNetBoy.Emulator.Services.Interfaces;
+
+namespace DotNetBoy.Emulator.Services.Implementations;
+
 public class ClockService : IClockService
 {
-
     public byte M { get; set; } = 0;
     public byte T { get; set; } = 0;
 
@@ -12,7 +13,7 @@ public class ClockService : IClockService
         {
             M++;
             OnMClock(this, new ClockEventArgs() { ClockValue = M });
-            
+
             if (i % 4 == 3)
             {
                 T++;
@@ -27,15 +28,16 @@ public class ClockService : IClockService
         T = 0;
     }
 
-    public event EventHandler<ClockEventArgs> TClock;
+    public event ClockHandler TClock;
 
-    protected virtual void OnTClock(object? sender, ClockEventArgs e)
+    private void OnTClock(object? sender, ClockEventArgs e)
     {
         TClock?.Invoke(sender, e);
     }
-    public event EventHandler<ClockEventArgs> MClock;
 
-    protected virtual void OnMClock(object? sender, ClockEventArgs e)
+    public event ClockHandler MClock;
+
+    private void OnMClock(object? sender, ClockEventArgs e)
     {
         MClock?.Invoke(sender, e);
     }

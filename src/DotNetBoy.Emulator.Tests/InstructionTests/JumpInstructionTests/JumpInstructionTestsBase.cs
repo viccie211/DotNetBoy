@@ -1,4 +1,5 @@
 using DotNetBoy.Emulator.InstructionSet;
+using DotNetBoy.Emulator.Services.Implementations;
 
 namespace DotNetBoy.Emulator.Tests.InstructionTests.JumpInstructionTests;
 

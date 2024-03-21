@@ -7,9 +7,6 @@ public class PpuService : IPpuService
     public int ScanLine { get; set; } = 0x90;
     public int Dot { get; set; } = 0;
 
-    // //M-Clock should be devided into two for the Ppu Clock So we just flip this bool every clock and only act when true
-    // public bool shouldActOnMClock {get;set;} = false;
-
     public PpuService(IClockService clockService, IMmuService mmuService)
     {
         _clockService = clockService;
@@ -23,8 +20,20 @@ public class PpuService : IPpuService
 
         if (Dot == 0)
         {
+            if (ScanLine == 144)
+            {
+                OnVBlankStart(this, EventArgs.Empty);
+            }
+
             ScanLine = ScanLine == 153 ? 0 : ScanLine + 1;
             _mmuService.WriteByte(0xff44, (byte)ScanLine);
         }
+    }
+
+    public event VBlankStart VBlankStart;
+
+    protected virtual void OnVBlankStart(object? sender, EventArgs e)
+    {
+        VBlankStart?.Invoke(sender, e);
     }
 }

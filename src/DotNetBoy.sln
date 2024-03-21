@@ -1,14 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetBoy", "DotNetBoy\DotNetBoy.csproj", "{EAA8CE9E-12C7-4BCF-9987-2448AB81203E}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34714.143
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetBoy", "DotNetBoy\DotNetBoy.csproj", "{EAA8CE9E-12C7-4BCF-9987-2448AB81203E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetBoy.Emulator", "DotNetBoy.Emulator\DotNetBoy.Emulator.csproj", "{A593C321-225B-44A6-A921-66FFA7AAE21A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetBoy.Emulator", "DotNetBoy.Emulator\DotNetBoy.Emulator.csproj", "{A593C321-225B-44A6-A921-66FFA7AAE21A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetBoy.Emulator.Tests", "DotNetBoy.Emulator.Tests\DotNetBoy.Emulator.Tests.csproj", "{D038FC76-4511-4347-A9AA-31AD3EDE53FF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetBoy.Emulator.Tests", "DotNetBoy.Emulator.Tests\DotNetBoy.Emulator.Tests.csproj", "{D038FC76-4511-4347-A9AA-31AD3EDE53FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetBoy.FrontEnd", "DotNetBoy.FrontEnd\DotNetBoy.FrontEnd\DotNetBoy.FrontEnd.csproj", "{5C0E1825-39A0-4B80-88E5-8A8160FE4305}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetBoy.FrontEnd.Wpf", "DotNetBoy.FrontEnd\DotNetBoy.FrontEnd.Wpf\DotNetBoy.FrontEnd.Wpf.csproj", "{F43B20CF-275F-4274-81F0-1652C8574AF2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetBoy.FrontEnd", "DotNetBoy.FrontEnd\DotNetBoy.FrontEnd.csproj", "{0BFE6C1A-B12F-4591-B330-22F8F66A806D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,13 +29,13 @@ Global
 		{D038FC76-4511-4347-A9AA-31AD3EDE53FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D038FC76-4511-4347-A9AA-31AD3EDE53FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D038FC76-4511-4347-A9AA-31AD3EDE53FF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5C0E1825-39A0-4B80-88E5-8A8160FE4305}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5C0E1825-39A0-4B80-88E5-8A8160FE4305}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5C0E1825-39A0-4B80-88E5-8A8160FE4305}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5C0E1825-39A0-4B80-88E5-8A8160FE4305}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F43B20CF-275F-4274-81F0-1652C8574AF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F43B20CF-275F-4274-81F0-1652C8574AF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F43B20CF-275F-4274-81F0-1652C8574AF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F43B20CF-275F-4274-81F0-1652C8574AF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BFE6C1A-B12F-4591-B330-22F8F66A806D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BFE6C1A-B12F-4591-B330-22F8F66A806D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BFE6C1A-B12F-4591-B330-22F8F66A806D}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{0BFE6C1A-B12F-4591-B330-22F8F66A806D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BFE6C1A-B12F-4591-B330-22F8F66A806D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal
