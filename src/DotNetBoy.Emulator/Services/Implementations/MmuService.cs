@@ -1,4 +1,6 @@
-﻿using DotNetBoy.Emulator.Services.Interfaces;
+﻿using System.Diagnostics;
+using DotNetBoy.Emulator.Enums;
+using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.Services.Implementations;
 
@@ -45,6 +47,30 @@ public class MmuService : IMmuService
         for (int i = 0; i < rom.Length && i < 0x7FFF; i++)
         {
             MappedMemory[i] = rom[i];
+        }
+    }
+
+    public byte[] GetTileSet(TileSet tileSet)
+    {
+        switch (tileSet)
+        {
+            default:
+            case TileSet.TileSet0:
+                return MappedMemory.Skip(0x7FFF).Take(0x1000).ToArray();
+            case TileSet.TileSet1:
+                return MappedMemory.Skip(0x87FF).Take(0x1000).ToArray();
+        }
+    }
+
+    public byte[] GetTileMap(TileMap tileMap)
+    {
+        switch (tileMap)
+        {
+            default:
+            case TileMap.TileMap0:
+                return MappedMemory.Skip(0x97FF).Take(0x400).ToArray();
+            case TileMap.TileMap1:
+                return MappedMemory.Skip(0x9BFF).Take(0x400).ToArray();
         }
     }
 }
