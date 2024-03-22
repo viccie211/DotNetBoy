@@ -1,4 +1,5 @@
 ﻿using DotNetBoy.Emulator.Enums;
+using DotNetBoy.Emulator.Models;
 
 namespace DotNetBoy.Emulator.Services.Interfaces;
 
@@ -15,6 +16,7 @@ public interface IMmuService
 
     void WriteByte(ushort address, byte value);
     void LoadRom(byte[] rom);
-    byte[] GetTileSet(TileSet tileSet);
-    byte[] GetTileMap(TileMap tileMap);
+    byte[] GetTileSet(ETileSet eTileSet);
+    byte[] GetTileMap(ETileMap eTileMap);
+    OamObject[] GetOamObjects();
 }

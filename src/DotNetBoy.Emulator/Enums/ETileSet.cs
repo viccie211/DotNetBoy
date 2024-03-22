@@ -1,6 +1,6 @@
 namespace DotNetBoy.Emulator.Enums;
 
-public enum TileSet
+public enum ETileSet
 {
     TileSet0,
     TileSet1,

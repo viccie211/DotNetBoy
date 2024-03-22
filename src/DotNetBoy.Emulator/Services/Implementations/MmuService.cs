@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using DotNetBoy.Emulator.Enums;
+using DotNetBoy.Emulator.Models;
 using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.Services.Implementations;
@@ -50,27 +51,47 @@ public class MmuService : IMmuService
         }
     }
 
-    public byte[] GetTileSet(TileSet tileSet)
+    public byte[] GetTileSet(ETileSet eTileSet)
     {
-        switch (tileSet)
+        switch (eTileSet)
         {
             default:
-            case TileSet.TileSet0:
+            case ETileSet.TileSet0:
                 return MappedMemory.Skip(0x7FFF).Take(0x1000).ToArray();
-            case TileSet.TileSet1:
+            case ETileSet.TileSet1:
                 return MappedMemory.Skip(0x87FF).Take(0x1000).ToArray();
         }
     }
 
-    public byte[] GetTileMap(TileMap tileMap)
+    public byte[] GetTileMap(ETileMap eTileMap)
     {
-        switch (tileMap)
+        switch (eTileMap)
         {
             default:
-            case TileMap.TileMap0:
+            case ETileMap.TileMap0:
                 return MappedMemory.Skip(0x97FF).Take(0x400).ToArray();
-            case TileMap.TileMap1:
+            case ETileMap.TileMap1:
                 return MappedMemory.Skip(0x9BFF).Take(0x400).ToArray();
         }
+    }
+
+    public byte[] GetOamBytes()
+    {
+        return MappedMemory.Skip(0xFDFF).Take(0x9F).ToArray();
+    }
+
+    public OamObject[] GetOamObjects()
+    {
+        const int oamObjectLength = 4;
+        const int totalOamObjects = 40;
+        var oamRam = GetOamBytes();
+        var result = new OamObject[totalOamObjects];
+
+        for (int i = 0; i < totalOamObjects; i++)
+        {
+            result[i] = oamRam.Skip(i * oamObjectLength).Take(oamObjectLength).ToArray();
+        }
+
+        return result;
     }
 }
