@@ -57,9 +57,9 @@ public class MmuService : IMmuService
         {
             default:
             case ETileSet.TileSet0:
-                return MappedMemory.Skip(0x7FFF).Take(0x1000).ToArray();
+                return MappedMemory[new Range(0x8000, 0x9000)];
             case ETileSet.TileSet1:
-                return MappedMemory.Skip(0x87FF).Take(0x1000).ToArray();
+                return MappedMemory[new Range(0x8800, 0x9800)];
         }
     }
 
@@ -69,15 +69,15 @@ public class MmuService : IMmuService
         {
             default:
             case ETileMap.TileMap0:
-                return MappedMemory.Skip(0x97FF).Take(0x400).ToArray();
+                return MappedMemory[new Range(0x9800, 0x9C00)];
             case ETileMap.TileMap1:
-                return MappedMemory.Skip(0x9BFF).Take(0x400).ToArray();
+                return MappedMemory[new Range(0x9C00, 0xA000)];
         }
     }
 
     public byte[] GetOamBytes()
     {
-        return MappedMemory.Skip(0xFDFF).Take(0x9F).ToArray();
+        return MappedMemory[new Range(0xFE00, 0xFE9F)];
     }
 
     public OamObject[] GetOamObjects()

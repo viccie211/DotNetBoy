@@ -14,6 +14,7 @@ public class PpuService : IPpuService
 
     private readonly IClockService _clockService;
     private readonly IMmuService _mmuService;
+    private readonly ITileService _tileService;
 
     public PpuModes Mode { get; internal set; }
     public int ScanLine { get; set; } = 0x90;
@@ -22,11 +23,13 @@ public class PpuService : IPpuService
     private byte ScrollY => _mmuService.ReadByte(SCY_ADDRESS);
     private byte ScrollX => _mmuService.ReadByte(SCX_ADDRESS);
 
-    public PpuService(IClockService clockService, IMmuService mmuService)
+    public PpuService(IClockService clockService, IMmuService mmuService, ITileService tileService)
     {
         _clockService = clockService;
         _mmuService = mmuService;
+        _tileService = tileService;
         _clockService.MClock += OnMClock;
+        FrameBuffer = new int[144, 160];
     }
 
     public void OnMClock(object? sender, ClockEventArgs e)
@@ -43,24 +46,21 @@ public class PpuService : IPpuService
                 Mode = PpuModes.OAMSearch;
             else if (Dot < 370) //TODO: Implement variability per sprite
             {
-                try
-                {
+                var screenX = Dot - 79;
+                var tileMap = LcdControlRegister.BackgroundTileMapDisplaySelect
+                    ? ETileMap.TileMap1
+                    : ETileMap.TileMap0;
+                var tileSet = LcdControlRegister.BackgroundWindowTileDataSelect
+                    ? ETileSet.TileSet0
+                    : ETileSet.TileSet1;
+                var tileX = (byte)(screenX + ScrollX) / TILE_SIZE;
+                var tilePixelX = 8-((screenX + ScrollX) % TILE_SIZE);
+                var tileY = (byte)((byte)(ScanLine + ScrollY) / TILE_SIZE);
+                var tilePixelY = (ScanLine + ScrollY) % TILE_SIZE;
+                if (ScanLine < SCREEN_HEIGHT && screenX < SCREEN_WIDTH)
+                    FrameBuffer[ScanLine, screenX] =
+                        _tileService.GetPixel(tileMap, tileSet, tileX, tileY, tilePixelX, tilePixelY);
 
-                    var screenX = Dot - 80;
-                    var tileY = (byte)((ScanLine + ScrollY) / TILE_SIZE);
-                    var yInTile = (ScanLine + ScrollY) % TILE_SIZE;
-                    var tileX = (byte)(screenX + ScrollX) / TILE_SIZE;
-                    var xInTile = (screenX + ScrollX) % TILE_SIZE;
-                    TileSet tileSet = _mmuService.GetTileSet(LcdControlRegister.BackgroundWindowTileDataSelect ? ETileSet.TileSet1 : ETileSet.TileSet0);
-                    // TileMap tileMap = _mmuService.GetTileMap(LcdControlRegister.BackgroundTileMapDisplaySelect ? ETileMap.TileMap1 : ETileMap.TileMap0);
-                    // var tileNumber = tileMap.Map[tileY, tileX];
-                    // var tile = tileSet.Set[tileNumber];
-                    // FrameBuffer[ScanLine, screenX] = tile.Pixels[yInTile, xInTile];
-                }
-                catch (Exception ex)
-                {
-                    Debug.Write(ex);
-                }
                 Mode = PpuModes.ActivePicture;
             }
             else

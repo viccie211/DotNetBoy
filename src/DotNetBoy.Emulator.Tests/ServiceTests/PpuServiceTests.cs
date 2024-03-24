@@ -1,4 +1,5 @@
 namespace DotNetBoy.Emulator.Tests.ServiceTests;
+
 public class PpuServiceTests
 {
     private PpuService service;
@@ -9,9 +10,10 @@ public class PpuServiceTests
     {
         var clockServiceMock = new Mock<IClockService>();
         mmuServiceMock = new Mock<IMmuService>();
-        service = new PpuService(clockServiceMock.Object, mmuServiceMock.Object);
+        var tileServiceMock = new Mock<ITileService>();
+        service = new PpuService(clockServiceMock.Object, mmuServiceMock.Object, tileServiceMock.Object);
     }
-    
+
     [Test]
     public void IncrementsScanLineOnClockWhenDot455()
     {
@@ -30,7 +32,6 @@ public class PpuServiceTests
     [Test]
     public void RollsOverScanLine()
     {
-        
         bool calledWriteByte = false;
         mmuServiceMock.Setup(m => m.WriteByte(0xff44, 0x00)).Callback(() => calledWriteByte = true);
         var expectedScanLine = 0;

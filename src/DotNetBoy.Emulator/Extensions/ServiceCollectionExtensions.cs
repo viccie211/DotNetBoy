@@ -14,6 +14,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<IByteUshortService, ByteUshortService>();
         serviceCollection.AddScoped<IMmuService, MmuService>();
         serviceCollection.AddScoped<IClockService,ClockService>();
+        serviceCollection.AddScoped<ITileService, TileService>();
         serviceCollection.AddScoped<IPpuService,PpuService>();
         serviceCollection.AddScoped<ICpuRegistersService,CpuRegistersService>();
         serviceCollection.AddScoped<JumpInstructions>();
