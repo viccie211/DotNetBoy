@@ -1,12 +1,11 @@
 using System.Diagnostics;
+using DotNetBoy.Emulator.Consts;
 using DotNetBoy.Emulator.Enums;
 using DotNetBoy.Emulator.Models;
 using DotNetBoy.Emulator.Services.Interfaces;
 
 public class PpuService : IPpuService
 {
-    private const int SCREEN_WIDTH = 160;
-    private const int SCREEN_HEIGHT = 144;
     private const int TILE_SIZE = 8;
     private const ushort LCD_CONTROL_REGISTER_ADDRESS = 0xFF40;
     private const ushort SCY_ADDRESS = 0xFF42;
@@ -16,12 +15,15 @@ public class PpuService : IPpuService
     private readonly IMmuService _mmuService;
     private readonly ITileService _tileService;
 
-    public PpuModes Mode { get; internal set; }
-    public int ScanLine { get; set; } = 0x90;
-    public int Dot { get; set; } = 0;
     private LcdControlRegister LcdControlRegister => _mmuService.ReadByte(LCD_CONTROL_REGISTER_ADDRESS);
     private byte ScrollY => _mmuService.ReadByte(SCY_ADDRESS);
     private byte ScrollX => _mmuService.ReadByte(SCX_ADDRESS);
+
+    public PpuModes Mode { get; internal set; }
+    public int ScanLine { get; set; } = 0x90;
+    public int Dot { get; set; } = 0;
+    public int[,] FrameBuffer { get; private set; }
+
 
     public PpuService(IClockService clockService, IMmuService mmuService, ITileService tileService)
     {
@@ -29,7 +31,7 @@ public class PpuService : IPpuService
         _mmuService = mmuService;
         _tileService = tileService;
         _clockService.MClock += OnMClock;
-        FrameBuffer = new int[144, 160];
+        FrameBuffer = new int[ScreenDimensions.HEIGHT, ScreenDimensions.WIDTH];
     }
 
     public void OnMClock(object? sender, ClockEventArgs e)
@@ -54,10 +56,10 @@ public class PpuService : IPpuService
                     ? ETileSet.TileSet0
                     : ETileSet.TileSet1;
                 var tileX = (byte)(screenX + ScrollX) / TILE_SIZE;
-                var tilePixelX = 8-((screenX + ScrollX) % TILE_SIZE);
+                var tilePixelX = 8 - ((screenX + ScrollX) % TILE_SIZE);
                 var tileY = (byte)((byte)(ScanLine + ScrollY) / TILE_SIZE);
                 var tilePixelY = (ScanLine + ScrollY) % TILE_SIZE;
-                if (ScanLine < SCREEN_HEIGHT && screenX < SCREEN_WIDTH)
+                if (ScanLine < ScreenDimensions.HEIGHT && screenX < ScreenDimensions.WIDTH)
                     FrameBuffer[ScanLine, screenX] =
                         _tileService.GetPixel(tileMap, tileSet, tileX, tileY, tilePixelX, tilePixelY);
 
@@ -79,7 +81,7 @@ public class PpuService : IPpuService
             if (ScanLine == 153)
             {
                 ScanLine = 0;
-                FrameBuffer = new int[SCREEN_HEIGHT, SCREEN_WIDTH];
+                FrameBuffer = new int[ScreenDimensions.HEIGHT, ScreenDimensions.WIDTH];
             }
             else
             {
@@ -96,6 +98,4 @@ public class PpuService : IPpuService
     {
         VBlankStart?.Invoke(sender, e);
     }
-
-    public int[,] FrameBuffer { get; internal set; }
 }

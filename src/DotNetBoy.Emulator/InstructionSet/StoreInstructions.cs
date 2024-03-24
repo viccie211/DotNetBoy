@@ -19,6 +19,7 @@ public class StoreInstructions : IInstructionSet
             { 0x12, StoreAtAddressDEFromA },
             { 0x22, StoreAtAddressHLFromAIncrementHL },
             { 0x32, StoreAtAddressHLFromADecrementHL },
+            { 0x36, StoreAtAddressHLFromD8 },
             { 0x70, StoreAtAddressHLFromB },
             { 0x71, StoreAtAddressHLFromC },
             { 0x72, StoreAtAddressHLFromD },
@@ -27,6 +28,7 @@ public class StoreInstructions : IInstructionSet
             { 0x75, StoreAtAddressHLFromL },
             { 0x77, StoreAtAddressHLFromA },
             { 0xE0, StoreAtAddressFF00PlusD8FromA },
+            { 0xE2, StoreAtAddressFF00PlusCFromA },
             { 0xEA, StoreAtA16FromA }
         };
         _clockService = clockService;
@@ -38,13 +40,14 @@ public class StoreInstructions : IInstructionSet
     {
         var lower = _byteUshortService.LowerByteOfSixteenBits(registers.StackPointer);
         var upper = _byteUshortService.UpperByteOfSixteenBits(registers.StackPointer);
-        var targetAddress = _mmuService.ReadWordLittleEndian(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
+        var targetAddress =
+            _mmuService.ReadWordLittleEndian(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
         _mmuService.WriteByte(targetAddress, lower);
         _mmuService.WriteByte((ushort)(targetAddress + 1), upper);
         _clockService.Clock(5);
         registers.ProgramCounter += 3;
     }
-    
+
     /// <summary>
     /// Store the contents of the B register at the address in memory specified by the HL register
     /// </summary>
@@ -53,7 +56,7 @@ public class StoreInstructions : IInstructionSet
     {
         StoreByteAtAddressHL(registers.B, registers);
     }
-    
+
     /// <summary>
     /// Store the contents of the C register at the address in memory specified by the HL register
     /// </summary>
@@ -62,7 +65,7 @@ public class StoreInstructions : IInstructionSet
     {
         StoreByteAtAddressHL(registers.C, registers);
     }
-    
+
     /// <summary>
     /// Store the contents of the D register at the address in memory specified by the HL register
     /// </summary>
@@ -71,7 +74,7 @@ public class StoreInstructions : IInstructionSet
     {
         StoreByteAtAddressHL(registers.D, registers);
     }
-    
+
     /// <summary>
     /// Store the contents of the A register at the address in memory specified by the HL register
     /// </summary>
@@ -80,7 +83,7 @@ public class StoreInstructions : IInstructionSet
     {
         StoreByteAtAddressHL(registers.E, registers);
     }
-    
+
     /// <summary>
     /// Store the contents of the A register at the address in memory specified by the HL register
     /// </summary>
@@ -89,7 +92,7 @@ public class StoreInstructions : IInstructionSet
     {
         StoreByteAtAddressHL(registers.H, registers);
     }
-    
+
     /// <summary>
     /// Store the contents of the A register at the address in memory specified by the HL register
     /// </summary>
@@ -106,6 +109,14 @@ public class StoreInstructions : IInstructionSet
     public void StoreAtAddressHLFromA(ICpuRegistersService registers)
     {
         StoreByteAtAddressHL(registers.A, registers);
+    }
+
+    public void StoreAtAddressHLFromD8(ICpuRegistersService registers)
+    {
+        var toStore = _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
+        _clockService.Clock();
+        registers.ProgramCounter += 1;
+        StoreByteAtAddressHL(toStore, registers);
     }
 
     /// <summary>
@@ -150,10 +161,18 @@ public class StoreInstructions : IInstructionSet
     /// </summary>
     public void StoreAtAddressFF00PlusD8FromA(ICpuRegistersService registers)
     {
-        var address = (ushort)(0xFF00 + _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter)));
-        _mmuService.WriteByte(address, registers.A);
-        _clockService.Clock(3);
-        registers.ProgramCounter += 2;
+        var address = _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
+        _clockService.Clock();
+        registers.ProgramCounter += 1;
+        StoreAtAddressFFPlusByteFromA(address, registers);
+    }
+
+    /// <summary>
+    /// Store from register A the to internal RAM, port register, or mode register at the address in the range 0xFF00-0xFFFF specified by the next byte
+    /// </summary>
+    public void StoreAtAddressFF00PlusCFromA(ICpuRegistersService registers)
+    {
+        StoreAtAddressFFPlusByteFromA(registers.C, registers);
     }
 
     /// <summary>
@@ -173,5 +192,12 @@ public class StoreInstructions : IInstructionSet
         _mmuService.WriteByte(registers.HL, toStore);
         registers.ProgramCounter += 1;
         _clockService.Clock(2);
+    }
+
+    private void StoreAtAddressFFPlusByteFromA(byte relativeAddress, ICpuRegistersService registers)
+    {
+        _mmuService.WriteByte(relativeAddress, registers.A);
+        _clockService.Clock(2);
+        registers.ProgramCounter += 1;
     }
 }

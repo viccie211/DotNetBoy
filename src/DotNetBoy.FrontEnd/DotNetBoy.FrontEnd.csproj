@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0-android;net8.0-ios;net8.0-maccatalyst</TargetFrameworks>
-    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
+    <TargetFramework Condition="$([MSBuild]::IsOSPlatform('windows'))">net8.0-windows10.0.19041.0</TargetFramework>
     <!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
     <!-- <TargetFrameworks>$(TargetFrameworks);net8.0-tizen</TargetFrameworks> -->
 
@@ -64,6 +63,35 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DotNetBoy.Emulator\DotNetBoy.Emulator.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Platforms\Android\**" />
+    <Compile Remove="Platforms\iOS\**" />
+    <Compile Remove="Platforms\MacCatalyst\**" />
+    <Compile Remove="Platforms\Tizen\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="Platforms\Android\**" />
+    <EmbeddedResource Remove="Platforms\iOS\**" />
+    <EmbeddedResource Remove="Platforms\MacCatalyst\**" />
+    <EmbeddedResource Remove="Platforms\Tizen\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Platforms\Android\**" />
+    <None Remove="Platforms\iOS\**" />
+    <None Remove="Platforms\MacCatalyst\**" />
+    <None Remove="Platforms\Tizen\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <MauiXaml Remove="Platforms\Android\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <MauiCss Remove="Platforms\Android\**" />
   </ItemGroup>
 
 </Project>

@@ -15,7 +15,7 @@ var scope = serviceProvider.CreateScope();
 var cpuRegisters = scope.ServiceProvider.GetService<ICpuRegistersService>()!;
 cpuRegisters.Reset();
 
-var rom = Roms.LoadInstructionsTestRom;
+var rom = Roms.Tetris;
 var mmuService = scope.ServiceProvider.GetService<IMmuService>()!;
 mmuService.LoadRom(rom);
 

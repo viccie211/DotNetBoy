@@ -1,3 +1,4 @@
+using DotNetBoy.Emulator.Consts;
 using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy;
@@ -10,16 +11,16 @@ public class ConsoleScreen
     {
         _ppuService = ppuService;
         _ppuService.VBlankStart += RenderScreen;
-        Console.SetWindowSize(160,144);
+        Console.SetWindowSize(ScreenDimensions.WIDTH, ScreenDimensions.HEIGHT);
     }
 
     public void RenderScreen(object? sender, EventArgs e)
     {
         var frameBuffer = _ppuService.FrameBuffer;
         Console.SetCursorPosition(0,0);
-        for (int y = 0; y < 144; y++)
+        for (int y = 0; y < ScreenDimensions.HEIGHT; y++)
         {
-            for (int x = 0; x < 160; x++)
+            for (int x = 0; x < ScreenDimensions.WIDTH; x++)
             {
                 char toWrite = ' ';
                 switch (frameBuffer[y, x])

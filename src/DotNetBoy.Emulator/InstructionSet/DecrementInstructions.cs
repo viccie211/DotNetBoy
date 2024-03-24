@@ -15,12 +15,16 @@ public class DecrementInstructions : IInstructionSet
         Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
         {
             { 0x05, DecrementB },
+            { 0x0B, DecrementBC },
             { 0x0D, DecrementC },
             { 0x15, DecrementD },
+            { 0x1B, DecrementDE },
             { 0x1D, DecrementE },
             { 0x25, DecrementH },
+            { 0x2B, DecrementHL },
             { 0x2D, DecrementL },
             { 0x35, DecrementAtAddressHL },
+            { 0x3B, DecrementStackPointer },
             { 0x3D, DecrementA },
         };
         _clockService = clockService;
@@ -101,6 +105,26 @@ public class DecrementInstructions : IInstructionSet
         registers.A = Decrement8Bits(registers.A, registers);
     }
 
+    public void DecrementBC(ICpuRegistersService registers)
+    {
+        registers.BC = Decrement16Bits(registers.BC, registers);
+    }
+
+    public void DecrementDE(ICpuRegistersService registers)
+    {
+        registers.DE = Decrement16Bits(registers.DE, registers);
+    }
+
+    public void DecrementHL(ICpuRegistersService registers)
+    {
+        registers.HL = Decrement16Bits(registers.HL, registers);
+    }
+
+    public void DecrementStackPointer(ICpuRegistersService registers)
+    {
+        registers.StackPointer = Decrement16Bits(registers.StackPointer, registers);
+    }
+
     private byte Decrement8Bits(byte initial, ICpuRegistersService registers)
     {
         registers.F.Subtract = true;
@@ -109,6 +133,14 @@ public class DecrementInstructions : IInstructionSet
         registers.F.Zero = result == 0;
         registers.ProgramCounter += 1;
         _clockService.Clock();
+        return result;
+    }
+
+    private ushort Decrement16Bits(ushort initial, ICpuRegistersService registers)
+    {
+        var result = (ushort)(initial - 1);
+        _clockService.Clock(2);
+        registers.ProgramCounter += 1;
         return result;
     }
 }

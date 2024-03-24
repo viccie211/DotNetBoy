@@ -9,14 +9,17 @@ namespace DotNetBoy.FrontEnd.ViewModels
         public readonly Cpu _cpu;
         public readonly IMmuService _mmuService;
         public readonly ICpuRegistersService _cpuRegistersService;
-        public MainPageViewModel(IPpuService ppuService, Cpu cpu, IMmuService mmuService, ICpuRegistersService cpuRegistersService)
+
+        public MainPageViewModel(IPpuService ppuService, Cpu cpu, IMmuService mmuService,
+            ICpuRegistersService cpuRegistersService)
         {
             _ppuService = ppuService;
             _mmuService = mmuService;
             _cpuRegistersService = cpuRegistersService;
             _cpu = cpu;
             _cpuRegistersService.Reset();
-            _mmuService.LoadRom(File.ReadAllBytes("C:\\Work\\Personal\\DotNetBoy\\src\\DotNetBoy\\DebugAssets\\bgbw64\\06-ld r,r.gb")); 
+            // _mmuService.LoadRom(File.ReadAllBytes("D:\\Repos\\DotNetBoy\\src\\DotNetBoy\\DebugAssets\\bgbw64\\06-ld r,r.gb")); 
+            _mmuService.LoadRom(File.ReadAllBytes("D:\\Repos\\DotNetBoy\\src\\DotNetBoy\\DebugAssets\\Tetris.gb"));
         }
 
         public async Task StartEmulation()

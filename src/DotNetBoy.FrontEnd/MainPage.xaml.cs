@@ -30,7 +30,9 @@ public partial class MainPage : ContentPage
         Dispatcher.DispatchAsync(() =>
         {
             CounterBtn.Text = $"VBlanked {count} times";
-            EmulatorScreen.RotationX = count;
+            var drawable = EmulatorScreen.Drawable as EmulatorScreenDrawable;
+            drawable.FrameBuffer = viewModel._ppuService.FrameBuffer;
+            EmulatorScreen.Invalidate();
         });
     }
 }

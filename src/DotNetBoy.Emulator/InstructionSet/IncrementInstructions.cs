@@ -14,6 +14,7 @@ public class IncrementInstructions : IInstructionSet
         {
             { 0x03, IncrementBC },
             { 0x04, IncrementB },
+            { 0x0C, IncrementC },
             { 0x13, IncrementDE },
             { 0x14, IncrementD },
             { 0x1C, IncrementE },
@@ -62,6 +63,15 @@ public class IncrementInstructions : IInstructionSet
     public void IncrementB(ICpuRegistersService registers)
     {
         registers.B = Increment8Bits(registers.B, registers);
+    }
+
+    /// <summary>
+    /// Increment the C register by one. Sets Z 0 H - 
+    /// </summary>
+    /// Verified with BGB
+    public void IncrementC(ICpuRegistersService registers)
+    {
+        registers.C = Increment8Bits(registers.C, registers);
     }
 
     /// <summary>
