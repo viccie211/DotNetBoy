@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using DotNetBoy.Emulator;
 using DotNetBoy.Emulator.Consts;
 using DotNetBoy.Emulator.Enums;
 using DotNetBoy.Emulator.Models;
@@ -25,7 +26,6 @@ public class PpuService : IPpuService
     public int ScanLine { get; set; } = 0x90;
     public int Dot { get; set; } = 0;
     public int[,] FrameBuffer { get; private set; }
-
 
     public PpuService(IClockService clockService, IMmuService mmuService, ITileService tileService)
     {
@@ -67,8 +67,6 @@ public class PpuService : IPpuService
                     var colorIndex = _tileService.GetPixel(tileMap, tileSet, tileX, tileY, tilePixelX, tilePixelY);
                     FrameBuffer[ScanLine, screenX] = ColorPaletteRegister.Colors[colorIndex];
                 }
-                    
-                
 
                 Mode = PpuModes.ActivePicture;
             }
@@ -103,6 +101,9 @@ public class PpuService : IPpuService
 
     protected virtual void OnVBlankStart(object? sender, EventArgs e)
     {
+        InterruptRegister interruptRegister = _mmuService.ReadByte(Cpu.INTERRUPT_REQUEST_REGISTER_ADDRESS);
+        interruptRegister.VBlank = true;
+        _mmuService.WriteByte(Cpu.INTERRUPT_REQUEST_REGISTER_ADDRESS, interruptRegister);
         VBlankStart?.Invoke(sender, e);
     }
 }

@@ -15,7 +15,7 @@ public class CpuRegistersService(IByteUshortService byteUshortService) : ICpuReg
     public byte L { get; set; }
     public FlagsRegister F { get; set; } = 0x00;
     public bool InterruptMasterEnable { get; set; } = false;
-
+    public bool InterruptsJustEnabled { get; set; } = false;
     #region 16 Bit Register Views
 
     public ushort AF

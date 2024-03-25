@@ -12,8 +12,9 @@ public class MiscellaneousInstructions : IInstructionSet
         Instructions = new Dictionary<byte, Action<ICpuRegistersService>>
         {
             { 0x00, NOP },
+            { 0x76, Halt },
             { 0xF3, DisableInterrupts },
-            { 0x76, Halt }
+            { 0xFB, EnableInterrupts },
         };
         _clockService = clockService;
     }
@@ -27,7 +28,7 @@ public class MiscellaneousInstructions : IInstructionSet
         registers.ProgramCounter++;
         _clockService.Clock();
     }
-    
+
     /// <summary>
     /// Sets the InterruptMasterEnable to false
     /// </summary>
@@ -35,6 +36,14 @@ public class MiscellaneousInstructions : IInstructionSet
     public void DisableInterrupts(ICpuRegistersService registers)
     {
         registers.InterruptMasterEnable = false;
+        _clockService.Clock();
+        registers.ProgramCounter += 1;
+    }
+
+    public void EnableInterrupts(ICpuRegistersService registers)
+    {
+        registers.InterruptMasterEnable = true;
+        registers.InterruptsJustEnabled = true;
         _clockService.Clock();
         registers.ProgramCounter += 1;
     }

@@ -5,6 +5,7 @@ namespace DotNetBoy.Emulator.Services.Interfaces;
 public interface ICpuRegistersService
 {
     bool InterruptMasterEnable { get; set; }
+    bool InterruptsJustEnabled { get; set; }
     byte A { get; set; }
     byte B { get; set; }
     byte C { get; set; }

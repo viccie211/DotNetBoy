@@ -2,6 +2,7 @@
 public class TestCpuRegisterService : ICpuRegistersService
 {
     public bool InterruptMasterEnable { get; set; }
+    public bool InterruptsJustEnabled { get; set; }
     public byte A { get; set; }
     public byte B { get; set; }
     public byte C { get; set; }

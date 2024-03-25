@@ -14,6 +14,14 @@ public class LogicInstructions : IInstructionSet
         _mmuService = mmuService;
         Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
         {
+            { 0xA0, ANDBWithA },
+            { 0xA1, ANDCWithA },
+            { 0xA2, ANDDWithA },
+            { 0xA3, ANDEWithA },
+            { 0xA4, ANDHWithA },
+            { 0xA5, ANDLWithA },
+            { 0xA6, ANDAtAddressHLWithA },
+            { 0xA7, ANDAWithA },
             { 0xA8, XORBWithA },
             { 0xA9, XORCWithA },
             { 0xAA, XORDWithA },
@@ -48,6 +56,52 @@ public class LogicInstructions : IInstructionSet
         _clockService.Clock(2);
         registers.ProgramCounter += 2;
     }
+
+    #region AND
+
+    public void ANDBWithA(ICpuRegistersService registers)
+    {
+        ANDByteWithA(registers.B, registers);
+    }
+
+    public void ANDCWithA(ICpuRegistersService registers)
+    {
+        ANDByteWithA(registers.C, registers);
+    }
+
+    public void ANDDWithA(ICpuRegistersService registers)
+    {
+        ANDByteWithA(registers.D, registers);
+    }
+
+    public void ANDEWithA(ICpuRegistersService registers)
+    {
+        ANDByteWithA(registers.E, registers);
+    }
+
+    public void ANDHWithA(ICpuRegistersService registers)
+    {
+        ANDByteWithA(registers.H, registers);
+    }
+
+    public void ANDLWithA(ICpuRegistersService registers)
+    {
+        ANDByteWithA(registers.L, registers);
+    }
+
+    public void ANDAtAddressHLWithA(ICpuRegistersService registers)
+    {
+        var toAND = _mmuService.ReadByte(registers.HL);
+        _clockService.Clock();
+        ANDByteWithA(toAND, registers);
+    }
+
+    public void ANDAWithA(ICpuRegistersService registers)
+    {
+        ANDByteWithA(registers.A, registers);
+    }
+
+    #endregion
 
     #region XOR
 
@@ -222,7 +276,6 @@ public class LogicInstructions : IInstructionSet
 
     #endregion
 
-
     /// <summary>
     /// Perform a bit wise AND with the next byte in memory and the contents of the A register and store it in the A register
     /// Flags Z 0 H:1 0
@@ -236,7 +289,6 @@ public class LogicInstructions : IInstructionSet
         _clockService.Clock();
         ANDByteWithA(toAnd, registers);
     }
-
 
     private void ORByteWithA(byte toOr, ICpuRegistersService registers)
     {

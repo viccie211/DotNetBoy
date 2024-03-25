@@ -28,6 +28,7 @@ public class JumpInstructions : IInstructionSet
             { 0xCD, CallA16 },
             { 0xD0, ReturnNonCarry },
             { 0xD8, ReturnCarry },
+            { 0xD9, ReturnFromInterrupt },
             { 0xE9, JumpToAddressHL }
         };
         _mmuService = mmuService;
@@ -150,6 +151,16 @@ public class JumpInstructions : IInstructionSet
     /// Verified against BGB
     public void ReturnFromSubroutine(ICpuRegistersService registers)
     {
+        Return(registers);
+    }
+
+    /// <summary>
+    /// Returns from a subroutine. It pops the return address from the stack and then jumps to that address
+    /// </summary>
+    /// Verified against BGB
+    public void ReturnFromInterrupt(ICpuRegistersService registers)
+    {
+        registers.InterruptMasterEnable = true;
         Return(registers);
     }
 

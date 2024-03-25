@@ -7,14 +7,16 @@ public class ClockService : IClockService
     public byte M { get; set; } = 0;
     public byte T { get; set; } = 0;
 
-    public void Clock(int clockIncrement = 1)
+    public void Clock(int clockIncrement = 1, bool incrementIsMClock = false)
     {
-        for (int i = 0; i < clockIncrement * 4; i++)
+        var increment = incrementIsMClock ? clockIncrement : clockIncrement * 4;
+
+        for (int i = 0; i < increment; i++)
         {
             M++;
             OnMClock(this, new ClockEventArgs() { ClockValue = M });
 
-            if (i % 4 == 3)
+            if (M % 4 == 3)
             {
                 T++;
                 OnTClock(this, new ClockEventArgs { ClockValue = T });
