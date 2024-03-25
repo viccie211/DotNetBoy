@@ -17,3 +17,4 @@ src/DotNetBoy.sln.DotSettings.user
 src/**/bin
 src/**/obj
 src/.vs
+src/**/appsettings.development.json

@@ -164,7 +164,7 @@ public class StoreInstructions : IInstructionSet
         var address = _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
         _clockService.Clock();
         registers.ProgramCounter += 1;
-        StoreAtAddressFFPlusByteFromA(address, registers);
+        StoreAtAddressFF00PlusByteFromA(address, registers);
     }
 
     /// <summary>
@@ -172,7 +172,7 @@ public class StoreInstructions : IInstructionSet
     /// </summary>
     public void StoreAtAddressFF00PlusCFromA(ICpuRegistersService registers)
     {
-        StoreAtAddressFFPlusByteFromA(registers.C, registers);
+        StoreAtAddressFF00PlusByteFromA(registers.C, registers);
     }
 
     /// <summary>
@@ -194,9 +194,10 @@ public class StoreInstructions : IInstructionSet
         _clockService.Clock(2);
     }
 
-    private void StoreAtAddressFFPlusByteFromA(byte relativeAddress, ICpuRegistersService registers)
+    private void StoreAtAddressFF00PlusByteFromA(byte relativeAddress, ICpuRegistersService registers)
     {
-        _mmuService.WriteByte(relativeAddress, registers.A);
+        var address = (ushort)(0xFF00 + relativeAddress); 
+        _mmuService.WriteByte(address, registers.A);
         _clockService.Clock(2);
         registers.ProgramCounter += 1;
     }
