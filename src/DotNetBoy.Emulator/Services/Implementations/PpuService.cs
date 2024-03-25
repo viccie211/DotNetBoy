@@ -53,10 +53,10 @@ public class PpuService : IPpuService
                     ? ETileMap.TileMap1
                     : ETileMap.TileMap0;
                 var tileSet = LcdControlRegister.BackgroundWindowTileDataSelect
-                    ? ETileSet.TileSet0
-                    : ETileSet.TileSet1;
+                    ? ETileSet.TileSet1
+                    : ETileSet.TileSet0;
                 var tileX = (byte)(screenX + ScrollX) / TILE_SIZE;
-                var tilePixelX = 8 - ((screenX + ScrollX) % TILE_SIZE);
+                var tilePixelX = ((screenX + ScrollX) % TILE_SIZE);
                 var tileY = (byte)((byte)(ScanLine + ScrollY) / TILE_SIZE);
                 var tilePixelY = (ScanLine + ScrollY) % TILE_SIZE;
                 if (ScanLine < ScreenDimensions.HEIGHT && screenX < ScreenDimensions.WIDTH)

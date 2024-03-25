@@ -17,13 +17,20 @@ public class TileService(IMmuService mmuService) : ITileService
             new Range(tileInTileMap * TILE_BYTE_LENGTH, tileInTileMap * TILE_BYTE_LENGTH + TILE_BYTE_LENGTH)];
 
         var tileRow = tile[new Range(tilePixelY * 2, tilePixelY * 2 + 2)];
-        var bitMask = (byte)Math.Pow(2, tilePixelX);
+        var bitMask = (byte)(0x01 << 7 - tilePixelX);
         var maskedBit0 = tileRow[0] & bitMask;
         var maskedBit1 = tileRow[1] & bitMask;
-        var shiftedBit0 = maskedBit0 >> tilePixelX;
-        var shiftedBit1 = maskedBit1 >> tilePixelX - 1;
-        var color = shiftedBit0 + shiftedBit1;
+        var shiftedBit0 = maskedBit0 > 0;
+        var shiftedBit1 = maskedBit1 > 0;
 
-        return color;
+        if (!shiftedBit0 && !shiftedBit1)
+            return 0;
+        if (shiftedBit0 && !shiftedBit1)
+            return 1;
+        if (!shiftedBit0 && shiftedBit1)
+            return 2;
+        if (shiftedBit0 && shiftedBit1)
+            return 3;
+        return 0;
     }
 }
