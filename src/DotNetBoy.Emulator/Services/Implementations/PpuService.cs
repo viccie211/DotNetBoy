@@ -8,6 +8,7 @@ public class PpuService : IPpuService
 {
     private const int TILE_SIZE = 8;
     private const ushort LCD_CONTROL_REGISTER_ADDRESS = 0xFF40;
+    private const ushort COLOR_PALETTE_REGISTER_ADDRESS = 0xFF47;
     private const ushort SCY_ADDRESS = 0xFF42;
     private const ushort SCX_ADDRESS = 0xFF43;
 
@@ -16,6 +17,7 @@ public class PpuService : IPpuService
     private readonly ITileService _tileService;
 
     private LcdControlRegister LcdControlRegister => _mmuService.ReadByte(LCD_CONTROL_REGISTER_ADDRESS);
+    private ColorPaletteRegister ColorPaletteRegister => _mmuService.ReadByte(COLOR_PALETTE_REGISTER_ADDRESS);
     private byte ScrollY => _mmuService.ReadByte(SCY_ADDRESS);
     private byte ScrollX => _mmuService.ReadByte(SCX_ADDRESS);
 
@@ -59,9 +61,14 @@ public class PpuService : IPpuService
                 var tilePixelX = ((screenX + ScrollX) % TILE_SIZE);
                 var tileY = (byte)((byte)(ScanLine + ScrollY) / TILE_SIZE);
                 var tilePixelY = (ScanLine + ScrollY) % TILE_SIZE;
+
                 if (ScanLine < ScreenDimensions.HEIGHT && screenX < ScreenDimensions.WIDTH)
-                    FrameBuffer[ScanLine, screenX] =
-                        _tileService.GetPixel(tileMap, tileSet, tileX, tileY, tilePixelX, tilePixelY);
+                {
+                    var colorIndex = _tileService.GetPixel(tileMap, tileSet, tileX, tileY, tilePixelX, tilePixelY);
+                    FrameBuffer[ScanLine, screenX] = ColorPaletteRegister.Colors[colorIndex];
+                }
+                    
+                
 
                 Mode = PpuModes.ActivePicture;
             }
