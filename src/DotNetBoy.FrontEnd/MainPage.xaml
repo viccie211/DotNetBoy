@@ -18,8 +18,8 @@
                 HorizontalOptions="Fill" />
             
             <GraphicsView Drawable="{StaticResource Drawable}"
-                          HeightRequest="300"
-                          WidthRequest="400"
+                          HeightRequest="144"
+                          WidthRequest="160"
                           x:Name="EmulatorScreen"/>
         </VerticalStackLayout>
     </ScrollView>

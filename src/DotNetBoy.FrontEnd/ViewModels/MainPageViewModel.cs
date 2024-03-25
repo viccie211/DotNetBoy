@@ -6,25 +6,27 @@ namespace DotNetBoy.FrontEnd.ViewModels
 {
     public class MainPageViewModel
     {
-        public readonly IPpuService _ppuService;
-        public readonly Cpu _cpu;
-        public readonly IMmuService _mmuService;
-        public readonly ICpuRegistersService _cpuRegistersService;
+        public readonly IPpuService PpuService;
+        public readonly Cpu Cpu;
+        public readonly IMmuService MmuService;
+        public readonly ICpuRegistersService CpuRegistersService;
+        public readonly int Scale;
 
         public MainPageViewModel(IPpuService ppuService, Cpu cpu, IMmuService mmuService,
             ICpuRegistersService cpuRegistersService, IConfiguration configuration)
         {
-            _ppuService = ppuService;
-            _mmuService = mmuService;
-            _cpuRegistersService = cpuRegistersService;
-            _cpu = cpu;
-            _cpuRegistersService.Reset();
-            _mmuService.LoadRom(File.ReadAllBytes(configuration["RomPath"]??""));
+            PpuService = ppuService;
+            MmuService = mmuService;
+            CpuRegistersService = cpuRegistersService;
+            Cpu = cpu;
+            CpuRegistersService.Reset();
+            MmuService.LoadRom(File.ReadAllBytes(configuration["RomPath"]??""));
+            Scale = configuration.GetValue<int>("Scale");
         }
 
         public async Task StartEmulation()
         {
-            Task.Run(() => _cpu.Loop());
+            Task.Run(() => Cpu.Loop());
         }
     }
 }

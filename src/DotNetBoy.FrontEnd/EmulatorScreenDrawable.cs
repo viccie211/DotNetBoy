@@ -4,6 +4,7 @@ namespace DotNetBoy.FrontEnd;
 
 public class EmulatorScreenDrawable : IDrawable
 {
+    public int Scale { get; set; } = 1;
     public int[,] FrameBuffer { get; set; } = new int[ScreenDimensions.HEIGHT, ScreenDimensions.WIDTH];
 
     public void Draw(ICanvas canvas, RectF dirtyRect)
@@ -15,8 +16,8 @@ public class EmulatorScreenDrawable : IDrawable
                 var gbColor = FrameBuffer[y, x];
                 var color = 0.33f * gbColor;
                 canvas.StrokeColor = Color.FromRgb(color, color, color);
-                canvas.StrokeSize = 1;
-                canvas.DrawRectangle(x, y, 1, 1);
+                canvas.StrokeSize = Scale;
+                canvas.DrawRectangle(x*Scale, y*Scale, Scale, Scale);
             }
         }
     }
