@@ -7,8 +7,9 @@ namespace DotNetBoy.Emulator.InstructionSet;
 public class IncrementInstructions : IInstructionSet
 {
     private readonly IClockService _clockService;
+    private readonly IMmuService _mmuService;
 
-    public IncrementInstructions(IClockService clockService)
+    public IncrementInstructions(IClockService clockService, IMmuService mmuService)
     {
         Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
         {
@@ -22,9 +23,11 @@ public class IncrementInstructions : IInstructionSet
             { 0x24, IncrementH },
             { 0x2C, IncrementL },
             { 0x33, IncrementStackPointer },
+            { 0x34, IncrementAtAddressHL },
             { 0x3C, IncrementA }
         };
         _clockService = clockService;
+        _mmuService = mmuService;
     }
 
     public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
@@ -126,6 +129,15 @@ public class IncrementInstructions : IInstructionSet
     public void IncrementStackPointer(ICpuRegistersService registers)
     {
         registers.StackPointer = Increment16Bits(registers.StackPointer, registers);
+    }
+
+    public void IncrementAtAddressHL(ICpuRegistersService registers)
+    {
+        var toIncrement = _mmuService.ReadByte(registers.HL);
+        _clockService.Clock();
+        var incremented = Increment8Bits(toIncrement, registers);
+        _mmuService.WriteByte(registers.HL, incremented);
+        _clockService.Clock();
     }
 
     #region private methods

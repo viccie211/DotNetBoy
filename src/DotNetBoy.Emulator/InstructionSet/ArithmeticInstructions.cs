@@ -15,7 +15,10 @@ public class ArithmeticInstructions : IInstructionSet
         _mmuService = mmuService;
         Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
         {
+            { 0x09, AddBCToHL },
+            { 0x19, AddDEToHL },
             { 0x29, AddHLToHL },
+            { 0x39, AddStackPointerToHL },
             { 0x80, AddBToA },
             { 0x81, AddCToA },
             { 0x82, AddDToA },
@@ -165,9 +168,24 @@ public class ArithmeticInstructions : IInstructionSet
         _clockService.Clock();
     }
 
+    public void AddBCToHL(ICpuRegistersService registers)
+    {
+        registers.HL = SixteenBitAddition(registers.BC, registers.HL, registers);
+    }
+
+    public void AddDEToHL(ICpuRegistersService registers)
+    {
+        registers.HL = SixteenBitAddition(registers.DE, registers.HL, registers);
+    }
+
     public void AddHLToHL(ICpuRegistersService registers)
     {
         registers.HL = SixteenBitAddition(registers.HL, registers.HL, registers);
+    }
+
+    public void AddStackPointerToHL(ICpuRegistersService registers)
+    {
+        registers.HL = SixteenBitAddition(registers.StackPointer, registers.HL, registers);
     }
 
     private void SubtractByteFromA(byte toSubtract, ICpuRegistersService registers)

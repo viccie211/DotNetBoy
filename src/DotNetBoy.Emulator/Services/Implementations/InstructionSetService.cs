@@ -20,8 +20,10 @@ public class InstructionSetService : IInstructionSetService
         LoadBetweenRegistersInstructions loadBetweenRegistersInstructions,
         ArithmeticInstructions arithmeticInstructions,
         ShiftRightInstructions shiftRightInstructions,
+        ResetBitInARegisterInstructions resetBitInARegisterInstructions,
         ResetBitInCRegisterInstructions resetBitInCRegisterInstructions,
-        RotateRightInstructions rotateRightInstructions
+        RotateRightInstructions rotateRightInstructions,
+        SwapInstructions swapInstructions
     )
     {
         var nonPrefixedInstructions = new List<IInstructionSet>()
@@ -42,8 +44,10 @@ public class InstructionSetService : IInstructionSetService
         var prefixedInstructions = new List<IInstructionSet>()
         {
             shiftRightInstructions,
+            resetBitInARegisterInstructions,
             resetBitInCRegisterInstructions,
-            rotateRightInstructions
+            rotateRightInstructions,
+            swapInstructions
         };
 
         NonPrefixedInstructions = new Action<ICpuRegistersService>[0x100];

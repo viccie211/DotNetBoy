@@ -8,12 +8,16 @@ Is a FrontEnd for the DotNetBoy emulator written in DotNet MAUI
 It's an exercise for me to understand how computers work at the low level.
 
 ## Current progress:
-Implemented 167/244 non prefixed instructions
+Implemented 190/244 non prefixed instructions
 
-Implemented 10/255 prefixed instructions
+Implemented 26/255 prefixed instructions
 
 Not yet implemented:
-* Interrupts
+* Raising the following interrupts: 
+    * LCD
+    * Timer
+    * Serial
+    * Joypad
 * Memory mappers
 * Rom bank switching
 * Window Layer graphics

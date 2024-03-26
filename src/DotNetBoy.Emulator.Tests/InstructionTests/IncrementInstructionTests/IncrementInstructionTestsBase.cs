@@ -12,13 +12,15 @@ public abstract class IncrementInstructionTestsBase
     public void SetUp()
     {
         var clockServiceMock = new Mock<ClockService>();
-        _instructions = new IncrementInstructions(clockServiceMock.Object);
-        _registers = new TestCpuRegisterService(){
-            F=new FlagsRegister(),
-            B=0x00,
-            BC=0x0000,
-            ProgramCounter=0x0000,
-            StackPointer=0x0000
+        var mmuServiceMock = new Mock<IMmuService>();
+        _instructions = new IncrementInstructions(clockServiceMock.Object, mmuServiceMock.Object);
+        _registers = new TestCpuRegisterService()
+        {
+            F = new FlagsRegister(),
+            B = 0x00,
+            BC = 0x0000,
+            ProgramCounter = 0x0000,
+            StackPointer = 0x0000
         };
     }
 }

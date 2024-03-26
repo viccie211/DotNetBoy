@@ -30,7 +30,10 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<ArithmeticInstructions>();
         serviceCollection.AddScoped<ShiftRightInstructions>();
         serviceCollection.AddScoped<ResetBitInCRegisterInstructions>();
+        serviceCollection.AddScoped<ResetBitInARegisterInstructions>();
         serviceCollection.AddScoped<RotateRightInstructions>();
+        serviceCollection.AddScoped<SwapInstructions>();
+        
         serviceCollection.AddScoped<IInstructionSetService, InstructionSetService>();
         
         serviceCollection.AddScoped<Cpu>();

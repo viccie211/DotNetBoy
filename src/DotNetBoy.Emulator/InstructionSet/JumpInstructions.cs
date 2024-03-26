@@ -23,13 +23,21 @@ public class JumpInstructions : IInstructionSet
             { 0xC0, ReturnNonZero },
             { 0xC3, JumpD16 },
             { 0xC4, CallA16NonZero },
+            { 0xC7, Reset0 },
             { 0xC8, ReturnZero },
             { 0xC9, ReturnFromSubroutine },
             { 0xCD, CallA16 },
+            { 0xCF, Reset1 },
             { 0xD0, ReturnNonCarry },
+            { 0xD7, Reset2 },
             { 0xD8, ReturnCarry },
             { 0xD9, ReturnFromInterrupt },
-            { 0xE9, JumpToAddressHL }
+            { 0xDF, Reset3 },
+            { 0xE7, Reset4 },
+            { 0xE9, JumpToAddressHL },
+            { 0xEF, Reset5 },
+            { 0xF7, Reset6 },
+            { 0xFF, Reset7 },
         };
         _mmuService = mmuService;
         _clockService = clockService;
@@ -166,6 +174,50 @@ public class JumpInstructions : IInstructionSet
 
     #endregion
 
+    #region Resets
+
+    public void Reset0(ICpuRegistersService registers)
+    {
+        Reset(0x0000, registers);
+    }
+
+    public void Reset1(ICpuRegistersService registers)
+    {
+        Reset(0x0008, registers);
+    }
+
+    public void Reset2(ICpuRegistersService registers)
+    {
+        Reset(0x0010, registers);
+    }
+
+    public void Reset3(ICpuRegistersService registers)
+    {
+        Reset(0x0018, registers);
+    }
+
+    public void Reset4(ICpuRegistersService registers)
+    {
+        Reset(0x0020, registers);
+    }
+
+    public void Reset5(ICpuRegistersService registers)
+    {
+        Reset(0x0028, registers);
+    }
+
+    public void Reset6(ICpuRegistersService registers)
+    {
+        Reset(0x0030, registers);
+    }
+
+    public void Reset7(ICpuRegistersService registers)
+    {
+        Reset(0x0038, registers);
+    }
+
+    #endregion
+
     #region private methods
 
     private void JumpRelative8BitsOnCondition(bool shouldJump, ICpuRegistersService registers)
@@ -212,6 +264,19 @@ public class JumpInstructions : IInstructionSet
         registers.ProgramCounter =
             _mmuService.ReadWordLittleEndian(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
         _clockService.Clock(6);
+    }
+
+    private void Reset(ushort address, ICpuRegistersService registers)
+    {
+        var toStore = (ushort)(registers.ProgramCounter + 1);
+        var lower = _byteUshortService.LowerByteOfSixteenBits(toStore);
+        var upper = _byteUshortService.UpperByteOfSixteenBits(toStore);
+        registers.StackPointer--;
+        _mmuService.WriteByte(registers.StackPointer, upper);
+        registers.StackPointer--;
+        _mmuService.WriteByte(registers.StackPointer, lower);
+        registers.ProgramCounter = address;
+        _clockService.Clock(4);
     }
 
     private void ReturnOnCondition(bool condition, ICpuRegistersService registers)

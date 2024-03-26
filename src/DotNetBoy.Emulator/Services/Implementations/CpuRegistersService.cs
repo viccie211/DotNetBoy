@@ -16,6 +16,7 @@ public class CpuRegistersService(IByteUshortService byteUshortService) : ICpuReg
     public FlagsRegister F { get; set; } = 0x00;
     public bool InterruptMasterEnable { get; set; } = false;
     public bool InterruptsJustEnabled { get; set; } = false;
+
     #region 16 Bit Register Views
 
     public ushort AF
@@ -66,14 +67,14 @@ public class CpuRegistersService(IByteUshortService byteUshortService) : ICpuReg
 
     public void Reset()
     {
-        A = 0x11;
-        B = 0;
-        C = 0;
-        D = 0xFF;
-        E = 0X56;
-        F = 0x80;
-        H = 0;
-        L = 0x0D;
+        A = 0x01;
+        B = 0x00;
+        C = 0x13;
+        D = 0x00;
+        E = 0XD8;
+        F = new FlagsRegister() { Zero = true, Subtract = false, HalfCarry = false, Carry = false };
+        H = 0x01;
+        L = 0x4D;
         ProgramCounter = 0x100;
         StackPointer = 0xFFFE;
     }

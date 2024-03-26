@@ -12,6 +12,7 @@ public class MiscellaneousInstructions : IInstructionSet
         Instructions = new Dictionary<byte, Action<ICpuRegistersService>>
         {
             { 0x00, NOP },
+            { 0x2F, ComplementA },
             { 0x76, Halt },
             { 0xF3, DisableInterrupts },
             { 0xFB, EnableInterrupts },
@@ -27,6 +28,15 @@ public class MiscellaneousInstructions : IInstructionSet
     {
         registers.ProgramCounter++;
         _clockService.Clock();
+    }
+
+    public void ComplementA(ICpuRegistersService registers)
+    {
+        registers.A = (byte)~registers.A;
+        registers.F.Subtract = true;
+        registers.F.HalfCarry = true;
+        _clockService.Clock();
+        registers.ProgramCounter += 1;
     }
 
     /// <summary>
