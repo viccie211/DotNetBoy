@@ -12,7 +12,8 @@ public class SRLInstructionTests
     {
         _registers = new TestCpuRegisterService();
         var clockServiceMock = new Mock<IClockService>();
-        _instructions = new ShiftRightInstructions(clockServiceMock.Object);
+        var mmuServiceMock = new Mock<IMmuService>();
+        _instructions = new ShiftRightInstructions(clockServiceMock.Object, mmuServiceMock.Object);
     }
 
     [Test]
@@ -33,7 +34,7 @@ public class SRLInstructionTests
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
         Assert.That(_registers.F, Is.EqualTo(expectedF));
     }
-    
+
     [Test]
     public void SRLB_0x01()
     {
@@ -52,7 +53,7 @@ public class SRLInstructionTests
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
         Assert.That(_registers.F, Is.EqualTo(expectedF));
     }
-    
+
     [Test]
     public void SRLB_0xFF()
     {
@@ -71,7 +72,7 @@ public class SRLInstructionTests
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
         Assert.That(_registers.F, Is.EqualTo(expectedF));
     }
-    
+
     [Test]
     public void SRLB_0xAA()
     {

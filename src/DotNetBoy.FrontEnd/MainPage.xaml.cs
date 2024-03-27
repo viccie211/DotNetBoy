@@ -12,6 +12,12 @@ public partial class MainPage : ContentPage
         InitializeComponent();
         BindingContext = viewModel;
         viewModel.PpuService.VBlankStart += OnVBlankStart;
+        Dispatcher.DispatchAsync(() =>
+        {
+            EmulatorScreen.WidthRequest = ScreenDimensions.WIDTH * viewModel.Scale;
+            EmulatorScreen.HeightRequest = ScreenDimensions.HEIGHT * viewModel.Scale;
+            EmulatorScreen.Invalidate();
+        });
     }
 
     private void StartButtonClicked(object sender, EventArgs e)

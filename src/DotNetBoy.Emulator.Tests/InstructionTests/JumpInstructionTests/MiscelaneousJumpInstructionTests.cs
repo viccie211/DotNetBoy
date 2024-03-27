@@ -6,7 +6,7 @@ public class MiscelaneousJumpInstructionTests : JumpInstructionTestsBase
     public void Jump()
     {
         const ushort expectedProgramCounter = 0xFFAA;
-        _instructions.JumpD16(_registers);
+        _instructions.JumpA16(_registers);
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
     }
     

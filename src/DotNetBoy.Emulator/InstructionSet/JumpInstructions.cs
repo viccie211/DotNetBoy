@@ -21,17 +21,21 @@ public class JumpInstructions : IInstructionSet
             { 0x30, JumpRelative8BitsIfNotCarry },
             { 0x38, JumpRelative8BitsIfCarry },
             { 0xC0, ReturnNonZero },
-            { 0xC3, JumpD16 },
+            { 0xC2, JumpA16OnNonZero },
+            { 0xC3, JumpA16 },
             { 0xC4, CallA16NonZero },
             { 0xC7, Reset0 },
             { 0xC8, ReturnZero },
             { 0xC9, ReturnFromSubroutine },
+            { 0xCA, JumpA16OnZero },
             { 0xCD, CallA16 },
             { 0xCF, Reset1 },
             { 0xD0, ReturnNonCarry },
+            { 0xD2, JumpA16OnNonCarry },
             { 0xD7, Reset2 },
             { 0xD8, ReturnCarry },
             { 0xD9, ReturnFromInterrupt },
+            { 0xDA, JumpA16OnCarry },
             { 0xDF, Reset3 },
             { 0xE7, Reset4 },
             { 0xE9, JumpToAddressHL },
@@ -93,11 +97,29 @@ public class JumpInstructions : IInstructionSet
     /// Jump to the address written next in memory.
     /// </summary>
     /// Verified against BGB
-    public void JumpD16(ICpuRegistersService registers)
+    public void JumpA16(ICpuRegistersService registers)
     {
-        registers.ProgramCounter =
-            _mmuService.ReadWordLittleEndian(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
-        _clockService.Clock(4);
+        JumpToA16(registers);
+    }
+
+    public void JumpA16OnZero(ICpuRegistersService registers)
+    {
+        JumpA16OnCondition(registers.F.Zero, registers);
+    }
+
+    public void JumpA16OnNonZero(ICpuRegistersService registers)
+    {
+        JumpA16OnCondition(!registers.F.Zero, registers);
+    }
+
+    public void JumpA16OnCarry(ICpuRegistersService registers)
+    {
+        JumpA16OnCondition(registers.F.Carry, registers);
+    }
+
+    public void JumpA16OnNonCarry(ICpuRegistersService registers)
+    {
+        JumpA16OnCondition(!registers.F.Carry, registers);
     }
 
     /// <summary>
@@ -238,6 +260,25 @@ public class JumpInstructions : IInstructionSet
         registers.ProgramCounter += 2;
         registers.ProgramCounter = InstructionUtilFunctions.SignedAdd(registers.ProgramCounter, relative);
         _clockService.Clock(3);
+    }
+
+    private void JumpA16OnCondition(bool shouldJump, ICpuRegistersService registers)
+    {
+        if (shouldJump)
+        {
+            JumpToA16(registers);
+            return;
+        }
+
+        registers.ProgramCounter += 3;
+        _clockService.Clock(3);
+    }
+
+    private void JumpToA16(ICpuRegistersService registers)
+    {
+        var address = _mmuService.ReadWordLittleEndian(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
+        registers.ProgramCounter = address;
+        _clockService.Clock(4);
     }
 
     private void CallA16OnCondition(bool shouldCall, ICpuRegistersService registers)

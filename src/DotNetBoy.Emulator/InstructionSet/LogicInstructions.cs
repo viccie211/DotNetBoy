@@ -40,6 +40,7 @@ public class LogicInstructions : IInstructionSet
             { 0xB7, ORAWithA },
             { 0xE6, ANDD8WithA },
             { 0xEE, XORD8WithA },
+            { 0xF6, ORD8WithA },
             { 0xFE, CompareD8WithA },
         };
         _clockService = clockService;
@@ -270,6 +271,13 @@ public class LogicInstructions : IInstructionSet
     public void ORAtAddressHLWithA(ICpuRegistersService registers)
     {
         var toOR = _mmuService.ReadByte(registers.HL);
+        _clockService.Clock();
+        ORByteWithA(toOR, registers);
+    }
+    
+    public void ORD8WithA(ICpuRegistersService registers)
+    {
+        var toOR = _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
         _clockService.Clock();
         ORByteWithA(toOR, registers);
     }

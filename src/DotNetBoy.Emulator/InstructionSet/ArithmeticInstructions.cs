@@ -26,11 +26,21 @@ public class ArithmeticInstructions : IInstructionSet
             { 0x84, AddHToA },
             { 0x85, AddLToA },
             { 0x87, AddAToA },
+            { 0x90, SubtractBFromA },
+            { 0x91, SubtractCFromA },
+            { 0x92, SubtractDFromA },
+            { 0x93, SubtractEFromA },
+            { 0x94, SubtractHFromA },
+            { 0x95, SubtractLFromA },
+            { 0x96, SubtractAtAddressHLFromA },
+            { 0x97, SubtractAFromA },
             { 0xC6, AddD8ToA },
             { 0xCE, AddD8WithCarryToA },
             { 0xD6, SubtractD8FromA }
         };
     }
+
+    #region Add
 
     /// <summary>
     /// Adds the contents of the B register to the A register and stores the result in the A register
@@ -92,6 +102,13 @@ public class ArithmeticInstructions : IInstructionSet
         AddByteToA(registers.L, registers);
     }
 
+    public void AddAtAddressHLToA(ICpuRegistersService registers)
+    {
+        var toAdd = _mmuService.ReadByte(registers.HL);
+        _clockService.Clock();
+        AddByteToA(toAdd, registers);
+    }
+
     /// <summary>
     /// Adds the contents of the A register to the A register and stores the result in the A register
     /// Sets Z 0 H C
@@ -115,17 +132,50 @@ public class ArithmeticInstructions : IInstructionSet
         AddByteToA(toAdd, registers);
     }
 
-    /// <summary>
-    /// Adds the next byte in memory and the carry flag to the A register and stores the result in the A register
-    /// Sets Z 0 H C
-    /// </summary>
-    ///
-    public void AddD8WithCarryToA(ICpuRegistersService registers)
+    #endregion
+
+    #region Subtract
+
+    public void SubtractBFromA(ICpuRegistersService registers)
     {
-        var toAdd = _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
+        SubtractByteFromA(registers.B, registers);
+    }
+
+    public void SubtractCFromA(ICpuRegistersService registers)
+    {
+        SubtractByteFromA(registers.C, registers);
+    }
+
+    public void SubtractDFromA(ICpuRegistersService registers)
+    {
+        SubtractByteFromA(registers.B, registers);
+    }
+
+    public void SubtractEFromA(ICpuRegistersService registers)
+    {
+        SubtractByteFromA(registers.E, registers);
+    }
+
+    public void SubtractHFromA(ICpuRegistersService registers)
+    {
+        SubtractByteFromA(registers.H, registers);
+    }
+
+    public void SubtractLFromA(ICpuRegistersService registers)
+    {
+        SubtractByteFromA(registers.L, registers);
+    }
+
+    public void SubtractAtAddressHLFromA(ICpuRegistersService registers)
+    {
+        var toSubtract = _mmuService.ReadByte(registers.HL);
         _clockService.Clock();
-        registers.ProgramCounter += 1;
-        AddByteWithCarryToA(toAdd, registers);
+        SubtractByteFromA(toSubtract, registers);
+    }
+
+    public void SubtractAFromA(ICpuRegistersService registers)
+    {
+        SubtractByteFromA(registers.A, registers);
     }
 
     /// <summary>
@@ -139,6 +189,21 @@ public class ArithmeticInstructions : IInstructionSet
         _clockService.Clock();
         registers.ProgramCounter += 1;
         SubtractByteFromA(toSubtract, registers);
+    }
+
+    #endregion
+
+    /// <summary>
+    /// Adds the next byte in memory and the carry flag to the A register and stores the result in the A register
+    /// Sets Z 0 H C
+    /// </summary>
+    ///
+    public void AddD8WithCarryToA(ICpuRegistersService registers)
+    {
+        var toAdd = _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
+        _clockService.Clock();
+        registers.ProgramCounter += 1;
+        AddByteWithCarryToA(toAdd, registers);
     }
 
     private void AddByteToA(byte toAdd, ICpuRegistersService registers)
