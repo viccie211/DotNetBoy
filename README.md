@@ -10,7 +10,7 @@ It's an exercise for me to understand how computers work at the low level.
 ## Current progress:
 Implemented 203/244 non prefixed instructions
 
-Implemented 88/255 prefixed instructions
+Implemented 152/255 prefixed instructions
 
 Not yet implemented:
 * Raising the following interrupts: 

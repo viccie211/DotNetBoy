@@ -1,6 +1,7 @@
 ﻿using DotNetBoy.Emulator.InstructionSet;
 using DotNetBoy.Emulator.InstructionSet.PrefixedInstructions;
 using DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.ResetBitInstructions;
+using DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.SetBitInstructions;
 using DotNetBoy.Emulator.Services.Implementations;
 using DotNetBoy.Emulator.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
@@ -38,6 +39,15 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<ResetBitAtAddressHLInstructions>();
         serviceCollection.AddScoped<ResetBitInARegisterInstructions>();
         serviceCollection.AddScoped<ResetBitInARegisterInstructions>();
+        serviceCollection.AddScoped<SetBitInBRegisterInstructions>();
+        serviceCollection.AddScoped<SetBitInCRegisterInstructions>();
+        serviceCollection.AddScoped<SetBitInDRegisterInstructions>();
+        serviceCollection.AddScoped<SetBitInERegisterInstructions>();
+        serviceCollection.AddScoped<SetBitInHRegisterInstructions>();
+        serviceCollection.AddScoped<SetBitInLRegisterInstructions>();
+        serviceCollection.AddScoped<SetBitAtAddressHLInstructions>();
+        serviceCollection.AddScoped<SetBitInARegisterInstructions>();
+        serviceCollection.AddScoped<SetBitInARegisterInstructions>();
         serviceCollection.AddScoped<RotateRightInstructions>();
         serviceCollection.AddScoped<SwapInstructions>();
 

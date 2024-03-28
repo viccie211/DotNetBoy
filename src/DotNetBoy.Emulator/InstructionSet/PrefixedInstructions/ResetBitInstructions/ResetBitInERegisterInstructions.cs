@@ -15,8 +15,8 @@ public class ResetBitInERegisterInstructions : ResetBitInstructionsBase, IInstru
             { 0x8B, ResetBit1InERegister },
             { 0x93, ResetBit2InERegister },
             { 0x9B, ResetBit3InERegister },
-            { 0xE3, ResetBit4InERegister },
-            { 0xEB, ResetBit5InERegister },
+            { 0xA3, ResetBit4InERegister },
+            { 0xAB, ResetBit5InERegister },
             { 0xB3, ResetBit6InERegister },
             { 0xBB, ResetBit7InERegister },
         };

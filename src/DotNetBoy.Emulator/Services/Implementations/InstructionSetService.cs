@@ -2,6 +2,7 @@
 using DotNetBoy.Emulator.InstructionSet.Interfaces;
 using DotNetBoy.Emulator.InstructionSet.PrefixedInstructions;
 using DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.ResetBitInstructions;
+using DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.SetBitInstructions;
 using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.Services.Implementations;
@@ -28,6 +29,14 @@ public class InstructionSetService : IInstructionSetService
         ResetBitInLRegisterInstructions resetBitInLRegisterInstructions,
         ResetBitAtAddressHLInstructions resetBitAtAddressHlInstructions,
         ResetBitInARegisterInstructions resetBitInARegisterInstructions,
+        SetBitInBRegisterInstructions setBitInBRegisterInstructions,
+        SetBitInCRegisterInstructions setBitInCRegisterInstructions,
+        SetBitInDRegisterInstructions setBitInDRegisterInstructions,
+        SetBitInERegisterInstructions setBitInERegisterInstructions,
+        SetBitInHRegisterInstructions setBitInHRegisterInstructions,
+        SetBitInLRegisterInstructions setBitInLRegisterInstructions,
+        SetBitAtAddressHLInstructions setBitAtAddressHlInstructions,
+        SetBitInARegisterInstructions setBitInARegisterInstructions,
         RotateRightInstructions rotateRightInstructions,
         SwapInstructions swapInstructions
     )
@@ -58,6 +67,14 @@ public class InstructionSetService : IInstructionSetService
             resetBitInLRegisterInstructions,
             resetBitAtAddressHlInstructions,
             resetBitInARegisterInstructions,
+            setBitInBRegisterInstructions,
+            setBitInCRegisterInstructions,
+            setBitInDRegisterInstructions,
+            setBitInERegisterInstructions,
+            setBitInHRegisterInstructions,
+            setBitInLRegisterInstructions,
+            setBitAtAddressHlInstructions,
+            setBitInARegisterInstructions,
             rotateRightInstructions,
             swapInstructions
         };
