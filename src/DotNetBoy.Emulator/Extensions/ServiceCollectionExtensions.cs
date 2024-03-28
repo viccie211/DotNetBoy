@@ -13,10 +13,10 @@ public static class ServiceCollectionExtensions
     {
         serviceCollection.AddScoped<IByteUshortService, ByteUshortService>();
         serviceCollection.AddScoped<IMmuService, MmuService>();
-        serviceCollection.AddScoped<IClockService,ClockService>();
+        serviceCollection.AddScoped<IClockService, ClockService>();
         serviceCollection.AddScoped<ITileService, TileService>();
-        serviceCollection.AddScoped<IPpuService,PpuService>();
-        serviceCollection.AddScoped<ICpuRegistersService,CpuRegistersService>();
+        serviceCollection.AddScoped<IPpuService, PpuService>();
+        serviceCollection.AddScoped<ICpuRegistersService, CpuRegistersService>();
         serviceCollection.AddScoped<JumpInstructions>();
         serviceCollection.AddScoped<MiscellaneousInstructions>();
         serviceCollection.AddScoped<LoadInstructions>();
@@ -29,13 +29,20 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<PushPopInstructions>();
         serviceCollection.AddScoped<ArithmeticInstructions>();
         serviceCollection.AddScoped<ShiftRightInstructions>();
+        serviceCollection.AddScoped<ResetBitInBRegisterInstructions>();
         serviceCollection.AddScoped<ResetBitInCRegisterInstructions>();
+        serviceCollection.AddScoped<ResetBitInDRegisterInstructions>();
+        serviceCollection.AddScoped<ResetBitInERegisterInstructions>();
+        serviceCollection.AddScoped<ResetBitInHRegisterInstructions>();
+        serviceCollection.AddScoped<ResetBitInLRegisterInstructions>();
+        serviceCollection.AddScoped<ResetBitAtAddressHLInstructions>();
+        serviceCollection.AddScoped<ResetBitInARegisterInstructions>();
         serviceCollection.AddScoped<ResetBitInARegisterInstructions>();
         serviceCollection.AddScoped<RotateRightInstructions>();
         serviceCollection.AddScoped<SwapInstructions>();
-        
+
         serviceCollection.AddScoped<IInstructionSetService, InstructionSetService>();
-        
+
         serviceCollection.AddScoped<Cpu>();
         return serviceCollection;
     }

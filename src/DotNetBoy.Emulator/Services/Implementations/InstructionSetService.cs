@@ -20,8 +20,14 @@ public class InstructionSetService : IInstructionSetService
         LoadBetweenRegistersInstructions loadBetweenRegistersInstructions,
         ArithmeticInstructions arithmeticInstructions,
         ShiftRightInstructions shiftRightInstructions,
-        ResetBitInARegisterInstructions resetBitInARegisterInstructions,
+        ResetBitInBRegisterInstructions resetBitInBRegisterInstructions,
         ResetBitInCRegisterInstructions resetBitInCRegisterInstructions,
+        ResetBitInDRegisterInstructions resetBitInDRegisterInstructions,
+        ResetBitInERegisterInstructions resetBitInERegisterInstructions,
+        ResetBitInHRegisterInstructions resetBitInHRegisterInstructions,
+        ResetBitInLRegisterInstructions resetBitInLRegisterInstructions,
+        ResetBitAtAddressHLInstructions resetBitAtAddressHlInstructions,
+        ResetBitInARegisterInstructions resetBitInARegisterInstructions,
         RotateRightInstructions rotateRightInstructions,
         SwapInstructions swapInstructions
     )
@@ -44,8 +50,14 @@ public class InstructionSetService : IInstructionSetService
         var prefixedInstructions = new List<IInstructionSet>()
         {
             shiftRightInstructions,
-            resetBitInARegisterInstructions,
+            resetBitInBRegisterInstructions,
             resetBitInCRegisterInstructions,
+            resetBitInDRegisterInstructions,
+            resetBitInERegisterInstructions,
+            resetBitInHRegisterInstructions,
+            resetBitInLRegisterInstructions,
+            resetBitAtAddressHlInstructions,
+            resetBitInARegisterInstructions,
             rotateRightInstructions,
             swapInstructions
         };

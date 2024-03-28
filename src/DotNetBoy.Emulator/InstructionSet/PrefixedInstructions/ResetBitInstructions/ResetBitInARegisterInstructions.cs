@@ -5,14 +5,10 @@ namespace DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.ResetBitInstruc
 
 public class ResetBitInARegisterInstructions : ResetBitInstructionsBase, IInstructionSet
 {
-    private readonly IClockService _clockService;
-
     public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
 
-    public ResetBitInARegisterInstructions(IClockService clockService)
+    public ResetBitInARegisterInstructions(IClockService clockService) : base(clockService)
     {
-        _clockService = clockService;
-
         Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
         {
             { 0x87, ResetBit0InARegister },
@@ -28,65 +24,41 @@ public class ResetBitInARegisterInstructions : ResetBitInstructionsBase, IInstru
 
     public void ResetBit0InARegister(ICpuRegistersService registers)
     {
-        var mask = GetResetMask(0);
-        registers.A = (byte)(registers.A & mask);
-        _clockService.Clock(2);
-        registers.ProgramCounter += 2;
+        registers.A = ResetBit(0, registers.A, registers);
     }
 
     public void ResetBit1InARegister(ICpuRegistersService registers)
     {
-        var mask = GetResetMask(1);
-        registers.A = (byte)(registers.A & mask);
-        _clockService.Clock(2);
-        registers.ProgramCounter += 2;
+        registers.A = ResetBit(1, registers.A, registers);
     }
 
     public void ResetBit2InARegister(ICpuRegistersService registers)
     {
-        var mask = GetResetMask(2);
-        registers.A = (byte)(registers.A & mask);
-        _clockService.Clock(2);
-        registers.ProgramCounter += 2;
+        registers.A = ResetBit(2, registers.A, registers);
     }
 
     public void ResetBit3InARegister(ICpuRegistersService registers)
     {
-        var mask = GetResetMask(3);
-        registers.A = (byte)(registers.A & mask);
-        _clockService.Clock(2);
-        registers.ProgramCounter += 2;
+        registers.A = ResetBit(3, registers.A, registers);
     }
 
     public void ResetBit4InARegister(ICpuRegistersService registers)
     {
-        var mask = GetResetMask(4);
-        registers.A = (byte)(registers.A & mask);
-        _clockService.Clock(2);
-        registers.ProgramCounter += 2;
+        registers.A = ResetBit(4, registers.A, registers);
     }
 
     public void ResetBit5InARegister(ICpuRegistersService registers)
     {
-        var mask = GetResetMask(5);
-        registers.A = (byte)(registers.A & mask);
-        _clockService.Clock(2);
-        registers.ProgramCounter += 2;
+        registers.A = ResetBit(5, registers.A, registers);
     }
 
     public void ResetBit6InARegister(ICpuRegistersService registers)
     {
-        var mask = GetResetMask(6);
-        registers.A = (byte)(registers.A & mask);
-        _clockService.Clock(2);
-        registers.ProgramCounter += 2;
+        registers.A = ResetBit(6, registers.A, registers);
     }
 
     public void ResetBit7InARegister(ICpuRegistersService registers)
     {
-        var mask = GetResetMask(7);
-        registers.A = (byte)(registers.A & mask);
-        _clockService.Clock(2);
-        registers.ProgramCounter += 2;
+        registers.A = ResetBit(7, registers.A, registers);
     }
 }
