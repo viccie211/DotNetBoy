@@ -18,6 +18,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<ITileService, TileService>();
         serviceCollection.AddScoped<IPpuService, PpuService>();
         serviceCollection.AddScoped<ICpuRegistersService, CpuRegistersService>();
+        serviceCollection.AddScoped<RotateInstructions>();
         serviceCollection.AddScoped<JumpInstructions>();
         serviceCollection.AddScoped<MiscellaneousInstructions>();
         serviceCollection.AddScoped<LoadInstructions>();
@@ -26,7 +27,6 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<DecrementInstructions>();
         serviceCollection.AddScoped<LogicInstructions>();
         serviceCollection.AddScoped<StoreInstructions>();
-        serviceCollection.AddScoped<RotateAndShiftInstructions>();
         serviceCollection.AddScoped<PushPopInstructions>();
         serviceCollection.AddScoped<ArithmeticInstructions>();
         serviceCollection.AddScoped<ShiftRightInstructions>();

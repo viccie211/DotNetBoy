@@ -38,6 +38,14 @@ public class LogicInstructions : IInstructionSet
             { 0xB5, ORLWithA },
             { 0xB6, ORAtAddressHLWithA },
             { 0xB7, ORAWithA },
+            { 0xB8, CompareBWithA },
+            { 0xB9, CompareCWithA },
+            { 0xBA, CompareDWithA },
+            { 0xBB, CompareEWithA },
+            { 0xBC, CompareHWithA },
+            { 0xBD, CompareLWithA },
+            { 0xBE, CompareAtAddressHLWithA },
+            { 0xBF, CompareAWithA },
             { 0xE6, ANDD8WithA },
             { 0xEE, XORD8WithA },
             { 0xF6, ORD8WithA },
@@ -46,17 +54,6 @@ public class LogicInstructions : IInstructionSet
         _clockService = clockService;
     }
 
-    public void CompareD8WithA(ICpuRegistersService registers)
-    {
-        var d8 = _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
-        var result = (byte)(registers.A - d8);
-        registers.F.Subtract = true;
-        registers.F.Zero = result == 0;
-        registers.F.HalfCarry = InstructionUtilFunctions.HalfCarryFor8BitSubtraction(registers.A, d8);
-        registers.F.Carry = InstructionUtilFunctions.CarryFor8BitSubtraction(registers.A, d8);
-        _clockService.Clock(2);
-        registers.ProgramCounter += 2;
-    }
 
     #region AND
 
@@ -274,12 +271,67 @@ public class LogicInstructions : IInstructionSet
         _clockService.Clock();
         ORByteWithA(toOR, registers);
     }
-    
+
     public void ORD8WithA(ICpuRegistersService registers)
     {
         var toOR = _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
         _clockService.Clock();
         ORByteWithA(toOR, registers);
+    }
+
+    #endregion
+
+    #region Compare
+
+    public void CompareBWithA(ICpuRegistersService registers)
+    {
+        CompareByteWithA(registers.B, registers);
+    }
+
+    public void CompareCWithA(ICpuRegistersService registers)
+    {
+        CompareByteWithA(registers.C, registers);
+    }
+
+    public void CompareDWithA(ICpuRegistersService registers)
+    {
+        CompareByteWithA(registers.D, registers);
+    }
+
+    public void CompareEWithA(ICpuRegistersService registers)
+    {
+        CompareByteWithA(registers.E, registers);
+    }
+
+    public void CompareHWithA(ICpuRegistersService registers)
+    {
+        CompareByteWithA(registers.H, registers);
+    }
+
+    public void CompareLWithA(ICpuRegistersService registers)
+    {
+        CompareByteWithA(registers.L, registers);
+    }
+
+    public void CompareAtAddressHLWithA(ICpuRegistersService registers)
+    {
+        var toCompare = _mmuService.ReadByte(registers.HL);
+        _clockService.Clock();
+        CompareByteWithA(toCompare, registers);
+    }
+
+    public void CompareAWithA(ICpuRegistersService registers)
+    {
+        CompareByteWithA(registers.A, registers);
+    }
+
+    public void CompareD8WithA(ICpuRegistersService registers)
+    {
+        var d8 = _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
+
+        _clockService.Clock();
+        registers.ProgramCounter += 1;
+        CompareByteWithA(d8, registers);
     }
 
     #endregion
@@ -327,6 +379,17 @@ public class LogicInstructions : IInstructionSet
         registers.F.Subtract = false;
         registers.F.Carry = false;
         registers.F.HalfCarry = false;
+        _clockService.Clock();
+        registers.ProgramCounter += 1;
+    }
+
+    private void CompareByteWithA(byte toCompare, ICpuRegistersService registers)
+    {
+        var result = (byte)(registers.A - toCompare);
+        registers.F.Subtract = true;
+        registers.F.Zero = result == 0;
+        registers.F.HalfCarry = InstructionUtilFunctions.HalfCarryFor8BitSubtraction(registers.A, toCompare);
+        registers.F.Carry = InstructionUtilFunctions.CarryFor8BitSubtraction(registers.A, toCompare);
         _clockService.Clock();
         registers.ProgramCounter += 1;
     }

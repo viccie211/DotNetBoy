@@ -38,8 +38,14 @@ public class InstructionUtilFunctions
 
     public static ushort SignedAdd(ushort target, byte add)
     {
-        sbyte s = unchecked((sbyte)add);
+        var s = ByteToSignedByte(add);
         return (ushort)(target + s);
+    }
+
+    public static sbyte ByteToSignedByte(byte input)
+    {
+        sbyte s = unchecked((sbyte)input);
+        return s;
     }
 
     public static ushort NextAddress(ushort programCounter)

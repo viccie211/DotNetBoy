@@ -68,7 +68,8 @@ public class LoadBetweenRegistersInstructions : IInstructionSet
             { 0x7C, LoadHIntoA },
             { 0x7D, LoadLIntoA },
             //0x7E is in LoadInstructions since it doesn't load between registers
-            { 0x07F, LoadAIntoA }
+            { 0x7F, LoadAIntoA },
+            { 0xF9, LoadHLIntoStackPointer }
         };
 
         _clockService = clockService;
@@ -542,6 +543,13 @@ public class LoadBetweenRegistersInstructions : IInstructionSet
     }
 
     #endregion
+
+    public void LoadHLIntoStackPointer(ICpuRegistersService registers)
+    {
+        registers.StackPointer = registers.HL;
+        _clockService.Clock(2);
+        registers.ProgramCounter += 1;
+    }
 
     private void LoadByteIntoA(byte toLoad, ICpuRegistersService registers)
     {

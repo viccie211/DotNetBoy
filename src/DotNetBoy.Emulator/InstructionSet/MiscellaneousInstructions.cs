@@ -12,7 +12,10 @@ public class MiscellaneousInstructions : IInstructionSet
         Instructions = new Dictionary<byte, Action<ICpuRegistersService>>
         {
             { 0x00, NOP },
+            { 0x27, DAA },
             { 0x2F, ComplementA },
+            { 0x37, SetCarryFlag },
+            { 0x3F, FlipCarryFlag },
             { 0x76, Halt },
             { 0xF3, DisableInterrupts },
             { 0xFB, EnableInterrupts },
@@ -27,6 +30,44 @@ public class MiscellaneousInstructions : IInstructionSet
     public void NOP(ICpuRegistersService registers)
     {
         registers.ProgramCounter++;
+        _clockService.Clock();
+    }
+
+    public void DAA(ICpuRegistersService registers)
+    {
+        // note: assumes a is a uint8_t and wraps from 0xff to 0
+        if (!registers.F.Subtract)
+        {
+            // after an addition, adjust if (half-)carry occurred or if result is out of bounds
+            if (registers.F.Carry || registers.A > 0x99)
+            {
+                registers.A += 0x60;
+                registers.F.Carry = true;
+            }
+
+            if (registers.F.HalfCarry || (registers.A & 0x0f) > 0x09)
+            {
+                registers.A += 0x6;
+            }
+        }
+        else
+        {
+            // after a subtraction, only adjust if (half-)carry occurred
+            if (registers.F.Carry)
+            {
+                registers.A -= 0x60;
+            }
+
+            if (registers.F.HalfCarry)
+            {
+                registers.A -= 0x6;
+            }
+        }
+
+        // these flags are always updated
+        registers.F.Zero = registers.A == 0; // the usual z flag
+        registers.F.HalfCarry = false; // h flag is always cleared
+        registers.ProgramCounter += 1;
         _clockService.Clock();
     }
 
@@ -54,6 +95,24 @@ public class MiscellaneousInstructions : IInstructionSet
     {
         registers.InterruptMasterEnable = true;
         registers.InterruptsJustEnabled = true;
+        _clockService.Clock();
+        registers.ProgramCounter += 1;
+    }
+
+    public void SetCarryFlag(ICpuRegistersService registers)
+    {
+        registers.F.Subtract = false;
+        registers.F.HalfCarry = false;
+        registers.F.Carry = true;
+        _clockService.Clock();
+        registers.ProgramCounter += 1;
+    }
+
+    public void FlipCarryFlag(ICpuRegistersService registers)
+    {
+        registers.F.Subtract = false;
+        registers.F.HalfCarry = false;
+        registers.F.Carry = !registers.F.Carry;
         _clockService.Clock();
         registers.ProgramCounter += 1;
     }

@@ -36,6 +36,7 @@ public class LoadInstructions : IInstructionSet
             { 0x6E, LoadAtAddressHLIntoL },
             { 0x7E, LoadAtAddressHLIntoA },
             { 0xF0, LoadAtAddressFF00PlusD8IntoA },
+            { 0xF8, LoadStackPointerPlusS8IntoHL },
             { 0xFA, LoadAtAddressA16IntoA }
         };
         _mmuService = mmuService;
@@ -162,7 +163,6 @@ public class LoadInstructions : IInstructionSet
         registers.A = LoadD8(registers);
     }
 
-
     /// <summary>
     /// Loads the byte located at the address in memory specified by the HL register into the A register and afterwards increment the HL register.
     /// </summary>
@@ -186,7 +186,6 @@ public class LoadInstructions : IInstructionSet
         registers.ProgramCounter += 1;
         _clockService.Clock(2);
     }
-
 
     /// <summary>
     /// Load the 8-bit contents of memory specified by register pair HL into register B.
@@ -272,6 +271,21 @@ public class LoadInstructions : IInstructionSet
         registers.A = _mmuService.ReadByte(address);
         registers.ProgramCounter += 3;
         _clockService.Clock(4);
+    }
+
+    public void LoadStackPointerPlusS8IntoHL(ICpuRegistersService registers)
+    {
+        var toAddUnsigned = _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
+        var signedToAdd = InstructionUtilFunctions.ByteToSignedByte(toAddUnsigned);
+        var resultInt = registers.StackPointer + signedToAdd;
+        var result = (ushort)resultInt;
+        registers.F.Zero = false;
+        registers.F.Subtract = false;
+        registers.F.Carry = resultInt > ushort.MaxValue;
+        registers.F.HalfCarry = (((registers.StackPointer & 0xFFF) + (signedToAdd & 0xFFF)) & 0x1000) == 0x1000;
+        registers.HL = result;
+        registers.ProgramCounter += 2;
+        _clockService.Clock(3);
     }
 
     #region private methods

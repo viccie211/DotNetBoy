@@ -15,7 +15,7 @@ var scope = serviceProvider.CreateScope();
 var cpuRegisters = scope.ServiceProvider.GetService<ICpuRegistersService>()!;
 cpuRegisters.Reset();
 
-var rom = Roms.AllInstructionTest;
+var rom = Roms.InstructionsTestRom;
 var mmuService = scope.ServiceProvider.GetService<IMmuService>()!;
 mmuService.LoadRom(rom);
 

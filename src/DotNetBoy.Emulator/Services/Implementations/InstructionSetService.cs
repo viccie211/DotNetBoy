@@ -9,13 +9,14 @@ namespace DotNetBoy.Emulator.Services.Implementations;
 
 public class InstructionSetService : IInstructionSetService
 {
-    public InstructionSetService(JumpInstructions jumpInstructions,
+    public InstructionSetService(
+        RotateInstructions rotateInstructions,
+        JumpInstructions jumpInstructions,
         MiscellaneousInstructions miscellaneousInstructions,
         LoadInstructions loadInstructions,
         IncrementInstructions incrementInstructions,
         DecrementInstructions decrementInstructions,
         LogicInstructions logicInstructions,
-        RotateAndShiftInstructions rotateAndShiftInstructions,
         StoreInstructions storeInstructions,
         PushPopInstructions pushPopInstructions,
         LoadBetweenRegistersInstructions loadBetweenRegistersInstructions,
@@ -43,13 +44,13 @@ public class InstructionSetService : IInstructionSetService
     {
         var nonPrefixedInstructions = new List<IInstructionSet>()
         {
+            rotateInstructions,
             jumpInstructions,
             miscellaneousInstructions,
             loadInstructions,
             incrementInstructions,
             decrementInstructions,
             logicInstructions,
-            rotateAndShiftInstructions,
             storeInstructions,
             pushPopInstructions,
             loadBetweenRegistersInstructions,
