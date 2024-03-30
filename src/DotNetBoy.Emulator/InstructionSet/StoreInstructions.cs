@@ -16,6 +16,7 @@ public class StoreInstructions : IInstructionSet
         Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
         {
             { 0x08, StoreStackPointerAtAddressD16 },
+            { 0x02, StoreAtAddressBCFromA },
             { 0x12, StoreAtAddressDEFromA },
             { 0x22, StoreAtAddressHLFromAIncrementHL },
             { 0x32, StoreAtAddressHLFromADecrementHL },
@@ -122,6 +123,17 @@ public class StoreInstructions : IInstructionSet
     /// <summary>
     /// Store the contents of the A register at the address in memory specified by the DE register
     /// </summary>
+    public void StoreAtAddressBCFromA(ICpuRegistersService registers)
+    {
+        _mmuService.WriteByte(registers.BC, registers.A);
+        registers.ProgramCounter += 1;
+        _clockService.Clock(2);
+    }
+
+
+    /// <summary>
+    /// Store the contents of the A register at the address in memory specified by the DE register
+    /// </summary>
     /// Verified against BGB
     public void StoreAtAddressDEFromA(ICpuRegistersService registers)
     {
@@ -196,7 +208,7 @@ public class StoreInstructions : IInstructionSet
 
     private void StoreAtAddressFF00PlusByteFromA(byte relativeAddress, ICpuRegistersService registers)
     {
-        var address = (ushort)(0xFF00 + relativeAddress); 
+        var address = (ushort)(0xFF00 + relativeAddress);
         _mmuService.WriteByte(address, registers.A);
         _clockService.Clock(2);
         registers.ProgramCounter += 1;

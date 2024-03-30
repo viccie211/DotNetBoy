@@ -8,9 +8,9 @@ Is a FrontEnd for the DotNetBoy emulator written in DotNet MAUI
 It's an exercise for me to understand how computers work at the low level.
 
 ## Current progress:
-Implemented 203/244 non prefixed instructions
+Implemented 242/244 non prefixed instructions
 
-Implemented 152/255 prefixed instructions
+Implemented 240/256 prefixed instructions
 
 Not yet implemented:
 * Raising the following interrupts: 

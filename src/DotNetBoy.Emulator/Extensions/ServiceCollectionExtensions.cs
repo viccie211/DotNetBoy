@@ -1,6 +1,8 @@
 ﻿using DotNetBoy.Emulator.InstructionSet;
 using DotNetBoy.Emulator.InstructionSet.PrefixedInstructions;
+using DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.BitInstructions;
 using DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.ResetBitInstructions;
+using DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.RotateInstructions;
 using DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.SetBitInstructions;
 using DotNetBoy.Emulator.Services.Implementations;
 using DotNetBoy.Emulator.Services.Interfaces;
@@ -30,6 +32,14 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<PushPopInstructions>();
         serviceCollection.AddScoped<ArithmeticInstructions>();
         serviceCollection.AddScoped<ShiftRightInstructions>();
+        serviceCollection.AddScoped<BitInBRegisterInstructions>();
+        serviceCollection.AddScoped<BitInCRegisterInstructions>();
+        serviceCollection.AddScoped<BitInDRegisterInstructions>();
+        serviceCollection.AddScoped<BitInERegisterInstructions>();
+        serviceCollection.AddScoped<BitInHRegisterInstructions>();
+        serviceCollection.AddScoped<BitInLRegisterInstructions>();
+        serviceCollection.AddScoped<BitAtAddressHLInstructions>();
+        serviceCollection.AddScoped<BitInARegisterInstructions>();
         serviceCollection.AddScoped<ResetBitInBRegisterInstructions>();
         serviceCollection.AddScoped<ResetBitInCRegisterInstructions>();
         serviceCollection.AddScoped<ResetBitInDRegisterInstructions>();
@@ -49,6 +59,9 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<SetBitInARegisterInstructions>();
         serviceCollection.AddScoped<SetBitInARegisterInstructions>();
         serviceCollection.AddScoped<RotateRightInstructions>();
+        serviceCollection.AddScoped<RotateLeftInstructions>();
+        serviceCollection.AddScoped<RotateRightThroughCarryInstructions>();
+        serviceCollection.AddScoped<RotateLeftThroughCarryInstructions>();
         serviceCollection.AddScoped<SwapInstructions>();
 
         serviceCollection.AddScoped<IInstructionSetService, InstructionSetService>();

@@ -1,14 +1,15 @@
-﻿using DotNetBoy.Emulator.InstructionSet.Interfaces;
+﻿using DotNetBoy.Emulator.InstructionSet.Abstracts;
+using DotNetBoy.Emulator.InstructionSet.Interfaces;
 using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.InstructionSet;
 
-public class RotateInstructions : IInstructionSet
+public class RotateInstructions : RotateInstructionsBase, IInstructionSet
 {
     private readonly IClockService _clockService;
     public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
 
-    public RotateInstructions(IClockService clockService)
+    public RotateInstructions(IClockService clockService) : base(clockService)
     {
         _clockService = clockService;
         Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
@@ -22,72 +23,22 @@ public class RotateInstructions : IInstructionSet
 
     public void RotateALeft(ICpuRegistersService registers)
     {
-        registers.F.Carry = (registers.A & 0x80) == 0x80;
-        var result = (byte)(registers.A << 1);
-        if (registers.F.Carry)
-        {
-            result = (byte)(result | 0x01);
-        }
-
-        registers.A = result;
-        registers.F.Zero = registers.A == 0;
-        registers.F.Subtract = false;
-        registers.F.HalfCarry = false;
-        _clockService.Clock();
-        registers.ProgramCounter += 1;
+        registers.A = RotateByteLeft(registers.A, registers);
     }
 
     public void RotateALeftThroughCarry(ICpuRegistersService registers)
     {
-        var previousCarry = registers.F.Carry;
-        registers.F.Carry = (registers.A & 0x80) == 0x80;
-        var result = (byte)(registers.A << 1);
-        if (previousCarry)
-        {
-            result = (byte)(result | 0x01);
-        }
-
-        registers.A = result;
-        registers.F.Zero = registers.A == 0;
-        registers.F.Subtract = false;
-        registers.F.HalfCarry = false;
-        _clockService.Clock();
-        registers.ProgramCounter += 1;
+        registers.A = RotateByteLeftThroughCarry(registers.A, registers);
     }
 
 
     public void RotateARight(ICpuRegistersService registers)
     {
-        registers.F.Carry = (registers.A & 0x01) == 0x01;
-        var result = (byte)(registers.A >> 1);
-        if (registers.F.Carry)
-        {
-            result = (byte)(result | 0x80);
-        }
-
-        registers.A = result;
-        registers.F.Zero = registers.A == 0;
-        registers.F.Subtract = false;
-        registers.F.HalfCarry = false;
-        _clockService.Clock();
-        registers.ProgramCounter += 1;
+        registers.A = RotateByteRight(registers.A, registers);
     }
 
     public void RotateARightThroughCarry(ICpuRegistersService registers)
     {
-        var previousCarry = registers.F.Carry;
-        registers.F.Carry = (registers.A & 0x01) == 0x01;
-        var result = (byte)(registers.A >> 1);
-        if (previousCarry)
-        {
-            result = (byte)(result | 0x80);
-        }
-
-        registers.A = result;
-        registers.F.Zero = registers.A == 0;
-        registers.F.Subtract = false;
-        registers.F.HalfCarry = false;
-        _clockService.Clock();
-        registers.ProgramCounter += 1;
+        registers.A = RotateByteRightThroughCarry(registers.A, registers);
     }
 }

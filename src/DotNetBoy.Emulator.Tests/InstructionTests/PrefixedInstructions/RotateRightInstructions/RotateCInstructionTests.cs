@@ -5,7 +5,7 @@ namespace DotNetBoy.Emulator.Tests.InstructionTests.PrefixedInstructions.RotateR
 public class RotateCInstructionTests
 {
     private ICpuRegistersService _registers;
-    private InstructionSet.PrefixedInstructions.RotateRightInstructions _instructions;
+    private InstructionSet.PrefixedInstructions.RotateInstructions.RotateRightInstructions _instructions;
 
     [SetUp]
     public void SetUp()
@@ -13,7 +13,7 @@ public class RotateCInstructionTests
         _registers = new TestCpuRegisterService();
         var clockServiceMock = new Mock<IClockService>();
         var mmuServiceMock = new Mock<IMmuService>();
-        _instructions = new InstructionSet.PrefixedInstructions.RotateRightInstructions(clockServiceMock.Object,mmuServiceMock.Object);
+        _instructions = new InstructionSet.PrefixedInstructions.RotateInstructions.RotateRightInstructions(clockServiceMock.Object,mmuServiceMock.Object);
     }
 
     [Test]

@@ -1,29 +1,28 @@
-﻿using DotNetBoy.Emulator.InstructionSet.Interfaces;
+﻿using DotNetBoy.Emulator.InstructionSet.Abstracts;
+using DotNetBoy.Emulator.InstructionSet.Interfaces;
 using DotNetBoy.Emulator.Services.Interfaces;
 
-namespace DotNetBoy.Emulator.InstructionSet.PrefixedInstructions;
+namespace DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.RotateInstructions;
 
-public class RotateRightInstructions : IInstructionSet
+public class RotateRightInstructions : RotateInstructionsBase, IInstructionSet
 {
-    private readonly IClockService _clockService;
     private readonly IMmuService _mmuService;
 
     public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
 
-    public RotateRightInstructions(IClockService clockService, IMmuService mmuService)
+    public RotateRightInstructions(IClockService clockService, IMmuService mmuService) : base(clockService)
     {
-        _clockService = clockService;
         _mmuService = mmuService;
         Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
         {
-            { 0x18, RotateB },
-            { 0x19, RotateC },
-            { 0x1A, RotateD },
-            { 0x1B, RotateE },
-            { 0x1C, RotateH },
-            { 0x1D, RotateL },
-            { 0x1E, RotateAtAddresssHL },
-            { 0x1F, RotateA },
+            { 0x08, RotateB },
+            { 0x09, RotateC },
+            { 0x0A, RotateD },
+            { 0x0B, RotateE },
+            { 0x0C, RotateH },
+            { 0x0D, RotateL },
+            { 0x0E, RotateAtAddresssHL },
+            { 0x0F, RotateA },
         };
     }
 
@@ -60,10 +59,10 @@ public class RotateRightInstructions : IInstructionSet
     public void RotateAtAddresssHL(ICpuRegistersService registers)
     {
         var toRotate = _mmuService.ReadByte(registers.HL);
-        _clockService.Clock();
+        ClockService.Clock();
         var rotated = RotateRight(toRotate, registers);
         _mmuService.WriteByte(registers.HL, rotated);
-        _clockService.Clock();
+        ClockService.Clock();
     }
 
     public void RotateA(ICpuRegistersService registers)
@@ -73,18 +72,9 @@ public class RotateRightInstructions : IInstructionSet
 
     private byte RotateRight(byte toRotate, ICpuRegistersService registers)
     {
-        var newCarry = (toRotate & 0x01) == 0x01;
-        var shifted = (byte)(toRotate >> 1);
-
-        if (registers.F.Carry)
-        {
-            shifted += 0x80;
-        }
-
-        registers.F.Carry = newCarry;
-        registers.F.Zero = shifted == 0;
-        registers.ProgramCounter += 2;
-        _clockService.Clock(2);
-        return shifted;
+        var result = RotateByteRight(toRotate, registers);
+        registers.ProgramCounter += 1;
+        ClockService.Clock();
+        return result;
     }
 }

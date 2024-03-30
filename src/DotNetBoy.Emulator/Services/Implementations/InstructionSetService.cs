@@ -1,7 +1,9 @@
 ﻿using DotNetBoy.Emulator.InstructionSet;
 using DotNetBoy.Emulator.InstructionSet.Interfaces;
 using DotNetBoy.Emulator.InstructionSet.PrefixedInstructions;
+using DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.BitInstructions;
 using DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.ResetBitInstructions;
+using DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.RotateInstructions;
 using DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.SetBitInstructions;
 using DotNetBoy.Emulator.Services.Interfaces;
 
@@ -22,6 +24,14 @@ public class InstructionSetService : IInstructionSetService
         LoadBetweenRegistersInstructions loadBetweenRegistersInstructions,
         ArithmeticInstructions arithmeticInstructions,
         ShiftRightInstructions shiftRightInstructions,
+        BitInBRegisterInstructions bitInBRegisterInstructions,
+        BitInCRegisterInstructions bitInCRegisterInstructions,
+        BitInDRegisterInstructions bitInDRegisterInstructions,
+        BitInERegisterInstructions bitInERegisterInstructions,
+        BitInHRegisterInstructions bitInHRegisterInstructions,
+        BitInLRegisterInstructions bitInLRegisterInstructions,
+        BitAtAddressHLInstructions bitAtAddressHlInstructions,
+        BitInARegisterInstructions bitInARegisterInstructions,
         ResetBitInBRegisterInstructions resetBitInBRegisterInstructions,
         ResetBitInCRegisterInstructions resetBitInCRegisterInstructions,
         ResetBitInDRegisterInstructions resetBitInDRegisterInstructions,
@@ -39,6 +49,9 @@ public class InstructionSetService : IInstructionSetService
         SetBitAtAddressHLInstructions setBitAtAddressHlInstructions,
         SetBitInARegisterInstructions setBitInARegisterInstructions,
         RotateRightInstructions rotateRightInstructions,
+        RotateLeftInstructions rotateLeftInstructions,
+        RotateLeftThroughCarryInstructions rotateLeftThroughCarryInstructions,
+        RotateRightThroughCarryInstructions rotateRightThroughCarryInstructions,
         SwapInstructions swapInstructions
     )
     {
@@ -60,6 +73,14 @@ public class InstructionSetService : IInstructionSetService
         var prefixedInstructions = new List<IInstructionSet>()
         {
             shiftRightInstructions,
+            bitInBRegisterInstructions,
+            bitInCRegisterInstructions,
+            bitInDRegisterInstructions,
+            bitInERegisterInstructions,
+            bitInHRegisterInstructions,
+            bitInLRegisterInstructions,
+            bitAtAddressHlInstructions,
+            bitInARegisterInstructions,
             resetBitInBRegisterInstructions,
             resetBitInCRegisterInstructions,
             resetBitInDRegisterInstructions,
@@ -77,6 +98,9 @@ public class InstructionSetService : IInstructionSetService
             setBitAtAddressHlInstructions,
             setBitInARegisterInstructions,
             rotateRightInstructions,
+            rotateLeftInstructions,
+            rotateRightThroughCarryInstructions,
+            rotateLeftThroughCarryInstructions,
             swapInstructions
         };
 

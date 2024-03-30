@@ -15,16 +15,17 @@ public class LoadInstructions : IInstructionSet
         Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
         {
             { 0x01, LoadD16IntoBC },
-            { 0x02, LoadAtAddressBCIntoA },
             { 0x06, LoadD8IntoB },
             { 0x0E, LoadD8IntoC },
             { 0x11, LoadD16IntoDE },
             { 0x16, LoadD8IntoD },
+            { 0x0A, LoadAtAddressBCIntoA },
             { 0x1A, LoadAtAddressDEIntoA },
             { 0x1E, LoadD8IntoE },
             { 0x21, LoadD16IntoHL },
             { 0x26, LoadD8IntoH },
             { 0x2A, LoadAtAddressHLIntoAIncrementHL },
+            { 0x3A, LoadAtAddressHLIntoADecrementHL },
             { 0x2E, LoadD8IntoL },
             { 0x3E, LoadD8IntoA },
             { 0x31, LoadD16IntoStackPointer },
@@ -78,24 +79,25 @@ public class LoadInstructions : IInstructionSet
     {
         registers.DE = LoadD16(registers);
     }
-
     /// <summary>
     /// Load a byte at the address in the BC register into the A register
+    /// </summary>
+    /// Verified with BGB
+    public void LoadAtAddressBCIntoA(ICpuRegistersService registers)
+    {
+        registers.A = _mmuService.ReadByte(registers.BC);
+        _clockService.Clock(2);
+        registers.ProgramCounter += 1;
+    }
+    
+    
+    /// <summary>
+    /// Load a byte at the address in the DE register into the A register
     /// </summary>
     /// Verified with BGB
     public void LoadAtAddressDEIntoA(ICpuRegistersService registers)
     {
         registers.A = _mmuService.ReadByte(registers.DE);
-        _clockService.Clock(2);
-        registers.ProgramCounter += 1;
-    }
-
-    // /// <summary>
-    // /// Load a byte at the address in the BC register into the A register
-    // /// </summary>
-    public void LoadAtAddressBCIntoA(ICpuRegistersService registers)
-    {
-        registers.A = _mmuService.ReadByte(registers.BC);
         _clockService.Clock(2);
         registers.ProgramCounter += 1;
     }

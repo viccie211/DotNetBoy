@@ -28,14 +28,17 @@ public class JumpInstructions : IInstructionSet
             { 0xC8, ReturnZero },
             { 0xC9, ReturnFromSubroutine },
             { 0xCA, JumpA16OnZero },
+            { 0xCC, CallA16Zero },
             { 0xCD, CallA16 },
             { 0xCF, Reset1 },
             { 0xD0, ReturnNonCarry },
             { 0xD2, JumpA16OnNonCarry },
+            { 0xD4, CallA16NonCarry },
             { 0xD7, Reset2 },
             { 0xD8, ReturnCarry },
             { 0xD9, ReturnFromInterrupt },
             { 0xDA, JumpA16OnCarry },
+            { 0xDC, CallA16Carry },
             { 0xDF, Reset3 },
             { 0xE7, Reset4 },
             { 0xE9, JumpToAddressHL },
@@ -137,9 +140,26 @@ public class JumpInstructions : IInstructionSet
     #region Calls
 
     //TODO: Write unit tests
+    public void CallA16Zero(ICpuRegistersService registers)
+    {
+        CallA16OnCondition(registers.F.Zero, registers);
+    }
+
     public void CallA16NonZero(ICpuRegistersService registers)
     {
         CallA16OnCondition(!registers.F.Zero, registers);
+    }
+
+    //TODO: Write unit tests
+    public void CallA16Carry(ICpuRegistersService registers)
+    {
+        CallA16OnCondition(!registers.F.Carry, registers);
+    }
+
+    //TODO: Write unit tests
+    public void CallA16NonCarry(ICpuRegistersService registers)
+    {
+        CallA16OnCondition(!registers.F.Carry, registers);
     }
 
     /// <summary>

@@ -3,7 +3,7 @@
 public class RotateDInstructionTests
 {
     private ICpuRegistersService _registers;
-    private InstructionSet.PrefixedInstructions.RotateRightInstructions _instructions;
+    private InstructionSet.PrefixedInstructions.RotateInstructions.RotateRightInstructions _instructions;
 
     [SetUp]
     public void SetUp()
@@ -12,7 +12,7 @@ public class RotateDInstructionTests
         var clockServiceMock = new Mock<IClockService>();
         var mmuServiceMock = new Mock<IMmuService>();
         _instructions =
-            new InstructionSet.PrefixedInstructions.RotateRightInstructions(clockServiceMock.Object,
+            new InstructionSet.PrefixedInstructions.RotateInstructions.RotateRightInstructions(clockServiceMock.Object,
                 mmuServiceMock.Object);
     }
 
