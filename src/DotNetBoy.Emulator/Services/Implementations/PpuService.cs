@@ -23,6 +23,9 @@ public class PpuService : IPpuService
 
     private byte WindowY => _mmuService.ReadByte(AddressConsts.WY_ADDRESS);
     private byte WindowX => _mmuService.ReadByte(AddressConsts.WX_ADDRESS);
+    private OamObject[] OamObjects => _mmuService.GetOamObjects();
+    private List<OamObject> _oamObjectsThisScanLine;
+    private int oamPenalty;
 
     public PpuModes Mode { get; internal set; }
     public int ScanLine { get; set; } = 0x90;
@@ -48,11 +51,23 @@ public class PpuService : IPpuService
         }
         else
         {
-            if (Dot < 79)
-                Mode = PpuModes.OAMSearch;
-            else if (Dot < 370) //TODO: Implement variability per sprite
+            if (Dot < 80)
             {
-                var screenX = Dot - 79;
+                Mode = PpuModes.OAMSearch;
+                if (_oamObjectsThisScanLine.Count < 10)
+                {
+                    var currentOamObject = OamObjects[Dot / 2];
+                    var spriteHeight = LcdControlRegister.SpriteSize ? 16 : 8;
+                    if (ScanLine > currentOamObject.YPosition &&
+                        ScanLine < currentOamObject.YPosition + spriteHeight)
+                    {
+                        _oamObjectsThisScanLine.Add(currentOamObject);
+                    }
+                }
+            }
+            else if (Dot < 252 + oamPenalty)
+            {
+                var screenX = Dot - 80;
 
                 var inWindow = LcdControlRegister.WindowDisplayEnable && WindowX < screenX && WindowY < ScanLine;
 
@@ -84,6 +99,8 @@ public class PpuService : IPpuService
 
         if (Dot == 0)
         {
+            _oamObjectsThisScanLine = new();
+            oamPenalty = 0;
             if (ScanLine == 144)
             {
                 OnVBlankStart(this, EventArgs.Empty);
