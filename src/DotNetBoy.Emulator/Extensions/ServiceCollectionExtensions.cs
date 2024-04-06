@@ -4,6 +4,7 @@ using DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.BitInstructions;
 using DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.ResetBitInstructions;
 using DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.RotateInstructions;
 using DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.SetBitInstructions;
+using DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.ShiftInstructions;
 using DotNetBoy.Emulator.Services.Implementations;
 using DotNetBoy.Emulator.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,7 +32,9 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<StoreInstructions>();
         serviceCollection.AddScoped<PushPopInstructions>();
         serviceCollection.AddScoped<ArithmeticInstructions>();
-        serviceCollection.AddScoped<ShiftRightInstructions>();
+        serviceCollection.AddScoped<ShiftRightLogicalInstructions>();
+        serviceCollection.AddScoped<ShiftRightArithmeticInstructions>();
+        serviceCollection.AddScoped<ShiftLeftArithmeticInstructions>();
         serviceCollection.AddScoped<BitInBRegisterInstructions>();
         serviceCollection.AddScoped<BitInCRegisterInstructions>();
         serviceCollection.AddScoped<BitInDRegisterInstructions>();

@@ -1,12 +1,14 @@
 using DotNetBoy.Emulator.Services.Implementations;
 
 namespace DotNetBoy.Emulator.Tests.ServiceTests;
+
 public class ClockServiceTests
 {
     [Test]
     public void Reset()
     {
-        var service = new ClockService
+        var mmuServiceMock = new Mock<IMmuService>();
+        var service = new ClockService(mmuServiceMock.Object)
         {
             T = 1,
             M = 1
@@ -24,7 +26,8 @@ public class ClockServiceTests
     [Test]
     public void Clock()
     {
-        var service = new ClockService();
+        var mmuServiceMock = new Mock<IMmuService>();
+        var service = new ClockService(mmuServiceMock.Object);
 
         var tClockEventCalled = 0;
         service.TClock += (o, e) => tClockEventCalled++;
@@ -48,7 +51,8 @@ public class ClockServiceTests
     public void Clock4Increments()
     {
         var clockIncrement = 4;
-        var service = new ClockService();
+        var mmuServiceMock = new Mock<IMmuService>();
+        var service = new ClockService(mmuServiceMock.Object);
 
         var tClockEventCalled = 0;
         service.TClock += (o, e) => tClockEventCalled++;

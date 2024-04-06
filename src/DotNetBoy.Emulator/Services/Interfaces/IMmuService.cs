@@ -15,6 +15,14 @@ public interface IMmuService
     ushort ReadWordLittleEndian(ushort address);
 
     void WriteByte(ushort address, byte value);
+    
+    /// <summary>
+    /// Writes a byte raw to the internal mapped memory without all the logic that normally happens when a byte is written by WriteByte
+    /// Used for instance to emulate the ClockService writing to the timer registers while WriteByte sets them to 0 on write.
+    /// </summary>
+    /// <param name="address">The address to write to</param>
+    /// <param name="value">The value to write</param>
+    void WriteByteRaw(ushort address, byte value);
     void LoadRom(byte[] rom);
     byte[] GetTileSet(ETileSet eTileSet);
     byte[] GetTileMap(ETileMap eTileMap);

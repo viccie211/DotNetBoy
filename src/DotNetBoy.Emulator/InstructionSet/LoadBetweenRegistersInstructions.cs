@@ -20,7 +20,7 @@ public class LoadBetweenRegistersInstructions : IInstructionSet
             { 0x44, LoadHIntoB },
             { 0x45, LoadLIntoB },
             //0x46 is in LoadInstructions since it doesn't load between registers
-            { 0x47, LoadAIntoC },
+            { 0x47, LoadAIntoB },
             { 0x48, LoadBIntoC },
             { 0x49, LoadCIntoC },
             { 0x4A, LoadDIntoC },

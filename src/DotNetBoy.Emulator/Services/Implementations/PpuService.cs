@@ -8,19 +8,21 @@ using DotNetBoy.Emulator.Services.Interfaces;
 public class PpuService : IPpuService
 {
     private const int TILE_SIZE = 8;
-    private const ushort LCD_CONTROL_REGISTER_ADDRESS = 0xFF40;
-    private const ushort COLOR_PALETTE_REGISTER_ADDRESS = 0xFF47;
-    private const ushort SCY_ADDRESS = 0xFF42;
-    private const ushort SCX_ADDRESS = 0xFF43;
 
     private readonly IClockService _clockService;
     private readonly IMmuService _mmuService;
     private readonly ITileService _tileService;
 
-    private LcdControlRegister LcdControlRegister => _mmuService.ReadByte(LCD_CONTROL_REGISTER_ADDRESS);
-    private ColorPaletteRegister ColorPaletteRegister => _mmuService.ReadByte(COLOR_PALETTE_REGISTER_ADDRESS);
-    private byte ScrollY => _mmuService.ReadByte(SCY_ADDRESS);
-    private byte ScrollX => _mmuService.ReadByte(SCX_ADDRESS);
+    private LcdControlRegister LcdControlRegister => _mmuService.ReadByte(AddressConsts.LCD_CONTROL_REGISTER_ADDRESS);
+
+    private ColorPaletteRegister ColorPaletteRegister =>
+        _mmuService.ReadByte(AddressConsts.COLOR_PALETTE_REGISTER_ADDRESS);
+
+    private byte ScrollY => _mmuService.ReadByte(AddressConsts.SCY_ADDRESS);
+    private byte ScrollX => _mmuService.ReadByte(AddressConsts.SCX_ADDRESS);
+
+    private byte WindowY => _mmuService.ReadByte(AddressConsts.WY_ADDRESS);
+    private byte WindowX => _mmuService.ReadByte(AddressConsts.WX_ADDRESS);
 
     public PpuModes Mode { get; internal set; }
     public int ScanLine { get; set; } = 0x90;
@@ -51,7 +53,11 @@ public class PpuService : IPpuService
             else if (Dot < 370) //TODO: Implement variability per sprite
             {
                 var screenX = Dot - 79;
-                var tileMap = LcdControlRegister.BackgroundTileMapDisplaySelect
+
+                var inWindow = LcdControlRegister.WindowDisplayEnable && WindowX < screenX && WindowY < ScanLine;
+
+                var tileMap = (inWindow && LcdControlRegister.WindowTileMapDisplaySelect) ||
+                              LcdControlRegister.BackgroundTileMapDisplaySelect
                     ? ETileMap.TileMap1
                     : ETileMap.TileMap0;
                 var tileSet = LcdControlRegister.BackgroundWindowTileDataSelect
@@ -101,9 +107,9 @@ public class PpuService : IPpuService
 
     protected virtual void OnVBlankStart(object? sender, EventArgs e)
     {
-        InterruptRegister interruptRegister = _mmuService.ReadByte(Cpu.INTERRUPT_REQUEST_REGISTER_ADDRESS);
+        InterruptRegister interruptRegister = _mmuService.ReadByte(AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS);
         interruptRegister.VBlank = true;
-        _mmuService.WriteByte(Cpu.INTERRUPT_REQUEST_REGISTER_ADDRESS, interruptRegister);
+        _mmuService.WriteByte(AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS, interruptRegister);
         VBlankStart?.Invoke(sender, e);
     }
 }

@@ -5,6 +5,7 @@ using DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.BitInstructions;
 using DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.ResetBitInstructions;
 using DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.RotateInstructions;
 using DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.SetBitInstructions;
+using DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.ShiftInstructions;
 using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.Services.Implementations;
@@ -23,7 +24,9 @@ public class InstructionSetService : IInstructionSetService
         PushPopInstructions pushPopInstructions,
         LoadBetweenRegistersInstructions loadBetweenRegistersInstructions,
         ArithmeticInstructions arithmeticInstructions,
-        ShiftRightInstructions shiftRightInstructions,
+        ShiftRightLogicalInstructions shiftRightLogicalInstructions,
+        ShiftRightArithmeticInstructions shiftRightArithmeticInstructions,
+        ShiftLeftArithmeticInstructions shiftLeftArithmeticInstructions,
         BitInBRegisterInstructions bitInBRegisterInstructions,
         BitInCRegisterInstructions bitInCRegisterInstructions,
         BitInDRegisterInstructions bitInDRegisterInstructions,
@@ -72,7 +75,9 @@ public class InstructionSetService : IInstructionSetService
 
         var prefixedInstructions = new List<IInstructionSet>()
         {
-            shiftRightInstructions,
+            shiftRightLogicalInstructions,
+            shiftRightArithmeticInstructions,
+            shiftLeftArithmeticInstructions,
             bitInBRegisterInstructions,
             bitInCRegisterInstructions,
             bitInDRegisterInstructions,

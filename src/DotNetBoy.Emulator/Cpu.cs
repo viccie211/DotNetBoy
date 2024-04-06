@@ -1,4 +1,5 @@
-﻿using DotNetBoy.Emulator.InstructionSet;
+﻿using DotNetBoy.Emulator.Consts;
+using DotNetBoy.Emulator.InstructionSet;
 using DotNetBoy.Emulator.Models;
 using DotNetBoy.Emulator.Services.Implementations;
 using DotNetBoy.Emulator.Services.Interfaces;
@@ -12,20 +13,15 @@ public class Cpu(
     IByteUshortService byteUshortService,
     IClockService clockService)
 {
-    public const ushort INTERRUPT_REQUEST_REGISTER_ADDRESS = 0xFF0F;
+   
     private const byte INSTRUCTION_PREFIX = 0xCB;
-    private const ushort INTERRUPT_ENABLE_REGISTER_ADDRESS = 0xFFFF;
-    private const ushort VBLANK_INTERRUPT_VECTOR = 0x0040;
-    private const ushort LCD_INTERRUPT_VECTOR = 0x0048;
-    private const ushort TIMER_INTERRUPT_VECTOR = 0x0050;
-    private const ushort SERIAL_INTERRUPT_VECTOR = 0x0058;
-    private const ushort JOYPAD_INTERRUPT_VECTOR = 0x0060;
-    private InterruptRegister InterruptEnableRegister => mmuService.ReadByte(INTERRUPT_ENABLE_REGISTER_ADDRESS);
+    
+    private InterruptRegister InterruptEnableRegister => mmuService.ReadByte(AddressConsts.INTERRUPT_ENABLE_REGISTER_ADDRESS);
 
-    private InterruptRegister interruptRequestRegister
+    private byte interruptRequestRegister
     {
-        get => mmuService.ReadByte(INTERRUPT_REQUEST_REGISTER_ADDRESS);
-        set => mmuService.WriteByte(INTERRUPT_REQUEST_REGISTER_ADDRESS, value);
+        get => mmuService.ReadByte(AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS);
+        set => mmuService.WriteByte(AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS, value);
     }
 
     public void Loop()
@@ -67,50 +63,50 @@ public class Cpu(
         if (!cpuRegistersService.InterruptMasterEnable || cpuRegistersService.InterruptsJustEnabled)
             return;
 
-        InterruptRegister copiedRegister = (byte)interruptRequestRegister;
+        InterruptRegister castRegister = interruptRequestRegister;
 
-        if (InterruptEnableRegister.VBlank && interruptRequestRegister.VBlank)
+        if (InterruptEnableRegister.VBlank && castRegister.VBlank)
         {
             cpuRegistersService.InterruptMasterEnable = false;
-            copiedRegister.VBlank = false;
-            interruptRequestRegister = copiedRegister;
-            CallInterruptVector(VBLANK_INTERRUPT_VECTOR);
+            castRegister.VBlank = false;
+            interruptRequestRegister = castRegister;
+            CallInterruptVector(AddressConsts.VBLANK_INTERRUPT_VECTOR);
             return;
         }
 
-        if (InterruptEnableRegister.LCD && interruptRequestRegister.LCD)
+        if (InterruptEnableRegister.LCD && castRegister.LCD)
         {
             cpuRegistersService.InterruptMasterEnable = false;
-            copiedRegister.LCD = false;
-            interruptRequestRegister = copiedRegister;
-            CallInterruptVector(LCD_INTERRUPT_VECTOR);
+            castRegister.LCD = false;
+            interruptRequestRegister = castRegister;
+            CallInterruptVector(AddressConsts.LCD_INTERRUPT_VECTOR);
             return;
         }
 
-        if (InterruptEnableRegister.Timer && interruptRequestRegister.Timer)
+        if (InterruptEnableRegister.Timer && castRegister.Timer)
         {
             cpuRegistersService.InterruptMasterEnable = false;
-            copiedRegister.Timer = false;
-            interruptRequestRegister = copiedRegister;
-            CallInterruptVector(TIMER_INTERRUPT_VECTOR);
+            castRegister.Timer = false;
+            interruptRequestRegister = castRegister;
+            CallInterruptVector(AddressConsts.TIMER_INTERRUPT_VECTOR);
             return;
         }
 
-        if (InterruptEnableRegister.Serial && interruptRequestRegister.Serial)
+        if (InterruptEnableRegister.Serial && castRegister.Serial)
         {
             cpuRegistersService.InterruptMasterEnable = false;
-            copiedRegister.Serial = false;
-            interruptRequestRegister = copiedRegister;
-            CallInterruptVector(SERIAL_INTERRUPT_VECTOR);
+            castRegister.Serial = false;
+            interruptRequestRegister = castRegister;
+            CallInterruptVector(AddressConsts.SERIAL_INTERRUPT_VECTOR);
             return;
         }
 
-        if (InterruptEnableRegister.Joypad && interruptRequestRegister.Joypad)
+        if (InterruptEnableRegister.Joypad && castRegister.Joypad)
         {
             cpuRegistersService.InterruptMasterEnable = false;
-            copiedRegister.Joypad = false;
-            interruptRequestRegister = copiedRegister;
-            CallInterruptVector(JOYPAD_INTERRUPT_VECTOR);
+            castRegister.Joypad = false;
+            interruptRequestRegister = castRegister;
+            CallInterruptVector(AddressConsts.JOYPAD_INTERRUPT_VECTOR);
             return;
         }
     }

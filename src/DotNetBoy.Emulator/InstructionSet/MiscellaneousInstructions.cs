@@ -12,11 +12,24 @@ public class MiscellaneousInstructions : IInstructionSet
         Instructions = new Dictionary<byte, Action<ICpuRegistersService>>
         {
             { 0x00, NOP },
+            { 0x10, Stop },
             { 0x27, DAA },
             { 0x2F, ComplementA },
             { 0x37, SetCarryFlag },
             { 0x3F, FlipCarryFlag },
             { 0x76, Halt },
+            { 0xCB, NOP },
+            { 0xD3, NOP },
+            { 0xDB, NOP },
+            { 0xDD, NOP },
+            { 0xE3, NOP },
+            { 0xE4, NOP },
+            { 0xEB, NOP },
+            { 0xEC, NOP },
+            { 0xED, NOP },
+            { 0xF4, NOP },
+            { 0xFC, NOP },
+            { 0xFD, NOP },
             { 0xF3, DisableInterrupts },
             { 0xFB, EnableInterrupts },
         };
@@ -123,6 +136,18 @@ public class MiscellaneousInstructions : IInstructionSet
     /// </summary>
     /// Verified against BGB
     public void Halt(ICpuRegistersService registers)
+    {
+        registers.Halted = true;
+        registers.ProgramCounter += 1;
+        _clockService.Clock();
+    }
+
+    /// <summary>
+    /// Stop the the CPU with the program counter one higher than the current instruction
+    /// TODO: Implement Actual stopping behaviour
+    /// </summary>
+    /// Verified against BGB
+    public void Stop(ICpuRegistersService registers)
     {
         registers.Halted = true;
         registers.ProgramCounter += 1;

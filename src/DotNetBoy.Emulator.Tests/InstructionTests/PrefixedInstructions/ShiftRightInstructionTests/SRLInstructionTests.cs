@@ -1,11 +1,12 @@
 ﻿using DotNetBoy.Emulator.InstructionSet.PrefixedInstructions;
+using DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.ShiftInstructions;
 
 namespace DotNetBoy.Emulator.Tests.InstructionTests.PrefixedInstructions.ShiftRightInstructionTests;
 
 public class SRLInstructionTests
 {
     private ICpuRegistersService _registers;
-    private ShiftRightInstructions _instructions;
+    private ShiftRightLogicalInstructions _instructions;
 
     [SetUp]
     public void SetUp()
@@ -13,7 +14,7 @@ public class SRLInstructionTests
         _registers = new TestCpuRegisterService();
         var clockServiceMock = new Mock<IClockService>();
         var mmuServiceMock = new Mock<IMmuService>();
-        _instructions = new ShiftRightInstructions(clockServiceMock.Object, mmuServiceMock.Object);
+        _instructions = new ShiftRightLogicalInstructions(clockServiceMock.Object, mmuServiceMock.Object);
     }
 
     [Test]
@@ -29,7 +30,7 @@ public class SRLInstructionTests
             Subtract = false,
         };
         _registers.B = 0x00;
-        _instructions.SRLB(_registers);
+        _instructions.ShiftRightLogicalB(_registers);
         Assert.That(_registers.B, Is.EqualTo(expectedB));
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
         Assert.That(_registers.F, Is.EqualTo(expectedF));
@@ -48,7 +49,7 @@ public class SRLInstructionTests
             Subtract = false,
         };
         _registers.B = 0x01;
-        _instructions.SRLB(_registers);
+        _instructions.ShiftRightLogicalB(_registers);
         Assert.That(_registers.B, Is.EqualTo(expectedB));
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
         Assert.That(_registers.F, Is.EqualTo(expectedF));
@@ -67,7 +68,7 @@ public class SRLInstructionTests
             Subtract = false,
         };
         _registers.B = 0xFF;
-        _instructions.SRLB(_registers);
+        _instructions.ShiftRightLogicalB(_registers);
         Assert.That(_registers.B, Is.EqualTo(expectedB));
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
         Assert.That(_registers.F, Is.EqualTo(expectedF));
@@ -86,7 +87,7 @@ public class SRLInstructionTests
             Subtract = false,
         };
         _registers.B = 0xAA;
-        _instructions.SRLB(_registers);
+        _instructions.ShiftRightLogicalB(_registers);
         Assert.That(_registers.B, Is.EqualTo(expectedB));
         Assert.That(_registers.ProgramCounter, Is.EqualTo(expectedProgramCounter));
         Assert.That(_registers.F, Is.EqualTo(expectedF));

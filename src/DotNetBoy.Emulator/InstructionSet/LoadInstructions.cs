@@ -37,6 +37,7 @@ public class LoadInstructions : IInstructionSet
             { 0x6E, LoadAtAddressHLIntoL },
             { 0x7E, LoadAtAddressHLIntoA },
             { 0xF0, LoadAtAddressFF00PlusD8IntoA },
+            { 0xF2, LoadAtAddressFF00PlusCIntoA },
             { 0xF8, LoadStackPointerPlusS8IntoHL },
             { 0xFA, LoadAtAddressA16IntoA }
         };
@@ -79,6 +80,7 @@ public class LoadInstructions : IInstructionSet
     {
         registers.DE = LoadD16(registers);
     }
+
     /// <summary>
     /// Load a byte at the address in the BC register into the A register
     /// </summary>
@@ -89,8 +91,8 @@ public class LoadInstructions : IInstructionSet
         _clockService.Clock(2);
         registers.ProgramCounter += 1;
     }
-    
-    
+
+
     /// <summary>
     /// Load a byte at the address in the DE register into the A register
     /// </summary>
@@ -262,6 +264,14 @@ public class LoadInstructions : IInstructionSet
         registers.A = _mmuService.ReadByte(address);
         _clockService.Clock(3);
         registers.ProgramCounter += 2;
+    }
+
+    public void LoadAtAddressFF00PlusCIntoA(ICpuRegistersService registers)
+    {
+        var address = (ushort)(0xFF00 + registers.C);
+        registers.A = _mmuService.ReadByte(address);
+        _clockService.Clock(2);
+        registers.ProgramCounter += 1;
     }
 
     /// <summary>

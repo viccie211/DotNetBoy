@@ -40,6 +40,16 @@ public class MmuService : IMmuService
         if (address is >= 0xE000 and <= 0xFDFF)
             //Also write to normal WRAM
             MappedMemory[(ushort)(address - 0x2000)] = value;
+
+        if (address == 0xFF04)
+            //Writing to this register resets it to zero
+            MappedMemory[address] = 0x00;
+    }
+
+    /// <inheritdoc/>
+    public void WriteByteRaw(ushort address, byte value)
+    {
+        MappedMemory[address] = value;
     }
 
     public void LoadRom(byte[] rom)
