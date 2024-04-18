@@ -10,7 +10,9 @@ public static class AddressConsts
     public const ushort SERIAL_INTERRUPT_VECTOR = 0x0058;
     public const ushort JOYPAD_INTERRUPT_VECTOR = 0x0060;
     public const ushort LCD_CONTROL_REGISTER_ADDRESS = 0xFF40;
-    
+    public const ushort LCD_STATUS_REGISTER_ADDRESS = 0xFF41;
+    public const ushort LY_REGISTER_ADDRESS = 0xFF44;
+    public const ushort LYC_REGISTER_ADDRESS = 0xFF45;
     public const ushort SCY_ADDRESS = 0xFF42;
     public const ushort SCX_ADDRESS = 0xFF43;
     public const ushort COLOR_PALETTE_REGISTER_ADDRESS = 0xFF47;

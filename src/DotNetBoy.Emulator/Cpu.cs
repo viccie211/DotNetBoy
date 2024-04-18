@@ -13,9 +13,8 @@ public class Cpu(
     IByteUshortService byteUshortService,
     IClockService clockService)
 {
-   
     private const byte INSTRUCTION_PREFIX = 0xCB;
-    
+
     private InterruptRegister InterruptEnableRegister => mmuService.ReadByte(AddressConsts.INTERRUPT_ENABLE_REGISTER_ADDRESS);
 
     private byte interruptRequestRegister
@@ -23,6 +22,8 @@ public class Cpu(
         get => mmuService.ReadByte(AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS);
         set => mmuService.WriteByte(AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS, value);
     }
+
+    private bool StatBlock = false;
 
     public void Loop()
     {
@@ -34,16 +35,12 @@ public class Cpu(
             if (instruction == INSTRUCTION_PREFIX)
             {
                 var actualInstruction = mmuService.ReadByte((ushort)(cpuRegistersService.ProgramCounter + 1));
-                var decodedInstruction = instructionSetService.PrefixedInstructions[actualInstruction] ??
-                                         throw new NotImplementedException(
-                                             $"\nPrefixed instruction {actualInstruction:X2} not implemented");
+                var decodedInstruction = instructionSetService.PrefixedInstructions[actualInstruction];
                 decodedInstruction(cpuRegistersService);
             }
             else
             {
-                var decodedInstruction = instructionSetService.NonPrefixedInstructions[instruction] ??
-                                         throw new NotImplementedException(
-                                             $"\nNonPrefixed instruction {instruction:X2} not implemented");
+                var decodedInstruction = instructionSetService.NonPrefixedInstructions[instruction];
                 decodedInstruction(cpuRegistersService);
             }
 
@@ -74,15 +71,18 @@ public class Cpu(
             return;
         }
 
-        if (InterruptEnableRegister.LCD && castRegister.LCD)
+        if (InterruptEnableRegister.LCD && castRegister.LCD && !StatBlock)
         {
             cpuRegistersService.InterruptMasterEnable = false;
             castRegister.LCD = false;
             interruptRequestRegister = castRegister;
             CallInterruptVector(AddressConsts.LCD_INTERRUPT_VECTOR);
+            StatBlock = true;
             return;
         }
 
+        StatBlock = false;
+        
         if (InterruptEnableRegister.Timer && castRegister.Timer)
         {
             cpuRegistersService.InterruptMasterEnable = false;

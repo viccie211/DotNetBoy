@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using DotNetBoy.Emulator.Consts;
 using DotNetBoy.Emulator.Enums;
 using DotNetBoy.Emulator.Models;
 using DotNetBoy.Emulator.Services.Interfaces;
@@ -13,7 +14,7 @@ public class MmuService : IMmuService
     {
         _byteUshortService = byteUshortService;
         MappedMemory = new byte[ushort.MaxValue + 1];
-        MappedMemory[0xFF44] = 0x90;
+        MappedMemory[AddressConsts.LY_REGISTER_ADDRESS] = 0x90;
     }
 
     public byte[] MappedMemory { get; init; }

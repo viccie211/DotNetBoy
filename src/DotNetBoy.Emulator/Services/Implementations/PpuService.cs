@@ -24,6 +24,21 @@ public class PpuService : IPpuService
     private byte WindowY => _mmuService.ReadByte(AddressConsts.WY_ADDRESS);
     private byte WindowX => _mmuService.ReadByte(AddressConsts.WX_ADDRESS);
 
+    private LcdStatusRegister LcdStatusRegister
+    {
+        get => _mmuService.ReadByte(AddressConsts.LCD_STATUS_REGISTER_ADDRESS);
+        set => _mmuService.WriteByte(AddressConsts.LCD_STATUS_REGISTER_ADDRESS, value);
+    }
+
+    private byte LyRegister
+    {
+        get => _mmuService.ReadByte(AddressConsts.LY_REGISTER_ADDRESS);
+        set => _mmuService.WriteByte(AddressConsts.LY_REGISTER_ADDRESS, value);
+    }
+
+    private byte LycRegister => _mmuService.ReadByte(AddressConsts.LYC_REGISTER_ADDRESS);
+
+
     public PpuModes Mode { get; internal set; }
     public int ScanLine { get; set; } = 0x90;
     public int Dot { get; set; } = 0;
@@ -40,6 +55,7 @@ public class PpuService : IPpuService
 
     public void OnMClock(object? sender, ClockEventArgs e)
     {
+        var stat = LcdStatusRegister.Clone();
         Dot = Dot == 455 ? 0 : Dot + 1;
 
         if (ScanLine > 143)
@@ -82,6 +98,9 @@ public class PpuService : IPpuService
             }
         }
 
+        stat.PpuMode = Mode;
+
+
         if (Dot == 0)
         {
             if (ScanLine == 144)
@@ -99,8 +118,19 @@ public class PpuService : IPpuService
                 ScanLine += 1;
             }
 
-            _mmuService.WriteByte(0xff44, (byte)ScanLine);
+
+            LyRegister = (byte)ScanLine;
+            stat.LycEqualsLy = LycRegister == LyRegister;
         }
+
+        LcdStatusRegister = stat;
+        InterruptRegister interruptRegister = _mmuService.ReadByte(AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS);
+        interruptRegister.LCD =
+            stat.LycIntSelect && stat.LycEqualsLy
+            || stat.Mode0IntSelect && Mode == PpuModes.HorizontalBlank
+            || stat.Mode1IntSelect && Mode == PpuModes.VerticalBlank
+            || stat.Mode2IntSelect && Mode == PpuModes.OAMSearch;
+        _mmuService.WriteByte(AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS, interruptRegister);
     }
 
     public event VBlankStart VBlankStart;
