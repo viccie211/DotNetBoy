@@ -8,7 +8,7 @@ public class TileService(IMmuService mmuService) : ITileService
     private const int TILE_MAP_WIDTH = 32;
     private const int TILE_BYTE_LENGTH = 16;
 
-    public int GetPixel(ETileMap tileMap, ETileSet tileSet, int tileX, int tileY, int tilePixelX, int tilePixelY)
+    public int GetTilePixel(ETileMap tileMap, ETileSet tileSet, int tileX, int tileY, int tilePixelX, int tilePixelY)
     {
         var tileMapVram = mmuService.GetTileMap(tileMap);
         var tileInTileMap = tileMapVram[tileY * TILE_MAP_WIDTH + tileX];
@@ -32,5 +32,30 @@ public class TileService(IMmuService mmuService) : ITileService
         if (shiftedBit0 && shiftedBit1)
             return 3;
         return 0;
+    }
+
+    public int GetSpritePixel(int tileIndex, int pixelX, int pixelY)
+    {
+        const int TILE_BYTE_LENGTH = 16;
+        var tileSetVram = mmuService.GetTileSet(ETileSet.TileSet0);
+        var tile = tileSetVram[
+            new Range(tileIndex * TILE_BYTE_LENGTH, tileIndex * TILE_BYTE_LENGTH + TILE_BYTE_LENGTH)];
+
+        var tileRow = tile[new Range(pixelY * 2, pixelY * 2 + 2)];
+        var bitMask = (byte)(0x01 << 7 - pixelX);
+        var maskedBit0 = tileRow[0] & bitMask;
+        var maskedBit1 = tileRow[1] & bitMask;
+        var shiftedBit0 = maskedBit0 > 0;
+        var shiftedBit1 = maskedBit1 > 0;
+
+        if (!shiftedBit0 && !shiftedBit1)
+            return 0;
+        if (shiftedBit0 && !shiftedBit1)
+            return 1;
+        if (!shiftedBit0 && shiftedBit1)
+            return 2;
+        if (shiftedBit0 && shiftedBit1)
+            return 3;
+        return 0;   
     }
 }
