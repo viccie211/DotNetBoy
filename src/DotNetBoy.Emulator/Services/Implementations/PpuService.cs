@@ -23,6 +23,8 @@ public class PpuService : IPpuService
 
     private byte WindowY => _mmuService.ReadByte(AddressConsts.WY_ADDRESS);
     private byte WindowX => _mmuService.ReadByte(AddressConsts.WX_ADDRESS);
+    private OamObject[] OamObjects => _mmuService.GetOamObjects();
+    private List<OamObject> _oamObjectsThisScanLine;
 
     private LcdStatusRegister LcdStatusRegister
     {
@@ -64,31 +66,16 @@ public class PpuService : IPpuService
         }
         else
         {
-            if (Dot < 79)
-                Mode = PpuModes.OAMSearch;
-            else if (Dot < 370) //TODO: Implement variability per sprite
+            if (Dot < 80)
             {
-                var screenX = Dot - 79;
-
-                var inWindow = LcdControlRegister.WindowDisplayEnable && WindowX < screenX && WindowY < ScanLine;
-
-                var tileMap = (inWindow && LcdControlRegister.WindowTileMapDisplaySelect) ||
-                              LcdControlRegister.BackgroundTileMapDisplaySelect
-                    ? ETileMap.TileMap1
-                    : ETileMap.TileMap0;
-                var tileSet = LcdControlRegister.BackgroundWindowTileDataSelect
-                    ? ETileSet.TileSet1
-                    : ETileSet.TileSet0;
-                var tileX = (byte)(screenX + ScrollX) / TILE_SIZE;
-                var tilePixelX = ((screenX + ScrollX) % TILE_SIZE);
-                var tileY = (byte)((byte)(ScanLine + ScrollY) / TILE_SIZE);
-                var tilePixelY = (ScanLine + ScrollY) % TILE_SIZE;
-
-                if (ScanLine < ScreenDimensions.HEIGHT && screenX < ScreenDimensions.WIDTH)
-                {
-                    var colorIndex = _tileService.GetPixel(tileMap, tileSet, tileX, tileY, tilePixelX, tilePixelY);
-                    FrameBuffer[ScanLine, screenX] = ColorPaletteRegister.Colors[colorIndex];
-                }
+                Mode = PpuModes.OAMSearch;
+                if (Dot == 0) ScanOAM();
+            }
+            else if (Dot < 252)
+            {
+                var screenX = Dot - 80;
+                RenderBackgroundAndWindow(screenX);
+                RenderSprites(screenX);
 
                 Mode = PpuModes.ActivePicture;
             }
@@ -103,6 +90,7 @@ public class PpuService : IPpuService
 
         if (Dot == 0)
         {
+            _oamObjectsThisScanLine = new();
             if (ScanLine == 144)
             {
                 OnVBlankStart(this, EventArgs.Empty);
@@ -141,5 +129,79 @@ public class PpuService : IPpuService
         interruptRegister.VBlank = true;
         _mmuService.WriteByte(AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS, interruptRegister);
         VBlankStart?.Invoke(sender, e);
+    }
+
+
+    private void ScanOAM()
+    {
+        _oamObjectsThisScanLine = [];
+        int spriteHeight = LcdControlRegister.SpriteSize ? 16 : 8;
+
+
+        for (int i = 0; i < 40; i++)
+        {
+            var currentOamObject = OamObjects[i];
+            int spriteY = currentOamObject.YPosition;
+
+            if (ScanLine >= spriteY && ScanLine < spriteY + spriteHeight)
+            {
+                _oamObjectsThisScanLine.Add(currentOamObject);
+
+                if (_oamObjectsThisScanLine.Count == 10) break; // Max 10 sprites per scanline
+            }
+        }
+    }
+
+    private void RenderBackgroundAndWindow(int screenX)
+    {
+        var inWindow = LcdControlRegister.WindowDisplayEnable && WindowX < screenX && WindowY < ScanLine;
+
+        var tileMap = (inWindow && LcdControlRegister.WindowTileMapDisplaySelect) ||
+                      LcdControlRegister.BackgroundTileMapDisplaySelect
+            ? ETileMap.TileMap1
+            : ETileMap.TileMap0;
+        var tileSet = LcdControlRegister.BackgroundWindowTileDataSelect
+            ? ETileSet.TileSet1
+            : ETileSet.TileSet0;
+        var tileX = (byte)(screenX + ScrollX) / TILE_SIZE;
+        var tilePixelX = ((screenX + ScrollX) % TILE_SIZE);
+        var tileY = (byte)((byte)(ScanLine + ScrollY) / TILE_SIZE);
+        var tilePixelY = (ScanLine + ScrollY) % TILE_SIZE;
+
+        if (ScanLine < ScreenDimensions.HEIGHT && screenX < ScreenDimensions.WIDTH)
+        {
+            var colorIndex = _tileService.GetTilePixel(tileMap, tileSet, tileX, tileY, tilePixelX, tilePixelY);
+            FrameBuffer[ScanLine, screenX] = ColorPaletteRegister.Colors[colorIndex];
+        }
+    }
+
+    private void RenderSprites(int screenX)
+    {
+        if (!LcdControlRegister.SpriteDisplayEnable) return;
+
+        foreach (var sprite in _oamObjectsThisScanLine.OrderByDescending(s => s.XPosition))
+        {
+            if (screenX >= sprite.XPosition && screenX < sprite.XPosition + 8)
+            {
+                int tilePixelX = screenX - sprite.XPosition;
+                int tilePixelY = ScanLine - sprite.YPosition;
+
+                if ((sprite.Flags & 0x40) != 0) tilePixelX = 7 - tilePixelX; // X flip
+                if ((sprite.Flags & 0x80) != 0) tilePixelY = 7 - tilePixelY; // Y flip
+
+                int colorIndex = _tileService.GetSpritePixel(sprite.TileIndex, tilePixelX, tilePixelY);
+
+                if (colorIndex != 0) // 0 is transparent for sprites
+                {
+                    bool bgPriority = (sprite.Flags & 0x80) != 0;
+                    if (!bgPriority || FrameBuffer[ScanLine, screenX] == 0)
+                    {
+                        byte paletteRegister = (sprite.Flags & 0x10) != 0 ? _mmuService.ReadByte(0xFF49) : _mmuService.ReadByte(0xFF48);
+                        int color = (paletteRegister >> (colorIndex * 2)) & 0x03;
+                        FrameBuffer[ScanLine, screenX] = color;
+                    }
+                }
+            }
+        }
     }
 }
