@@ -9,6 +9,11 @@ public static class AddressConsts
     public const ushort TIMER_INTERRUPT_VECTOR = 0x0050;
     public const ushort SERIAL_INTERRUPT_VECTOR = 0x0058;
     public const ushort JOYPAD_INTERRUPT_VECTOR = 0x0060;
+    public const ushort JOYPAD_INPUT_REGISTER = 0xFF00;
+    public const ushort DIV_REGISTER = 0xFF04;
+    public const ushort TIMA_REGISTER = 0xFF05;
+    public const ushort TMA_REGISTER = 0xFF06;
+    public const ushort TAC_REGISTER = 0xFF07;
     public const ushort LCD_CONTROL_REGISTER_ADDRESS = 0xFF40;
     public const ushort LCD_STATUS_REGISTER_ADDRESS = 0xFF41;
     public const ushort LY_REGISTER_ADDRESS = 0xFF44;

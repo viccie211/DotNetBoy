@@ -67,7 +67,7 @@ public class CpuRegistersService(IByteUshortService byteUshortService) : ICpuReg
 
     public void Reset()
     {
-        A = 0x01;
+        A = 0x11;
         B = 0x00;
         C = 0x13;
         D = 0x00;

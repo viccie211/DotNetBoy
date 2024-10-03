@@ -8,5 +8,6 @@ public interface IPpuService
 {
     PpuModes Mode { get; }
     event VBlankStart VBlankStart;
+    void VBlankStartInvoke(object? sender, EventArgs e);
     int[,] FrameBuffer { get; }
 }

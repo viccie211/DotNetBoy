@@ -58,76 +58,98 @@ public class PpuService : IPpuService
     public void OnMClock(object? sender, ClockEventArgs e)
     {
         var stat = LcdStatusRegister.Clone();
-        Dot = Dot == 455 ? 0 : Dot + 1;
+        bool statInterruptRequested = false;
 
-        if (ScanLine > 143)
-        {
-            Mode = PpuModes.VerticalBlank;
-        }
-        else
-        {
-            if (Dot < 80)
-            {
-                Mode = PpuModes.OAMSearch;
-                if (Dot == 0) ScanOAM();
-            }
-            else if (Dot < 252)
-            {
-                var screenX = Dot - 80;
-                RenderBackgroundAndWindow(screenX);
-                RenderSprites(screenX);
-
-                Mode = PpuModes.ActivePicture;
-            }
-            else
-            {
-                Mode = PpuModes.HorizontalBlank;
-            }
-        }
-
-        stat.PpuMode = Mode;
-
+        Dot = (Dot + 1) % 456;
 
         if (Dot == 0)
         {
-            _oamObjectsThisScanLine = new();
+            ScanLine = (ScanLine + 1) % 154;
+            LyRegister = (byte)ScanLine;
+
+            // LYC=LY check
+            stat.LycEqualsLy = LycRegister == LyRegister;
+            if (stat.LycEqualsLy && stat.LycIntSelect)
+            {
+                statInterruptRequested = true;
+            }
+
             if (ScanLine == 144)
             {
-                OnVBlankStart(this, EventArgs.Empty);
+                VBlankInterruptRequest();
+                // Trigger V-Blank interrupt
+                InterruptRegister interruptRegister = _mmuService.ReadByte(AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS);
+                interruptRegister.VBlank = true;
+                _mmuService.WriteByte(AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS, interruptRegister);
             }
-
-            if (ScanLine == 153)
+            else if (ScanLine == 0)
             {
-                ScanLine = 0;
                 FrameBuffer = new int[ScreenDimensions.HEIGHT, ScreenDimensions.WIDTH];
             }
-            else
+        }
+
+        // Update PPU mode
+        if (ScanLine >= 144)
+        {
+            Mode = PpuModes.VerticalBlank;
+        }
+        else if (Dot < 80)
+        {
+            Mode = PpuModes.OAMSearch;
+            if (Dot == 0) ScanOAM();
+        }
+        else if (Dot < 252)
+        {
+            Mode = PpuModes.ActivePicture;
+            var screenX = Dot - 80;
+            RenderBackgroundAndWindow(screenX);
+            RenderSprites(screenX);
+        }
+        else
+        {
+            Mode = PpuModes.HorizontalBlank;
+        }
+
+        // Check if mode changed and if interrupt should be requested
+        if (stat.PpuMode != Mode)
+        {
+            stat.PpuMode = Mode;
+            switch (Mode)
             {
-                ScanLine += 1;
+                case PpuModes.HorizontalBlank:
+                    if (stat.Mode0IntSelect) statInterruptRequested = true;
+                    break;
+                case PpuModes.VerticalBlank:
+                    if (stat.Mode1IntSelect) statInterruptRequested = true;
+                    break;
+                case PpuModes.OAMSearch:
+                    if (stat.Mode2IntSelect) statInterruptRequested = true;
+                    break;
             }
-
-
-            LyRegister = (byte)ScanLine;
-            stat.LycEqualsLy = LycRegister == LyRegister;
         }
 
         LcdStatusRegister = stat;
-        InterruptRegister interruptRegister = _mmuService.ReadByte(AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS);
-        interruptRegister.LCD =
-            stat.LycIntSelect && stat.LycEqualsLy
-            || stat.Mode0IntSelect && Mode == PpuModes.HorizontalBlank
-            || stat.Mode1IntSelect && Mode == PpuModes.VerticalBlank
-            || stat.Mode2IntSelect && Mode == PpuModes.OAMSearch;
-        _mmuService.WriteByte(AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS, interruptRegister);
+
+        // Trigger STAT interrupt if conditions are met
+        if (statInterruptRequested)
+        {
+            InterruptRegister interruptRegister = _mmuService.ReadByte(AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS);
+            interruptRegister.LCD = true;
+            _mmuService.WriteByte(AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS, interruptRegister);
+        }
     }
 
     public event VBlankStart VBlankStart;
 
-    protected virtual void OnVBlankStart(object? sender, EventArgs e)
+    private void VBlankInterruptRequest()
     {
         InterruptRegister interruptRegister = _mmuService.ReadByte(AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS);
         interruptRegister.VBlank = true;
         _mmuService.WriteByte(AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS, interruptRegister);
+    }
+
+    public void VBlankStartInvoke(object? sender, EventArgs e)
+    {
         VBlankStart?.Invoke(sender, e);
     }
 

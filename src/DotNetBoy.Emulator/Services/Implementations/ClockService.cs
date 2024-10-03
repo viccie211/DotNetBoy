@@ -6,10 +6,10 @@ namespace DotNetBoy.Emulator.Services.Implementations;
 
 public class ClockService(IMmuService mmuService) : IClockService
 {
-    private const ushort DividerRegisterAddress = 0xFF04;
-    private const ushort TimerCounterRegisterAddress = 0xFF05;
-    private const ushort TimerModuloAddress = 0xFF06;
-    private const ushort TimerControlRegisterAddress = 0xFF07;
+    private const ushort DividerRegisterAddress = AddressConsts.DIV_REGISTER;
+    private const ushort TimerCounterRegisterAddress = AddressConsts.TIMA_REGISTER;
+    private const ushort TimerModuloAddress = AddressConsts.TMA_REGISTER;
+    private const ushort TimerControlRegisterAddress = AddressConsts.TAC_REGISTER;
 
 
     public byte M { get; set; } = 0;

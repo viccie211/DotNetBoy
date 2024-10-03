@@ -11,7 +11,8 @@ public class Cpu(
     ICpuRegistersService cpuRegistersService,
     IInstructionSetService instructionSetService,
     IByteUshortService byteUshortService,
-    IClockService clockService)
+    IClockService clockService,
+    IPpuService ppuService)
 {
     private const byte INSTRUCTION_PREFIX = 0xCB;
 
@@ -68,6 +69,7 @@ public class Cpu(
             castRegister.VBlank = false;
             interruptRequestRegister = castRegister;
             CallInterruptVector(AddressConsts.VBLANK_INTERRUPT_VECTOR);
+            ppuService.VBlankStartInvoke(this, EventArgs.Empty);
             return;
         }
 
@@ -82,7 +84,7 @@ public class Cpu(
         }
 
         StatBlock = false;
-        
+
         if (InterruptEnableRegister.Timer && castRegister.Timer)
         {
             cpuRegistersService.InterruptMasterEnable = false;
