@@ -26,7 +26,7 @@ public class ArithmeticInstructions : IInstructionSet
             { 0x84, AddHToA },
             { 0x85, AddLToA },
             { 0x86, AddAtAddressHLToA },
-            { 0x87, AddAWithCarryToA },
+            { 0x87, AddAToA },
             { 0x88, AddBWithCarryToA },
             { 0x89, AddCWithCarryToA },
             { 0x8A, AddDWithCarryToA },
@@ -221,7 +221,7 @@ public class ArithmeticInstructions : IInstructionSet
 
     public void SubtractDFromA(ICpuRegistersService registers)
     {
-        SubtractByteFromA(registers.B, registers);
+        SubtractByteFromA(registers.D, registers);
     }
 
     public void SubtractEFromA(ICpuRegistersService registers)
@@ -280,7 +280,7 @@ public class ArithmeticInstructions : IInstructionSet
 
     public void SubtractDWithCarryFromA(ICpuRegistersService registers)
     {
-        SubtractByteWithCarryFromA(registers.B, registers);
+        SubtractByteWithCarryFromA(registers.D, registers);
     }
 
     public void SubtractEWithCarryFromA(ICpuRegistersService registers)
@@ -358,8 +358,8 @@ public class ArithmeticInstructions : IInstructionSet
         var result = (ushort)resultInt;
         registers.F.Zero = false;
         registers.F.Subtract = false;
-        registers.F.HalfCarry = ((registers.StackPointer & 0xFFF) + (toAddUnsigned & 0xFFF)) > 0xFFF;
-        registers.F.Carry = (registers.StackPointer + toAddUnsigned) > ushort.MaxValue;
+        registers.F.HalfCarry = (result & 0x0f) < (registers.StackPointer & 0x0f);
+        registers.F.Carry = (result & 0xff) < (registers.StackPointer & 0xff);
         registers.StackPointer = result;
         registers.ProgramCounter += 2;
         _clockService.Clock(4);
@@ -370,12 +370,15 @@ public class ArithmeticInstructions : IInstructionSet
 
     private void AddByteWithCarryToA(byte toAdd, ICpuRegistersService registers)
     {
-        if (registers.F.Carry)
-        {
-            toAdd += 1;
-        }
-
-        AddByteToA(toAdd, registers);
+        var carryBit = registers.F.Carry ? 1 : 0;
+        var result = registers.A + toAdd + carryBit;
+        registers.F.Zero = (byte)result == 0;
+        registers.F.Subtract = false;
+        registers.F.HalfCarry = (result & 0x0F) < (registers.A & 0x0F) + carryBit;
+        registers.F.Carry = result > 255;
+        registers.A = (byte)result;
+        registers.ProgramCounter += 1;
+        _clockService.Clock();
     }
 
     private void AddByteToA(byte toAdd, ICpuRegistersService registers)
@@ -391,9 +394,15 @@ public class ArithmeticInstructions : IInstructionSet
 
     private void SubtractByteWithCarryFromA(byte toSubtract, ICpuRegistersService registers)
     {
-        byte carry = (byte)(registers.F.Carry ? 1 : 0);
-        byte withCarry = (byte)(toSubtract + carry);
-        SubtractByteFromA(withCarry, registers);
+        byte carryBit = (byte)(registers.F.Carry ? 1 : 0);
+        var result = registers.A - toSubtract - carryBit;
+        registers.F.Zero = (byte)result == 0;
+        registers.F.Subtract = true;
+        registers.F.HalfCarry = ((registers.A & 0x0f) - carryBit) < (toSubtract & 0x0f);
+        registers.F.Carry = result < 0;
+        registers.ProgramCounter += 1;
+        registers.A = (byte)result;
+        _clockService.Clock();
     }
 
     private void SubtractByteFromA(byte toSubtract, ICpuRegistersService registers)
@@ -413,7 +422,6 @@ public class ArithmeticInstructions : IInstructionSet
         registers.F.HalfCarry = InstructionUtilFunctions.HalfCarryFor16BitAddition(a, b);
         registers.F.Subtract = false;
         var result = (ushort)(a + b);
-        registers.F.Zero = false;
         _clockService.Clock(2);
         registers.ProgramCounter += 1;
         return result;

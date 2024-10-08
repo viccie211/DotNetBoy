@@ -153,7 +153,7 @@ public class JumpInstructions : IInstructionSet
     //TODO: Write unit tests
     public void CallA16Carry(ICpuRegistersService registers)
     {
-        CallA16OnCondition(!registers.F.Carry, registers);
+        CallA16OnCondition(registers.F.Carry, registers);
     }
 
     //TODO: Write unit tests

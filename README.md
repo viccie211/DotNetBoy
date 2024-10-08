@@ -22,3 +22,8 @@ Not yet implemented:
 * Sprites
 * Input
 * Sound
+
+# Special Thanks 
+* The developers of BGB (https://bgb.bircd.org/)
+* The developer SpecBoy: spec-chum (https://github.com/spec-chum/SpecBoy)
+For their emulators which I used as my hardware references on many occasions

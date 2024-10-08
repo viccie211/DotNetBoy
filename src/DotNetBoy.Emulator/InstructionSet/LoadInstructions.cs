@@ -251,7 +251,7 @@ public class LoadInstructions : IInstructionSet
     /// 
     public void LoadAtAddressHLIntoA(ICpuRegistersService registers)
     {
-        registers.H = LoadByteAtAddressHL(registers);
+        registers.A = LoadByteAtAddressHL(registers);
     }
 
     /// <summary>

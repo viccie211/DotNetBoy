@@ -1,5 +1,6 @@
 ﻿using DotNetBoy.Emulator.Services.Interfaces;
 using DotNetBoy.Emulator;
+using DotNetBoy.Resources;
 using Microsoft.Extensions.Configuration;
 
 namespace DotNetBoy.FrontEnd.ViewModels
@@ -20,7 +21,7 @@ namespace DotNetBoy.FrontEnd.ViewModels
             CpuRegistersService = cpuRegistersService;
             Cpu = cpu;
             CpuRegistersService.Reset();
-            MmuService.LoadRom(File.ReadAllBytes(configuration["RomPath"]??""));
+            MmuService.LoadRom(Roms.GetRom(configuration["RomName"]!));
             Scale = configuration.GetValue<int>("Scale");
         }
 

@@ -276,6 +276,7 @@ public class LogicInstructions : IInstructionSet
     {
         var toOR = _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
         _clockService.Clock();
+        registers.ProgramCounter++;
         ORByteWithA(toOR, registers);
     }
 

@@ -65,6 +65,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DotNetBoy.Emulator\DotNetBoy.Emulator.csproj" />
+    <ProjectReference Include="..\DotNetBoy.Resources\DotNetBoy.Resources.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -82,7 +83,6 @@
     <None Remove="appsettings.json" />
     <EmbeddedResource Include="appsettings.json" />
     <None Remove="appsettings.development.json" />
-    <EmbeddedResource Include="appsettings.development.json" />
   </ItemGroup>
 
   <ItemGroup>

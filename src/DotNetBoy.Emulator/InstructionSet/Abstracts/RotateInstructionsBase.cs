@@ -6,7 +6,7 @@ public class RotateInstructionsBase(IClockService clockService)
 {
     protected readonly IClockService ClockService = clockService;
 
-    protected byte RotateByteLeft(byte toRotate, ICpuRegistersService registers)
+    protected byte RotateByteLeft(byte toRotate, ICpuRegistersService registers, bool includeZeroFlag = true)
     {
         registers.F.Carry = (toRotate & 0x80) == 0x80;
         var result = (byte)(toRotate << 1);
@@ -15,7 +15,7 @@ public class RotateInstructionsBase(IClockService clockService)
             result = (byte)(result | 0x01);
         }
 
-        registers.F.Zero = result == 0;
+        registers.F.Zero = includeZeroFlag && result == 0;
         registers.F.Subtract = false;
         registers.F.HalfCarry = false;
         ClockService.Clock();
@@ -32,7 +32,7 @@ public class RotateInstructionsBase(IClockService clockService)
         {
             result = (byte)(result | 0x01);
         }
-        
+
         registers.F.Zero = includeZeroFlag && result == 0;
         registers.F.Subtract = false;
         registers.F.HalfCarry = false;
@@ -42,7 +42,7 @@ public class RotateInstructionsBase(IClockService clockService)
     }
 
 
-    protected byte RotateByteRight(byte toRotate, ICpuRegistersService registers)
+    protected byte RotateByteRight(byte toRotate, ICpuRegistersService registers, bool includeZeroFlag = true)
     {
         registers.F.Carry = (toRotate & 0x01) == 0x01;
         var result = (byte)(toRotate >> 1);
@@ -51,7 +51,7 @@ public class RotateInstructionsBase(IClockService clockService)
             result = (byte)(result | 0x80);
         }
 
-        registers.F.Zero = result == 0;
+        registers.F.Zero = includeZeroFlag && result == 0;
         registers.F.Subtract = false;
         registers.F.HalfCarry = false;
         ClockService.Clock();

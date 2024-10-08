@@ -16,7 +16,7 @@ var scope = serviceProvider.CreateScope();
 var cpuRegisters = scope.ServiceProvider.GetService<ICpuRegistersService>()!;
 cpuRegisters.Reset();
 
-var romFileName = Roms.RomFileInfos.First(x => x.Name == "03-op sp,hl.gb").FullName;
+var romFileName = Roms.RomFileInfos.First(x => x.Name == "09-op r,r.gb").FullName;
 var rom = File.ReadAllBytes(romFileName);
 var mmuService = scope.ServiceProvider.GetService<IMmuService>()!;
 mmuService.LoadRom(rom);
@@ -42,6 +42,6 @@ while (dotNetBoyStatus == specBoyStatus)
     }
     dotNetBoyStatus = $"{cpuRegisters} 0x{(cpu.Prefixed?DotNetBoy.Emulator.Cpu.INSTRUCTION_PREFIX.ToString("x2"):"")}{cpu.Instruction.ToString("x2")}";
     specBoyStatus = $"{specBoy.cpu} 0x{(specBoy.cpu.Prefixed?DotNetBoy.Emulator.Cpu.INSTRUCTION_PREFIX.ToString("x2"):"")}{specBoy.cpu.Instruction.ToString("x2")}";
-    Console.WriteLine($"DotNetBoy: {dotNetBoyStatus}");
+    Console.WriteLine($"DotNetBoy:\t\t{dotNetBoyStatus}");
+    Console.WriteLine($"ReferenceEmulator:\t{specBoyStatus}");
 }
-Console.WriteLine($"ReferenceEmulator: {specBoyStatus}");

@@ -23,7 +23,7 @@ public class RotateInstructions : RotateInstructionsBase, IInstructionSet
 
     public void RotateALeft(ICpuRegistersService registers)
     {
-        registers.A = RotateByteLeft(registers.A, registers);
+        registers.A = RotateByteLeft(registers.A, registers, false);
     }
 
     public void RotateALeftThroughCarry(ICpuRegistersService registers)
@@ -34,7 +34,7 @@ public class RotateInstructions : RotateInstructionsBase, IInstructionSet
 
     public void RotateARight(ICpuRegistersService registers)
     {
-        registers.A = RotateByteRight(registers.A, registers);
+        registers.A = RotateByteRight(registers.A, registers, false);
     }
 
     public void RotateARightThroughCarry(ICpuRegistersService registers)

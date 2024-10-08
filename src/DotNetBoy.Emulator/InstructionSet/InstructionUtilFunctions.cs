@@ -11,7 +11,7 @@ public class InstructionUtilFunctions
     /// <returns>Whether half carry should be set</returns>
     public static bool HalfCarryFor8BitAddition(byte a, byte b)
     {
-        return (((a & 0xF) + (b & 0xF)) & 0x10) == 0x10;
+        return (a + b & 0x0f) < (a & 0x0f);
     }
 
     /// <summary>
