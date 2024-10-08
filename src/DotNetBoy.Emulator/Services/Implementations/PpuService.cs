@@ -32,7 +32,7 @@ public class PpuService : IPpuService
         set => _mmuService.WriteByte(AddressConsts.LCD_STATUS_REGISTER_ADDRESS, value);
     }
 
-    private byte LyRegister
+    public byte LyRegister
     {
         get => _mmuService.ReadByte(AddressConsts.LY_REGISTER_ADDRESS);
         set => _mmuService.WriteByte(AddressConsts.LY_REGISTER_ADDRESS, value);
@@ -42,7 +42,7 @@ public class PpuService : IPpuService
 
 
     public PpuModes Mode { get; internal set; }
-    public int ScanLine { get; set; } = 0x90;
+    public int ScanLine { get; set; } = 0x00;
     public int Dot { get; set; } = 0;
     public int[,] FrameBuffer { get; private set; }
 
@@ -59,12 +59,21 @@ public class PpuService : IPpuService
     {
         var stat = LcdStatusRegister.Clone();
         bool statInterruptRequested = false;
-
-        Dot = (Dot + 1) % 456;
+        Dot++;
+        
+        if (Dot >= 455)
+        {
+            Dot = 0;
+        }
 
         if (Dot == 0)
         {
-            ScanLine = (ScanLine + 1) % 154;
+            ScanLine++;
+            if (ScanLine >= 153)
+            {
+                ScanLine = 0;
+            }
+
             LyRegister = (byte)ScanLine;
 
             // LYC=LY check
@@ -77,10 +86,7 @@ public class PpuService : IPpuService
             if (ScanLine == 144)
             {
                 VBlankInterruptRequest();
-                // Trigger V-Blank interrupt
-                InterruptRegister interruptRegister = _mmuService.ReadByte(AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS);
-                interruptRegister.VBlank = true;
-                _mmuService.WriteByte(AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS, interruptRegister);
+                VBlankStartInvoke(this, EventArgs.Empty);
             }
             else if (ScanLine == 0)
             {

@@ -293,8 +293,9 @@ public class LoadInstructions : IInstructionSet
         var result = (ushort)resultInt;
         registers.F.Zero = false;
         registers.F.Subtract = false;
-        registers.F.Carry = resultInt > ushort.MaxValue;
-        registers.F.HalfCarry = (((registers.StackPointer & 0xFFF) + (signedToAdd & 0xFFF)) & 0x1000) == 0x1000;
+        registers.F.HalfCarry = ((registers.StackPointer & 0xF) + (toAddUnsigned & 0xF)) > 0xF;
+        registers.F.Carry = ((registers.StackPointer & 0xFF) + toAddUnsigned) > 0xFF;
+
         registers.HL = result;
         registers.ProgramCounter += 2;
         _clockService.Clock(3);

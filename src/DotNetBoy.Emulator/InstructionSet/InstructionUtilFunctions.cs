@@ -60,7 +60,7 @@ public class InstructionUtilFunctions
 
     public static bool HalfCarryFor16BitAddition(ushort a, ushort b)
     {
-        return (((a & 0xFFF) + (b & 0xFFF)) & 0x1000) == 0x1000;
+        return ((a & 0xFFF) + (b & 0xFFF)) > 0xFFF;
     }
 
 }

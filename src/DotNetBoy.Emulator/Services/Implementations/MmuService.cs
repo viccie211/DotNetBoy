@@ -14,7 +14,7 @@ public class MmuService : IMmuService
     {
         _byteUshortService = byteUshortService;
         MappedMemory = new byte[ushort.MaxValue + 1];
-        MappedMemory[AddressConsts.LY_REGISTER_ADDRESS] = 0x90;
+        MappedMemory[AddressConsts.LY_REGISTER_ADDRESS] = 0x00;
     }
 
     public byte[] MappedMemory { get; init; }

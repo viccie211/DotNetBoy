@@ -11,10 +11,11 @@ public class Cpu(
     ICpuRegistersService cpuRegistersService,
     IInstructionSetService instructionSetService,
     IByteUshortService byteUshortService,
-    IClockService clockService,
-    IPpuService ppuService)
+    IClockService clockService)
 {
-    private const byte INSTRUCTION_PREFIX = 0xCB;
+    public const byte INSTRUCTION_PREFIX = 0xCB;
+    public byte Instruction { get; set; }
+    public bool Prefixed { get; set; }
 
     private InterruptRegister InterruptEnableRegister => mmuService.ReadByte(AddressConsts.INTERRUPT_ENABLE_REGISTER_ADDRESS);
 
@@ -30,30 +31,37 @@ public class Cpu(
     {
         while (!cpuRegistersService.Halted)
         {
-            //Fetch
-            var instruction = mmuService.ReadByte(cpuRegistersService.ProgramCounter);
-
-            if (instruction == INSTRUCTION_PREFIX)
-            {
-                var actualInstruction = mmuService.ReadByte((ushort)(cpuRegistersService.ProgramCounter + 1));
-                var decodedInstruction = instructionSetService.PrefixedInstructions[actualInstruction];
-                decodedInstruction(cpuRegistersService);
-            }
-            else
-            {
-                var decodedInstruction = instructionSetService.NonPrefixedInstructions[instruction];
-                decodedInstruction(cpuRegistersService);
-            }
-
-            Interrupts();
-
-            if (cpuRegistersService.InterruptsJustEnabled)
-            {
-                cpuRegistersService.InterruptsJustEnabled = false;
-            }
+            Step();
         }
 
         Console.WriteLine("Halted");
+    }
+
+    public void Step()
+    {
+         Instruction = mmuService.ReadByte(cpuRegistersService.ProgramCounter);
+
+        if (Instruction == INSTRUCTION_PREFIX)
+        {
+            var actualInstruction = mmuService.ReadByte((ushort)(cpuRegistersService.ProgramCounter + 1));
+            var decodedInstruction = instructionSetService.PrefixedInstructions[actualInstruction];
+            Prefixed = true;
+            Instruction = actualInstruction;
+            decodedInstruction(cpuRegistersService);
+        }
+        else
+        {
+            var decodedInstruction = instructionSetService.NonPrefixedInstructions[Instruction];
+            Prefixed = false;
+            decodedInstruction(cpuRegistersService);
+        }
+
+        Interrupts();
+
+        if (cpuRegistersService.InterruptsJustEnabled)
+        {
+            cpuRegistersService.InterruptsJustEnabled = false;
+        }
     }
 
     private void Interrupts()
@@ -69,7 +77,6 @@ public class Cpu(
             castRegister.VBlank = false;
             interruptRequestRegister = castRegister;
             CallInterruptVector(AddressConsts.VBLANK_INTERRUPT_VECTOR);
-            ppuService.VBlankStartInvoke(this, EventArgs.Empty);
             return;
         }
 

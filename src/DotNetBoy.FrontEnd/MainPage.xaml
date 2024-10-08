@@ -21,6 +21,15 @@
                           HeightRequest="144"
                           WidthRequest="160"
                           x:Name="EmulatorScreen"/>
+            
+            <Button
+                x:Name="StepBtn"
+                Text="Step" 
+                SemanticProperties.Hint=""
+                Clicked="StepButtonClicked"
+                HorizontalOptions="Fill" />
+            <Label x:Name="PC"/>
+                
         </VerticalStackLayout>
     </ScrollView>
 

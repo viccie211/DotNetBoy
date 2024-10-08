@@ -350,7 +350,7 @@ public class JumpInstructions : IInstructionSet
         }
 
         _clockService.Clock(2);
-        registers.ProgramCounter += 2;
+        registers.ProgramCounter += 1;
     }
 
     private void Return(ICpuRegistersService registers)

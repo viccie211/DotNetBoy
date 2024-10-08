@@ -45,4 +45,11 @@ public partial class MainPage : ContentPage
             EmulatorScreen.Invalidate();
         });
     }
+
+    public void StepButtonClicked(object sender, EventArgs e)
+    {
+        var viewModel = BindingContext as MainPageViewModel;
+        PC.Text = viewModel.CpuRegistersService.ToString();
+        viewModel.Cpu.Step();
+    }
 }

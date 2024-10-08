@@ -18,3 +18,20 @@ src/**/bin
 src/**/obj
 src/.vs
 src/**/appsettings.development.json
+src/DotNetBoy.Resources/DebugAssets/bgbw64
+src/DotNetBoy.Resources/DebugAssets/01-special.gb
+src/DotNetBoy.Resources/DebugAssets/02-interrupts.gb
+src/DotNetBoy.Resources/DebugAssets/03-op sp,hl.gb
+src/DotNetBoy.Resources/DebugAssets/04-op r,imm.gb
+src/DotNetBoy.Resources/DebugAssets/05-op rp.gb
+src/DotNetBoy.Resources/DebugAssets/06-ld r,r.gb
+src/DotNetBoy.Resources/DebugAssets/07-jr,jp,call,ret,rst.gb
+src/DotNetBoy.Resources/DebugAssets/08-misc instrs.gb
+src/DotNetBoy.Resources/DebugAssets/09-op r,r.gb
+src/DotNetBoy.Resources/DebugAssets/10-bit ops.gb
+src/DotNetBoy.Resources/DebugAssets/11-op a,(hl).gb
+src/DotNetBoy.Resources/DebugAssets/bgbtest.gb
+src/DotNetBoy.Resources/DebugAssets/cpu_instrs.gb
+src/DotNetBoy.Resources/DebugAssets/Super Mario Land.gb
+src/DotNetBoy.Resources/DebugAssets/Tetris.gb
+src/ReferenceEmulator

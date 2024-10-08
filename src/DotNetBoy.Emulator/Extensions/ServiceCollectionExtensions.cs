@@ -13,7 +13,7 @@ namespace DotNetBoy.Emulator.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddEmulator(this IServiceCollection serviceCollection)
+    public static IServiceCollection AddDotNetBoy(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddScoped<IByteUshortService, ByteUshortService>();
         serviceCollection.AddScoped<IMmuService, MmuService>();

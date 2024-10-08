@@ -10,4 +10,6 @@ public interface IPpuService
     event VBlankStart VBlankStart;
     void VBlankStartInvoke(object? sender, EventArgs e);
     int[,] FrameBuffer { get; }
+    byte LyRegister { get; set; }
+    int ScanLine { get; set; }
 }

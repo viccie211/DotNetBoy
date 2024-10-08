@@ -67,12 +67,12 @@ public class CpuRegistersService(IByteUshortService byteUshortService) : ICpuReg
 
     public void Reset()
     {
-        A = 0x11;
+        A = 0x01;
         B = 0x00;
         C = 0x13;
         D = 0x00;
         E = 0XD8;
-        F = new FlagsRegister() { Zero = true, Subtract = false, HalfCarry = false, Carry = false };
+        F = 0xB0;
         H = 0x01;
         L = 0x4D;
         ProgramCounter = 0x100;

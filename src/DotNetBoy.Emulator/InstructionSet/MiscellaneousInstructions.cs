@@ -149,8 +149,7 @@ public class MiscellaneousInstructions : IInstructionSet
     /// Verified against BGB
     public void Stop(ICpuRegistersService registers)
     {
-        registers.Halted = true;
-        registers.ProgramCounter += 1;
+        registers.ProgramCounter += 2;
         _clockService.Clock();
     }
 
