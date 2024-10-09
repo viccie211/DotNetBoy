@@ -12,8 +12,9 @@ public class MiscellaneousInstructionsTests
     public void SetUp()
     {
         var clockServiceMock = new Mock<IClockService>();
+        var mmuServiceMock = new Mock<IMmuService>();
         _registers = new TestCpuRegisterService();
-        _instructions = new MiscellaneousInstructions(clockServiceMock.Object);
+        _instructions = new MiscellaneousInstructions(clockServiceMock.Object, mmuServiceMock.Object);
     }
 
     [Test]

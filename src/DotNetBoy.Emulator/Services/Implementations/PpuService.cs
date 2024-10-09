@@ -1,5 +1,3 @@
-using System.Diagnostics;
-using DotNetBoy.Emulator;
 using DotNetBoy.Emulator.Consts;
 using DotNetBoy.Emulator.Enums;
 using DotNetBoy.Emulator.Models;
@@ -60,7 +58,7 @@ public class PpuService : IPpuService
         var stat = LcdStatusRegister.Clone();
         bool statInterruptRequested = false;
         Dot++;
-        
+
         if (Dot >= 455)
         {
             Dot = 0;
@@ -85,6 +83,7 @@ public class PpuService : IPpuService
 
             if (ScanLine == 144)
             {
+                RenderFullBackgroundAndWindow();
                 VBlankInterruptRequest();
                 VBlankStartInvoke(this, EventArgs.Empty);
             }
@@ -108,8 +107,8 @@ public class PpuService : IPpuService
         {
             Mode = PpuModes.ActivePicture;
             var screenX = Dot - 80;
-            RenderBackgroundAndWindow(screenX);
-            RenderSprites(screenX);
+            // RenderBackgroundAndWindow(ScanLine, screenX);
+            // RenderSprites(screenX);
         }
         else
         {
@@ -180,9 +179,20 @@ public class PpuService : IPpuService
         }
     }
 
-    private void RenderBackgroundAndWindow(int screenX)
+    private void RenderFullBackgroundAndWindow()
     {
-        var inWindow = LcdControlRegister.WindowDisplayEnable && WindowX < screenX && WindowY < ScanLine;
+        for (int y = 0; y < ScreenDimensions.HEIGHT; y++)
+        {
+            for (int x = 0; x < ScreenDimensions.WIDTH; x++)
+            {
+                RenderBackgroundAndWindow(y, x);
+            }
+        }
+    }
+
+    private void RenderBackgroundAndWindow(int screenY, int screenX)
+    {
+        var inWindow = false &&LcdControlRegister.WindowDisplayEnable && WindowX < screenX && WindowY < screenY;
 
         var tileMap = (inWindow && LcdControlRegister.WindowTileMapDisplaySelect) ||
                       LcdControlRegister.BackgroundTileMapDisplaySelect
@@ -193,13 +203,13 @@ public class PpuService : IPpuService
             : ETileSet.TileSet0;
         var tileX = (byte)(screenX + ScrollX) / TILE_SIZE;
         var tilePixelX = ((screenX + ScrollX) % TILE_SIZE);
-        var tileY = (byte)((byte)(ScanLine + ScrollY) / TILE_SIZE);
-        var tilePixelY = (ScanLine + ScrollY) % TILE_SIZE;
+        var tileY = (byte)((byte)(screenY + ScrollY) / TILE_SIZE);
+        var tilePixelY = (screenY + ScrollY) % TILE_SIZE;
 
-        if (ScanLine < ScreenDimensions.HEIGHT && screenX < ScreenDimensions.WIDTH)
+        if (screenY < ScreenDimensions.HEIGHT && screenX < ScreenDimensions.WIDTH)
         {
             var colorIndex = _tileService.GetTilePixel(tileMap, tileSet, tileX, tileY, tilePixelX, tilePixelY);
-            FrameBuffer[ScanLine, screenX] = ColorPaletteRegister.Colors[colorIndex];
+            FrameBuffer[screenY, screenX] = ColorPaletteRegister.Colors[colorIndex];
         }
     }
 

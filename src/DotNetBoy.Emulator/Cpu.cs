@@ -29,31 +29,51 @@ public class Cpu(
 
     public void Loop()
     {
-        while (!cpuRegistersService.Halted)
+        while (true)
         {
             Step();
         }
-
-        Console.WriteLine("Halted");
     }
 
     public void Step()
     {
-         Instruction = mmuService.ReadByte(cpuRegistersService.ProgramCounter);
-
-        if (Instruction == INSTRUCTION_PREFIX)
+        if (cpuRegistersService.HaltBug)
         {
-            var actualInstruction = mmuService.ReadByte((ushort)(cpuRegistersService.ProgramCounter + 1));
-            var decodedInstruction = instructionSetService.PrefixedInstructions[actualInstruction];
-            Prefixed = true;
-            Instruction = actualInstruction;
-            decodedInstruction(cpuRegistersService);
+            cpuRegistersService.HaltBug = false;
+            cpuRegistersService.ProgramCounter--;
+        }
+
+        if (cpuRegistersService.Halted)
+        {
+            clockService.Clock();
         }
         else
         {
-            var decodedInstruction = instructionSetService.NonPrefixedInstructions[Instruction];
-            Prefixed = false;
-            decodedInstruction(cpuRegistersService);
+            Instruction = mmuService.ReadByte(cpuRegistersService.ProgramCounter);
+
+            if (Instruction == INSTRUCTION_PREFIX)
+            {
+                var actualInstruction = mmuService.ReadByte((ushort)(cpuRegistersService.ProgramCounter + 1));
+                var decodedInstruction = instructionSetService.PrefixedInstructions[actualInstruction];
+                Prefixed = true;
+                Instruction = actualInstruction;
+                decodedInstruction(cpuRegistersService);
+            }
+            else
+            {
+                var decodedInstruction = instructionSetService.NonPrefixedInstructions[Instruction];
+                Prefixed = false;
+                decodedInstruction(cpuRegistersService);
+            }
+        }
+
+        if (cpuRegistersService.Halted && (cpuRegistersService.InterruptMasterEnable || (InterruptEnableRegister & interruptRequestRegister & 0x1f) != 0))
+        {
+            cpuRegistersService.Halted = false;
+            if (!cpuRegistersService.InterruptMasterEnable)
+            {
+                cpuRegistersService.ProgramCounter++;
+            }
         }
 
         Interrupts();

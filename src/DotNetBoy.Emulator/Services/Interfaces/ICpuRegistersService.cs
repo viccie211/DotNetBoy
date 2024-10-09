@@ -21,6 +21,7 @@ public interface ICpuRegistersService
     ushort ProgramCounter { get; set; }
     ushort StackPointer { get; set; }
     bool Halted { get; set; }
+    bool HaltBug { get; set; }
 
     void Reset();
 

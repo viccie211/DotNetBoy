@@ -1,4 +1,3 @@
-
 public class TestCpuRegisterService : ICpuRegistersService
 {
     public bool InterruptMasterEnable { get; set; }
@@ -18,6 +17,7 @@ public class TestCpuRegisterService : ICpuRegistersService
     public ushort ProgramCounter { get; set; }
     public ushort StackPointer { get; set; }
     public bool Halted { get; set; }
+    public bool HaltBug { get; set; }
 
     public TestCpuRegisterService()
     {
