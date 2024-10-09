@@ -1,4 +1,5 @@
-﻿using DotNetBoy.Emulator.InstructionSet.Interfaces;
+﻿using DotNetBoy.Emulator.Consts;
+using DotNetBoy.Emulator.InstructionSet.Interfaces;
 using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.InstructionSet;
@@ -6,8 +7,9 @@ namespace DotNetBoy.Emulator.InstructionSet;
 public class MiscellaneousInstructions : IInstructionSet
 {
     private readonly IClockService _clockService;
+    private readonly IMmuService _mmuService;
 
-    public MiscellaneousInstructions(IClockService clockService)
+    public MiscellaneousInstructions(IClockService clockService, IMmuService mmuService)
     {
         Instructions = new Dictionary<byte, Action<ICpuRegistersService>>
         {
@@ -34,6 +36,7 @@ public class MiscellaneousInstructions : IInstructionSet
             { 0xFB, EnableInterrupts },
         };
         _clockService = clockService;
+        _mmuService = mmuService;
     }
 
     /// <summary>
@@ -137,9 +140,16 @@ public class MiscellaneousInstructions : IInstructionSet
     /// Verified against BGB
     public void Halt(ICpuRegistersService registers)
     {
-        registers.Halted = true;
-        registers.ProgramCounter += 1;
-        _clockService.Clock();
+        var interruptEnableRegister = _mmuService.ReadByte(AddressConsts.INTERRUPT_ENABLE_REGISTER_ADDRESS);
+        var interruptRequestRegister = _mmuService.ReadByte(AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS);
+        if (registers.InterruptMasterEnable || (interruptEnableRegister & interruptRequestRegister & 0x1f) == 0)
+        {
+            registers.Halted = true;
+        }
+        else
+        {
+            registers.HaltBug = true;
+        }
     }
 
     /// <summary>

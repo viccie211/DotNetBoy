@@ -64,6 +64,7 @@ public class CpuRegistersService(IByteUshortService byteUshortService) : ICpuReg
     public ushort ProgramCounter { get; set; }
     public ushort StackPointer { get; set; }
     public bool Halted { get; set; }
+    public bool HaltBug { get; set; }
 
     public void Reset()
     {
