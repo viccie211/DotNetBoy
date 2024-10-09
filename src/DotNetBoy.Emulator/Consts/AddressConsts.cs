@@ -2,6 +2,7 @@ namespace DotNetBoy.Emulator.Consts;
 
 public static class AddressConsts
 {
+    public const ushort CARTRIDGE_TYPE_HEADER_ADDRESS = 0x0147;
     public const ushort INTERRUPT_REQUEST_REGISTER_ADDRESS = 0xFF0F;
     public const ushort INTERRUPT_ENABLE_REGISTER_ADDRESS = 0xFFFF;
     public const ushort VBLANK_INTERRUPT_VECTOR = 0x0040;
