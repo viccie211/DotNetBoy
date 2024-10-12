@@ -25,7 +25,7 @@ public class MmuService : IMmuService
 
     public byte ReadByte(ushort address)
     {
-        if (address is <= 0x7FFF or (>= 0xA000 and <= 0xBFFF))
+        if (address is <= AddressConsts.ROM_BANK_1_UPPER_ADDRESS or (>= AddressConsts.CARTRIDGE_RAM_BASE_ADDRESS and <= AddressConsts.CARTRIDGE_RAM_UPPER_ADDRESS))
         {
             return Cartridge.ReadByte(address);
         }
@@ -40,7 +40,7 @@ public class MmuService : IMmuService
 
     public void WriteByte(ushort address, byte value)
     {
-        if (address is <= 0x7FFF or (>= 0xA000 and <= 0xBFFF))
+        if (address is <= AddressConsts.ROM_BANK_1_UPPER_ADDRESS or (>= AddressConsts.CARTRIDGE_RAM_BASE_ADDRESS and <= AddressConsts.CARTRIDGE_RAM_UPPER_ADDRESS))
         {
             Cartridge.WriteByte(address,value);
             return;
@@ -71,7 +71,10 @@ public class MmuService : IMmuService
         if (MbcType is EMbcType.Mbc1 or EMbcType.Mbc1Ram or EMbcType.Mbc1RamBattery)
         {
             Cartridge = new Mbc1Cartridge(rom, MbcType);
+            return;
         }
+
+        Cartridge = new DefaultCartridge(rom);
     }
 
     private EMbcType ReadMbcType(byte[] rom)

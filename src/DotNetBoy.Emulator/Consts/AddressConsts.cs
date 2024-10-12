@@ -2,8 +2,14 @@ namespace DotNetBoy.Emulator.Consts;
 
 public static class AddressConsts
 {
+    public const ushort ROM_BANK_0_BASE_ADDRESS = 0x0000;
+    public const ushort ROM_BANK_0_UPPER_ADDRESS = 0x3FFF;
     public const ushort CARTRIDGE_TYPE_HEADER_ADDRESS = 0x0147;
     public const ushort CARTRIDGE_SIZE_HEADER_ADDRESS = 0x0148;
+    public const ushort ROM_BANK_1_BASE_ADDRESS = 0x4000;
+    public const ushort ROM_BANK_1_UPPER_ADDRESS = 0x7FFF;
+    public const ushort CARTRIDGE_RAM_BASE_ADDRESS = 0xA000;
+    public const ushort CARTRIDGE_RAM_UPPER_ADDRESS = 0xBFFF;
     public const ushort INTERRUPT_REQUEST_REGISTER_ADDRESS = 0xFF0F;
     public const ushort INTERRUPT_ENABLE_REGISTER_ADDRESS = 0xFFFF;
     public const ushort VBLANK_INTERRUPT_VECTOR = 0x0040;

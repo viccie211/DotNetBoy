@@ -34,7 +34,7 @@ public class Mbc1Cartridge : ICartridge
         _romBanks = [];
         for (int i = 0; i < bankCount; i++)
         {
-            var baseAddress = i * 0x4000;
+            var baseAddress = i * AddressConsts.ROM_BANK_1_BASE_ADDRESS;
             _romBanks.Add(new byte[ICartridge.BANK_SIZE]);
             for (int j = 0; j < ICartridge.BANK_SIZE; j++)
             {
@@ -47,37 +47,37 @@ public class Mbc1Cartridge : ICartridge
         _requiredNumberBits = (romSize >> 4) - 1;
         if (_type == EMbcType.Mbc1Ram || _type == EMbcType.Mbc1RamBattery)
         {
-            _ramBanks = [new byte[0x1FFF], new byte[0x1FFF], new byte[0x1FFF]];
+            _ramBanks = [new byte[0x2000], new byte[0x2000], new byte[0x2000]];
         }
     }
 
 
     public byte ReadByte(ushort address)
     {
-        if (address <= 0x3FFF && !_ramBankingMode)
+        if (address <= AddressConsts.ROM_BANK_0_UPPER_ADDRESS && !_ramBankingMode)
         {
             return _romBanks[0][address];
         }
         
-        if (address <= 0x3FFF)
+        if (address <= AddressConsts.ROM_BANK_0_UPPER_ADDRESS)
         {
             return _romBanks[_activeRamBankOrRomBankUpper2Bits][address];
         }
 
-        if (address is >= 0x4000 and <= 0x7FFF)
+        if (address is >= AddressConsts.ROM_BANK_1_BASE_ADDRESS and <= AddressConsts.ROM_BANK_1_UPPER_ADDRESS)
         {
-            return _romBanks[_activeRomBank][address - 0x4000];
+            return _romBanks[_activeRomBank][address - AddressConsts.ROM_BANK_1_BASE_ADDRESS];
         }
 
-        if (_type == EMbcType.Mbc1Ram || _type == EMbcType.Mbc1RamBattery && address is >= 0xA000 and <= 0xBFFF && _ramEnable)
+        if (_type == EMbcType.Mbc1Ram || _type == EMbcType.Mbc1RamBattery && address is >= AddressConsts.CARTRIDGE_RAM_BASE_ADDRESS and <= AddressConsts.CARTRIDGE_RAM_UPPER_ADDRESS && _ramEnable)
         {
             if (_ramBankingMode)
             {
-                return _ramBanks[_activeRamBankOrRomBankUpper2Bits][address - 0xA000];
+                return _ramBanks[_activeRamBankOrRomBankUpper2Bits][address - AddressConsts.CARTRIDGE_RAM_BASE_ADDRESS];
             }
             else
             {
-                return _ramBanks[0][address - 0xA000];
+                return _ramBanks[0][address - AddressConsts.CARTRIDGE_RAM_BASE_ADDRESS];
             }
         }
 
@@ -91,7 +91,7 @@ public class Mbc1Cartridge : ICartridge
             _ramEnable = (value & 0x0A) == 0x0A;
         }
 
-        if (address is >= 0x2000 and <= 0x3FFF)
+        if (address is >= 0x2000 and <= AddressConsts.ROM_BANK_0_UPPER_ADDRESS)
         {
             var maskedValue = (byte)(value & 0x1F);
             if (_requiredNumberBits < 5 && (maskedValue & 0x10) == 0x10)
@@ -117,6 +117,11 @@ public class Mbc1Cartridge : ICartridge
         if (address is >= 0x6000 and <= 0x7FFF)
         {
             _ramBankingMode = (value & 0x01) == 0x01;
+        }
+
+        if (_ramEnable && address is >= AddressConsts.CARTRIDGE_RAM_BASE_ADDRESS and <= AddressConsts.CARTRIDGE_RAM_UPPER_ADDRESS )
+        {
+            _ramBanks[_activeRamBankOrRomBankUpper2Bits][address-AddressConsts.CARTRIDGE_RAM_BASE_ADDRESS] = value;
         }
     }
 }
