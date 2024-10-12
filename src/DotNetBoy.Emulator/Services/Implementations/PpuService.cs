@@ -59,7 +59,7 @@ public class PpuService : IPpuService
         bool statInterruptRequested = false;
         Dot++;
 
-        if (Dot >= 455)
+        if (Dot > 455)
         {
             Dot = 0;
         }
@@ -67,7 +67,7 @@ public class PpuService : IPpuService
         if (Dot == 0)
         {
             ScanLine++;
-            if (ScanLine >= 153)
+            if (ScanLine > 153)
             {
                 ScanLine = 0;
             }
@@ -192,7 +192,7 @@ public class PpuService : IPpuService
 
     private void RenderBackgroundAndWindow(int screenY, int screenX)
     {
-        var inWindow = false &&LcdControlRegister.WindowDisplayEnable && WindowX < screenX && WindowY < screenY;
+        var inWindow = LcdControlRegister.WindowDisplayEnable && WindowX < screenX && WindowY < screenY;
 
         var tileMap = (inWindow && LcdControlRegister.WindowTileMapDisplaySelect) ||
                       LcdControlRegister.BackgroundTileMapDisplaySelect

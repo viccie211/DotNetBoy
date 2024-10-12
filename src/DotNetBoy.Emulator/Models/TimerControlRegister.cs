@@ -12,16 +12,16 @@ public class TimerControlRegister
         switch (clockSelect)
         {
             case 0x00:
-                divisionFactor = 1024;
-                break;
-            case 0x01:
-                divisionFactor = 16;
-                break;
-            case 0x02:
                 divisionFactor = 64;
                 break;
+            case 0x01:
+                divisionFactor = 1;
+                break;
+            case 0x02:
+                divisionFactor = 4;
+                break;
             case 0x03:
-                divisionFactor = 256;
+                divisionFactor = 16;
                 break;
         }
 

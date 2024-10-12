@@ -37,6 +37,7 @@ public class Cpu(
 
     public void Step()
     {
+        Interrupts();
         if (cpuRegistersService.HaltBug)
         {
             cpuRegistersService.HaltBug = false;
@@ -75,8 +76,6 @@ public class Cpu(
                 cpuRegistersService.ProgramCounter++;
             }
         }
-
-        Interrupts();
 
         if (cpuRegistersService.InterruptsJustEnabled)
         {

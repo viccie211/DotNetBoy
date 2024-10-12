@@ -10,8 +10,6 @@ public class ClockService(IMmuService mmuService) : IClockService
     private const ushort TimerCounterRegisterAddress = AddressConsts.TIMA_REGISTER;
     private const ushort TimerModuloAddress = AddressConsts.TMA_REGISTER;
     private const ushort TimerControlRegisterAddress = AddressConsts.TAC_REGISTER;
-
-
     public byte M { get; set; } = 0;
     public byte T { get; set; } = 0;
 
@@ -33,29 +31,28 @@ public class ClockService(IMmuService mmuService) : IClockService
 
     private byte TimerModuloRegister => mmuService.ReadByte(TimerModuloAddress);
 
-    public void Clock(int clockIncrement = 1, bool incrementIsMClock = false)
+    public void Clock(int clockIncrement = 1, bool incrementIsTClock = false)
     {
-        var increment = incrementIsMClock ? clockIncrement : clockIncrement * 4;
+        var increment = incrementIsTClock ? clockIncrement : clockIncrement * 4;
 
         for (int i = 0; i < increment; i++)
         {
-            M++;
-            _internalTimer++;
-            Timers();
-            OnMClock(this, new ClockEventArgs() { ClockValue = M });
+            T++;
+            OnTClock(this, new ClockEventArgs() { ClockValue = T });
 
-            if (M % 4 == 3)
+            if (T % 4 == 0)
             {
-                T++;
-                OnTClock(this, new ClockEventArgs { ClockValue = T });
+                M++;
+                Timers();
+                OnMClock(this, new ClockEventArgs { ClockValue = M });
             }
         }
     }
 
     private void Timers()
     {
-        if (_internalTimer == 4096)
-            _internalTimer = 0;
+        _internalTimer++;
+
         if (TimerControlRegister.TimerEnable && _internalTimer % TimerControlRegister.TimerInputDivisionFactor == 0)
         {
             if (TimerCounterRegister == 0xFF)
@@ -71,7 +68,7 @@ public class ClockService(IMmuService mmuService) : IClockService
             }
         }
 
-        if (_internalTimer % 256 == 0)
+        if (_internalTimer % 16 == 0)
         {
             DividerRegister++;
         }

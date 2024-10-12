@@ -35,3 +35,4 @@ src/DotNetBoy.Resources/DebugAssets/cpu_instrs.gb
 src/DotNetBoy.Resources/DebugAssets/Super Mario Land.gb
 src/DotNetBoy.Resources/DebugAssets/Tetris.gb
 src/ReferenceEmulator
+src/DotNetBoy.Resources/DebugAssets/instr_timing.gb

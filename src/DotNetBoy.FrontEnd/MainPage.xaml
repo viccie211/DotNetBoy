@@ -21,6 +21,13 @@
                           HeightRequest="144"
                           WidthRequest="160"
                           x:Name="EmulatorScreen"/>
+            <Button
+                x:Name="PauseBtn"
+                Text="Pause" 
+                SemanticProperties.Hint=""
+                Clicked="PauseButtonClicked"
+                HorizontalOptions="Fill" />
+            
             
             <Button
                 x:Name="StepBtn"
