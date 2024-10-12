@@ -2,6 +2,7 @@
 using DotNetBoy.Emulator.Consts;
 using DotNetBoy.Emulator.Enums;
 using DotNetBoy.Emulator.Models;
+using DotNetBoy.Emulator.Models.Cartridges;
 using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.Services.Implementations;
@@ -9,24 +10,26 @@ namespace DotNetBoy.Emulator.Services.Implementations;
 public class MmuService : IMmuService
 {
     private readonly IByteUshortService _byteUshortService;
-    private const int BANK_SIZE = 0x3FFF;
-    private const int BANK_0_BASE_ADDRESS = 0x0000;
-    private const int BANK_1_BASE_ADDRESS = 0x3FFF;
 
     public MmuService(IByteUshortService byteUshortService)
     {
         _byteUshortService = byteUshortService;
         MappedMemory = new byte[ushort.MaxValue + 1];
         MappedMemory[AddressConsts.LY_REGISTER_ADDRESS] = 0x00;
-        RomBanks=[];
+        Cartridge = new DefaultCartridge(new byte[0x8000]);
     }
 
     public byte[] MappedMemory { get; init; }
-    public byte[][] RomBanks { get; set; }
     public EMbcType MbcType { get; set; } = EMbcType.NoMbc;
+    public ICartridge Cartridge { get; set; }
 
     public byte ReadByte(ushort address)
     {
+        if (address is <= 0x7FFF or (>= 0xA000 and <= 0xBFFF))
+        {
+            return Cartridge.ReadByte(address);
+        }
+
         return MappedMemory[address];
     }
 
@@ -37,21 +40,12 @@ public class MmuService : IMmuService
 
     public void WriteByte(ushort address, byte value)
     {
-        if (address <= 0x7FFF)
+        if (address is <= 0x7FFF or (>= 0xA000 and <= 0xBFFF))
         {
-            
-            if (address is >= 0x2000 and <= 0x3FFF)
-            {
-                if (value == 0)
-                {
-                    LoadBank(1,0x4000);
-                }
-            }
-
+            Cartridge.WriteByte(address,value);
             return;
         }
-
-        //Can't write to ROM
+        
         MappedMemory[address] = value;
         if (address is >= 0xC000 and <= 0xDDFF)
             //Also write to echo WRAM
@@ -73,15 +67,11 @@ public class MmuService : IMmuService
 
     public void LoadRom(byte[] rom)
     {
-        var bankCount = (rom.Length / BANK_SIZE) + (rom.Length % BANK_SIZE != 0 ? 1 : 0);
-        RomBanks=new byte[bankCount][];
-        for (int i = 0; i < bankCount; i++)
+        MbcType = ReadMbcType(rom);
+        if (MbcType is EMbcType.Mbc1 or EMbcType.Mbc1Ram or EMbcType.Mbc1RamBattery)
         {
-            RomBanks[i] = rom.Skip(i).Take(BANK_SIZE).ToArray();
+            Cartridge = new Mbc1Cartridge(rom, MbcType);
         }
-
-        LoadBank(0, 0x0000);
-        LoadBank(1, 0x4000);
     }
 
     private EMbcType ReadMbcType(byte[] rom)
@@ -105,13 +95,6 @@ public class MmuService : IMmuService
         }
     }
 
-    private void LoadBank(int bankNumber, ushort baseAddress)
-    {
-        for (int i = 0; i < BANK_SIZE; i++)
-        {
-            MappedMemory[baseAddress + i] = RomBanks[bankNumber][i];
-        }
-    }
 
     public byte[] GetTileSet(ETileSet eTileSet)
     {
