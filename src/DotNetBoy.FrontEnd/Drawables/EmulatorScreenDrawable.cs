@@ -1,6 +1,6 @@
 using DotNetBoy.Emulator.Consts;
 
-namespace DotNetBoy.FrontEnd;
+namespace DotNetBoy.FrontEnd.Drawables;
 
 public class EmulatorScreenDrawable : IDrawable
 {

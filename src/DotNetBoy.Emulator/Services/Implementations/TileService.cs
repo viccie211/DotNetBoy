@@ -7,14 +7,33 @@ public class TileService(IMmuService mmuService) : ITileService
 {
     private const int TILE_MAP_WIDTH = 32;
     private const int TILE_BYTE_LENGTH = 16;
+    private const int ADDRESS_OFFSET = 0x9000 - 0x8800;
 
     public int GetTilePixel(ETileMap tileMap, ETileSet tileSet, int tileX, int tileY, int tilePixelX, int tilePixelY)
     {
         var tileMapVram = mmuService.GetTileMap(tileMap);
+        byte[] tile;
         var tileInTileMap = tileMapVram[tileY * TILE_MAP_WIDTH + tileX];
         var tileSetVram = mmuService.GetTileSet(tileSet);
-        var tile = tileSetVram[
-            new Range(tileInTileMap * TILE_BYTE_LENGTH, tileInTileMap * TILE_BYTE_LENGTH + TILE_BYTE_LENGTH)];
+        if (tileSet == ETileSet.TileSet1)
+        {
+            tile = tileSetVram[
+                new Range(tileInTileMap * TILE_BYTE_LENGTH, tileInTileMap * TILE_BYTE_LENGTH + TILE_BYTE_LENGTH)];
+        }
+        else
+        {
+            if (tileInTileMap <= 127)
+            {
+                tile = tileSetVram[
+                    new Range(ADDRESS_OFFSET + (tileInTileMap * TILE_BYTE_LENGTH), ADDRESS_OFFSET + (tileInTileMap * TILE_BYTE_LENGTH + TILE_BYTE_LENGTH))];
+            }
+            else
+            {
+                tile = tileSetVram[
+                    new Range(tileInTileMap * TILE_BYTE_LENGTH - ADDRESS_OFFSET, tileInTileMap * TILE_BYTE_LENGTH + TILE_BYTE_LENGTH - ADDRESS_OFFSET)
+                ];
+            }
+        }
 
         var tileRow = tile[new Range(tilePixelY * 2, tilePixelY * 2 + 2)];
         var bitMask = (byte)(0x01 << 7 - tilePixelX);
@@ -56,6 +75,6 @@ public class TileService(IMmuService mmuService) : ITileService
             return 2;
         if (shiftedBit0 && shiftedBit1)
             return 3;
-        return 0;   
+        return 0;
     }
 }

@@ -2,6 +2,7 @@
 using DotNetBoy.Emulator.Consts;
 using DotNetBoy.Emulator.Events;
 using DotNetBoy.Emulator.Models;
+using DotNetBoy.FrontEnd.Drawables;
 using DotNetBoy.FrontEnd.ViewModels;
 
 namespace DotNetBoy.FrontEnd;
@@ -51,7 +52,7 @@ public partial class MainPage : ContentPage
         var frameBuffer = viewModel?.PpuService.FrameBuffer;
         if (frameBuffer == null)
             return;
-        Dispatcher.Dispatch(() =>
+        Dispatcher.DispatchAsync(() =>
         {
             CounterBtn.Text = $"VBlanked {count} times";
             var drawable = EmulatorScreen.Drawable as EmulatorScreenDrawable;
