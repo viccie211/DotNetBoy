@@ -52,6 +52,7 @@ public class LoadInstructions : IInstructionSet
     public void LoadD16IntoBC(ICpuRegistersService registers)
     {
         registers.BC = LoadD16(registers);
+        
     }
 
     /// <summary>
@@ -88,7 +89,7 @@ public class LoadInstructions : IInstructionSet
     public void LoadAtAddressBCIntoA(ICpuRegistersService registers)
     {
         registers.A = _mmuService.ReadByte(registers.BC);
-        _clockService.Clock(2);
+        _clockService.Clock();
         registers.ProgramCounter += 1;
     }
 
@@ -100,7 +101,7 @@ public class LoadInstructions : IInstructionSet
     public void LoadAtAddressDEIntoA(ICpuRegistersService registers)
     {
         registers.A = _mmuService.ReadByte(registers.DE);
-        _clockService.Clock(2);
+        _clockService.Clock();
         registers.ProgramCounter += 1;
     }
 
@@ -176,7 +177,7 @@ public class LoadInstructions : IInstructionSet
         registers.A = _mmuService.ReadByte(registers.HL);
         registers.HL++;
         registers.ProgramCounter += 1;
-        _clockService.Clock(2);
+        _clockService.Clock();
     }
 
     /// <summary>
@@ -188,7 +189,7 @@ public class LoadInstructions : IInstructionSet
         registers.A = _mmuService.ReadByte(registers.HL);
         registers.HL--;
         registers.ProgramCounter += 1;
-        _clockService.Clock(2);
+        _clockService.Clock();
     }
 
     /// <summary>
@@ -262,7 +263,7 @@ public class LoadInstructions : IInstructionSet
         var address =
             (ushort)(0xFF00 + _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter)));
         registers.A = _mmuService.ReadByte(address);
-        _clockService.Clock(3);
+        _clockService.Clock(2);
         registers.ProgramCounter += 2;
     }
 
@@ -282,7 +283,7 @@ public class LoadInstructions : IInstructionSet
         var address = _mmuService.ReadWordLittleEndian(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
         registers.A = _mmuService.ReadByte(address);
         registers.ProgramCounter += 3;
-        _clockService.Clock(4);
+        _clockService.Clock(3);
     }
 
     public void LoadStackPointerPlusS8IntoHL(ICpuRegistersService registers)
@@ -306,7 +307,7 @@ public class LoadInstructions : IInstructionSet
     private ushort LoadD16(ICpuRegistersService registers)
     {
         var result = _mmuService.ReadWordLittleEndian(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
-        _clockService.Clock(3);
+        _clockService.Clock(2);
         registers.ProgramCounter += 3;
         return result;
     }
@@ -314,7 +315,7 @@ public class LoadInstructions : IInstructionSet
     private byte LoadD8(ICpuRegistersService registers)
     {
         var result = _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
-        _clockService.Clock(2);
+        _clockService.Clock();
         registers.ProgramCounter += 2;
         return result;
     }
@@ -323,7 +324,7 @@ public class LoadInstructions : IInstructionSet
     {
         var result = _mmuService.ReadByte(registers.HL);
         registers.ProgramCounter += 1;
-        _clockService.Clock(2);
+        _clockService.Clock();
         return result;
     }
 

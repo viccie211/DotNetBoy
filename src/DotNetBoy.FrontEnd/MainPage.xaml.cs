@@ -1,5 +1,6 @@
 ﻿using DotNetBoy.Emulator;
 using DotNetBoy.Emulator.Consts;
+using DotNetBoy.Emulator.Events;
 using DotNetBoy.Emulator.Models;
 using DotNetBoy.FrontEnd.ViewModels;
 
@@ -42,7 +43,7 @@ public partial class MainPage : ContentPage
         });
     }
 
-    public void OnVBlankStart(object? sender, EventArgs e)
+    public void OnVBlankStart(object? sender, VBlankEventArgs e)
     {
         count++;
 
@@ -50,11 +51,11 @@ public partial class MainPage : ContentPage
         var frameBuffer = viewModel?.PpuService.FrameBuffer;
         if (frameBuffer == null)
             return;
-        Dispatcher.DispatchAsync(() =>
+        Dispatcher.Dispatch(() =>
         {
             CounterBtn.Text = $"VBlanked {count} times";
             var drawable = EmulatorScreen.Drawable as EmulatorScreenDrawable;
-            drawable.FrameBuffer= viewModel.PpuService.FrameBuffer;
+            drawable.FrameBuffer = e.FrameBuffer;
             drawable.Scale = viewModel.Scale;
             EmulatorScreen.WidthRequest = ScreenDimensions.WIDTH * viewModel.Scale;
             EmulatorScreen.HeightRequest = ScreenDimensions.HEIGHT * viewModel.Scale;

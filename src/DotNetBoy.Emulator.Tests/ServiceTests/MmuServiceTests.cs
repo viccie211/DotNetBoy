@@ -10,9 +10,10 @@ public class MmuServiceTests
     public void SetUp()
     {
         var byteUshortServiceMock = new Mock<IByteUshortService>();
+        var timerServiceMock = new Mock<ITimerService>();
         byteUshortServiceMock.Setup(b => b.CombineBytes(0x00, 0xFF)).Returns(0x00FF);
 
-        mmuService = new MmuService(byteUshortServiceMock.Object)
+        mmuService = new MmuService(byteUshortServiceMock.Object,timerServiceMock.Object)
         {
             MappedMemory =
             {

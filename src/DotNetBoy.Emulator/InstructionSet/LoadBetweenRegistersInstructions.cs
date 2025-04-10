@@ -547,56 +547,49 @@ public class LoadBetweenRegistersInstructions : IInstructionSet
     public void LoadHLIntoStackPointer(ICpuRegistersService registers)
     {
         registers.StackPointer = registers.HL;
-        _clockService.Clock(2);
+        _clockService.Clock();
         registers.ProgramCounter += 1;
     }
 
     private void LoadByteIntoA(byte toLoad, ICpuRegistersService registers)
     {
         registers.A = toLoad;
-        _clockService.Clock();
         registers.ProgramCounter += 1;
     }
 
     private void LoadByteIntoB(byte toLoad, ICpuRegistersService registers)
     {
         registers.B = toLoad;
-        _clockService.Clock();
         registers.ProgramCounter += 1;
     }
 
     private void LoadByteIntoC(byte toLoad, ICpuRegistersService registers)
     {
         registers.C = toLoad;
-        _clockService.Clock();
         registers.ProgramCounter += 1;
     }
 
     private void LoadByteIntoD(byte toLoad, ICpuRegistersService registers)
     {
         registers.D = toLoad;
-        _clockService.Clock();
         registers.ProgramCounter += 1;
     }
 
     private void LoadByteIntoE(byte toLoad, ICpuRegistersService registers)
     {
         registers.E = toLoad;
-        _clockService.Clock();
         registers.ProgramCounter += 1;
     }
 
     private void LoadByteIntoH(byte toLoad, ICpuRegistersService registers)
     {
         registers.H = toLoad;
-        _clockService.Clock();
         registers.ProgramCounter += 1;
     }
 
     private void LoadByteIntoL(byte toLoad, ICpuRegistersService registers)
     {
         registers.L = toLoad;
-        _clockService.Clock();
         registers.ProgramCounter += 1;
     }
 }

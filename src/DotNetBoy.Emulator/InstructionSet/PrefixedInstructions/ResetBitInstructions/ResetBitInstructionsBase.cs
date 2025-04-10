@@ -12,7 +12,7 @@ public abstract class ResetBitInstructionsBase(IClockService clockService)
         toShift = (byte)(toShift << bitNumber);
         var mask =(byte)(baseMask ^ toShift);
         var result = (byte)(toMask & mask);
-        ClockService.Clock(2);
+        ClockService.Clock();
         registers.ProgramCounter += 2;
         return result;
     }

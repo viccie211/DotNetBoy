@@ -16,7 +16,7 @@ var scope = serviceProvider.CreateScope();
 var cpuRegisters = scope.ServiceProvider.GetService<ICpuRegistersService>()!;
 cpuRegisters.Reset();
 
-var romFileName = Roms.RomFileInfos.First(x => x.Name == "Tetris.gb").FullName;
+var romFileName = Roms.RomFileInfos.First(x => x.Name == "instr_timing.gb").FullName;
 var rom = File.ReadAllBytes(romFileName);
 var mmuService = scope.ServiceProvider.GetService<IMmuService>()!;
 mmuService.LoadRom(rom);    
@@ -24,6 +24,7 @@ mmuService.LoadRom(rom);
 var ppuService = scope.ServiceProvider.GetService<IPpuService>()!;
 var cpu = scope.ServiceProvider.GetService<DotNetBoy.Emulator.Cpu>()!;
 var instructionSetService = scope.ServiceProvider.GetService<IInstructionSetService>()!;
+var timerService = scope.ServiceProvider.GetService<ITimerService>()!;
 
 var specBoy = scope.ServiceProvider.GetService<ReferenceEmulator>()!;
 specBoy.LoadRom(romFileName);
@@ -40,8 +41,8 @@ while (dotNetBoyStatus == specBoyStatus)
     {
         cpuRegisters.A = specBoy.cpu.A;
     }
-    dotNetBoyStatus = $"{cpuRegisters} 0x{(cpu.Prefixed?DotNetBoy.Emulator.Cpu.INSTRUCTION_PREFIX.ToString("x2"):"")}{cpu.Instruction.ToString("x2")}";
-    specBoyStatus = $"{specBoy.cpu} 0x{(specBoy.cpu.Prefixed?DotNetBoy.Emulator.Cpu.INSTRUCTION_PREFIX.ToString("x2"):"")}{specBoy.cpu.Instruction.ToString("x2")}";
+    dotNetBoyStatus = $"{cpuRegisters} 0x{(cpu.Prefixed?DotNetBoy.Emulator.Cpu.INSTRUCTION_PREFIX.ToString("x2"):"")}{cpu.Instruction.ToString("x2")} DivCounter: {timerService.DivCounter} TIMA:{mmuService.ReadByte(AddressConsts.TIMA_REGISTER)}";
+    specBoyStatus = $"{specBoy.cpu} 0x{(specBoy.cpu.Prefixed?DotNetBoy.Emulator.Cpu.INSTRUCTION_PREFIX.ToString("x2"):"")}{specBoy.cpu.Instruction.ToString("x2")} DivCounter: {specBoy.timers.divCounter} TIMA:{specBoy.mem.ReadByte(AddressConsts.TIMA_REGISTER)}";
     Console.WriteLine($"DotNetBoy:\t\t{dotNetBoyStatus}");
     Console.WriteLine($"ReferenceEmulator:\t{specBoyStatus}");
 }

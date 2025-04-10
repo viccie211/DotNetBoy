@@ -8,7 +8,8 @@ public class ClockServiceTests
     public void Reset()
     {
         var mmuServiceMock = new Mock<IMmuService>();
-        var service = new ClockService(mmuServiceMock.Object)
+        var timerserviceMock = new Mock<ITimerService>();
+        var service = new ClockService(mmuServiceMock.Object,timerserviceMock.Object)
         {
             T = 1,
             M = 1
@@ -27,7 +28,8 @@ public class ClockServiceTests
     public void Clock()
     {
         var mmuServiceMock = new Mock<IMmuService>();
-        var service = new ClockService(mmuServiceMock.Object);
+        var timerserviceMock = new Mock<ITimerService>();
+        var service = new ClockService(mmuServiceMock.Object, timerserviceMock.Object);
 
         var tClockEventCalled = 0;
         service.TClock += (o, e) => tClockEventCalled++;
@@ -52,7 +54,8 @@ public class ClockServiceTests
     {
         var clockIncrement = 4;
         var mmuServiceMock = new Mock<IMmuService>();
-        var service = new ClockService(mmuServiceMock.Object);
+        var timerserviceMock = new Mock<ITimerService>();
+        var service = new ClockService(mmuServiceMock.Object, timerserviceMock.Object);
 
         var tClockEventCalled = 0;
         service.TClock += (o, e) => tClockEventCalled++;

@@ -51,6 +51,7 @@ public class Cpu(
         else
         {
             Instruction = mmuService.ReadByte(cpuRegistersService.ProgramCounter);
+            clockService.Clock();
 
             if (Instruction == INSTRUCTION_PREFIX)
             {

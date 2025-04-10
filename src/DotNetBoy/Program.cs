@@ -18,7 +18,7 @@ cpuRegisters.Reset();
 
 // var rom = Roms.InstructionsTestRom;
 // var rom = Roms.AllInstructionTest;
-var rom = File.ReadAllBytes(Roms.RomFileInfos.First(x => x.Name == "Tetris.gb").FullName);
+var rom = File.ReadAllBytes(Roms.RomFileInfos.First(x => x.Name == "instr_timing.gb").FullName);
 var mmuService = scope.ServiceProvider.GetService<IMmuService>()!;
 mmuService.LoadRom(rom);
 

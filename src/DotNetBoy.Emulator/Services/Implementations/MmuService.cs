@@ -10,10 +10,12 @@ namespace DotNetBoy.Emulator.Services.Implementations;
 public class MmuService : IMmuService
 {
     private readonly IByteUshortService _byteUshortService;
+    private readonly ITimerService _timerService;
 
-    public MmuService(IByteUshortService byteUshortService)
+    public MmuService(IByteUshortService byteUshortService, ITimerService timerService)
     {
         _byteUshortService = byteUshortService;
+        _timerService = timerService;
         MappedMemory = new byte[ushort.MaxValue + 1];
         MappedMemory[AddressConsts.LY_REGISTER_ADDRESS] = 0x00;
         Cartridge = new DefaultCartridge(new byte[0x8000]);
@@ -22,13 +24,25 @@ public class MmuService : IMmuService
     public byte[] MappedMemory { get; init; }
     public EMbcType MbcType { get; set; } = EMbcType.NoMbc;
     public ICartridge Cartridge { get; set; }
-
+    
     public byte ReadByte(ushort address)
     {
         if (address is <= AddressConsts.ROM_BANK_1_UPPER_ADDRESS or (>= AddressConsts.CARTRIDGE_RAM_BASE_ADDRESS and <= AddressConsts.CARTRIDGE_RAM_UPPER_ADDRESS))
         {
             return Cartridge.ReadByte(address);
         }
+
+        if (address == AddressConsts.DIV_REGISTER)
+            return _timerService.Div;
+
+        if (address == AddressConsts.TIMA_REGISTER)
+            return _timerService.Tima;
+
+        if (address == AddressConsts.TMA_REGISTER)
+            return _timerService.Tma;
+
+        if (address == AddressConsts.TAC_REGISTER)
+            return _timerService.Tac;
 
         return MappedMemory[address];
     }
@@ -42,10 +56,10 @@ public class MmuService : IMmuService
     {
         if (address is <= AddressConsts.ROM_BANK_1_UPPER_ADDRESS or (>= AddressConsts.CARTRIDGE_RAM_BASE_ADDRESS and <= AddressConsts.CARTRIDGE_RAM_UPPER_ADDRESS))
         {
-            Cartridge.WriteByte(address,value);
+            Cartridge.WriteByte(address, value);
             return;
         }
-        
+
         MappedMemory[address] = value;
         if (address is >= 0xC000 and <= 0xDDFF)
             //Also write to echo WRAM
@@ -54,9 +68,17 @@ public class MmuService : IMmuService
             //Also write to normal WRAM
             MappedMemory[(ushort)(address - 0x2000)] = value;
 
-        if (address == 0xFF04)
-            //Writing to this register resets it to zero
-            MappedMemory[address] = 0x00;
+        if (address == AddressConsts.DIV_REGISTER)
+            _timerService.Div = value;
+
+        if (address == AddressConsts.TIMA_REGISTER)
+            _timerService.Tima = value;
+
+        if (address == AddressConsts.TMA_REGISTER)
+            _timerService.Tma = value;
+
+        if (address == AddressConsts.TAC_REGISTER)
+            _timerService.Tac = value;
     }
 
     /// <inheritdoc/>

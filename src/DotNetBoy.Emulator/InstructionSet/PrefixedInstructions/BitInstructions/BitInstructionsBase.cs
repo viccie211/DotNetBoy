@@ -13,7 +13,7 @@ public abstract class BitInstructionsBase(IClockService clockService)
         registers.F.Zero = masked != 1;
         registers.F.Subtract = false;
         registers.F.HalfCarry = true;
-        clockService.Clock(2);
+        clockService.Clock();
         registers.ProgramCounter += 2;
     }
 }

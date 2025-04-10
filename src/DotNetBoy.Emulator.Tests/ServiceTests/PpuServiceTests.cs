@@ -25,7 +25,7 @@ public class PpuServiceTests
 
         service.Dot = 455;
         service.ScanLine = 0;
-        service.OnMClock(null, new ClockEventArgs());
+        service.OnTClock(null, new ClockEventArgs());
 
         Assert.That(service.ScanLine, Is.EqualTo(expectedScanLine));
         Assert.IsTrue(calledWriteByte);
@@ -40,7 +40,7 @@ public class PpuServiceTests
 
         service.ScanLine = 153;
         service.Dot = 455;
-        service.OnMClock(null, new ClockEventArgs());
+        service.OnTClock(null, new ClockEventArgs());
 
         Assert.IsTrue(calledWriteByte);
         Assert.That(service.ScanLine, Is.EqualTo(expectedScanLine));

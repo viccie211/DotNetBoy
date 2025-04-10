@@ -14,7 +14,7 @@ public abstract class ShiftInstructionsBase(IClockService clockService)
         registers.F.Zero = toSRL == 0;
         registers.F.Subtract = false;
         registers.F.HalfCarry = false;
-        ClockService.Clock(2);
+        ClockService.Clock();
         registers.ProgramCounter += 2;
         return toSRL;
     }
@@ -28,7 +28,7 @@ public abstract class ShiftInstructionsBase(IClockService clockService)
         registers.F.Zero = toSRA == 0;
         registers.F.Subtract = false;
         registers.F.HalfCarry = false;
-        ClockService.Clock(2);
+        ClockService.Clock();
         registers.ProgramCounter += 2;
         return toSRA;
     }
@@ -40,7 +40,7 @@ public abstract class ShiftInstructionsBase(IClockService clockService)
         registers.F.Zero = toSLA == 0;
         registers.F.Subtract = false;
         registers.F.HalfCarry = false;
-        ClockService.Clock(2);
+        ClockService.Clock();
         registers.ProgramCounter += 2;
         return toSLA;
     }

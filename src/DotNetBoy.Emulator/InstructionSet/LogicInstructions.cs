@@ -359,7 +359,6 @@ public class LogicInstructions : IInstructionSet
         registers.F.Carry = false;
         registers.F.HalfCarry = false;
         registers.ProgramCounter += 1;
-        _clockService.Clock();
     }
 
     private void ANDByteWithA(byte toAnd, ICpuRegistersService registers)
@@ -370,7 +369,6 @@ public class LogicInstructions : IInstructionSet
         registers.F.HalfCarry = true;
         registers.F.Carry = false;
         registers.ProgramCounter += 1;
-        _clockService.Clock();
     }
 
     private void XORByteWithA(byte toXOR, ICpuRegistersService registers)
@@ -380,7 +378,6 @@ public class LogicInstructions : IInstructionSet
         registers.F.Subtract = false;
         registers.F.Carry = false;
         registers.F.HalfCarry = false;
-        _clockService.Clock();
         registers.ProgramCounter += 1;
     }
 
@@ -391,7 +388,6 @@ public class LogicInstructions : IInstructionSet
         registers.F.Zero = result == 0;
         registers.F.HalfCarry = InstructionUtilFunctions.HalfCarryFor8BitSubtraction(registers.A, toCompare);
         registers.F.Carry = InstructionUtilFunctions.CarryFor8BitSubtraction(registers.A, toCompare);
-        _clockService.Clock();
         registers.ProgramCounter += 1;
     }
 

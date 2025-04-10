@@ -45,7 +45,7 @@ public class StoreInstructions : IInstructionSet
             _mmuService.ReadWordLittleEndian(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
         _mmuService.WriteByte(targetAddress, lower);
         _mmuService.WriteByte((ushort)(targetAddress + 1), upper);
-        _clockService.Clock(5);
+        _clockService.Clock(4);
         registers.ProgramCounter += 3;
     }
 
@@ -127,7 +127,7 @@ public class StoreInstructions : IInstructionSet
     {
         _mmuService.WriteByte(registers.BC, registers.A);
         registers.ProgramCounter += 1;
-        _clockService.Clock(2);
+        _clockService.Clock();
     }
 
 
@@ -139,7 +139,7 @@ public class StoreInstructions : IInstructionSet
     {
         _mmuService.WriteByte(registers.DE, registers.A);
         registers.ProgramCounter += 1;
-        _clockService.Clock(2);
+        _clockService.Clock();
     }
 
     /// <summary>
@@ -152,7 +152,7 @@ public class StoreInstructions : IInstructionSet
         _mmuService.WriteByte(registers.HL, registers.A);
         registers.ProgramCounter += 1;
         registers.HL++;
-        _clockService.Clock(2);
+        _clockService.Clock();
     }
 
     /// <summary>
@@ -165,7 +165,7 @@ public class StoreInstructions : IInstructionSet
         _mmuService.WriteByte(registers.HL, registers.A);
         registers.ProgramCounter += 1;
         registers.HL--;
-        _clockService.Clock(2);
+        _clockService.Clock();
     }
 
     /// <summary>
@@ -194,23 +194,24 @@ public class StoreInstructions : IInstructionSet
     public void StoreAtA16FromA(ICpuRegistersService registers)
     {
         var address = _mmuService.ReadWordLittleEndian(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
+        _clockService.Clock();
         _mmuService.WriteByte(address, registers.A);
         registers.ProgramCounter += 3;
-        _clockService.Clock(4);
+        _clockService.Clock(2);
     }
 
     private void StoreByteAtAddressHL(byte toStore, ICpuRegistersService registers)
     {
         _mmuService.WriteByte(registers.HL, toStore);
         registers.ProgramCounter += 1;
-        _clockService.Clock(2);
+        _clockService.Clock();
     }
 
     private void StoreAtAddressFF00PlusByteFromA(byte relativeAddress, ICpuRegistersService registers)
     {
         var address = (ushort)(0xFF00 + relativeAddress);
         _mmuService.WriteByte(address, registers.A);
-        _clockService.Clock(2);
+        _clockService.Clock();
         registers.ProgramCounter += 1;
     }
 }

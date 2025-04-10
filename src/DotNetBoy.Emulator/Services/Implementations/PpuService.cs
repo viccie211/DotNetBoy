@@ -1,5 +1,6 @@
 using DotNetBoy.Emulator.Consts;
 using DotNetBoy.Emulator.Enums;
+using DotNetBoy.Emulator.Events;
 using DotNetBoy.Emulator.Models;
 using DotNetBoy.Emulator.Services.Interfaces;
 
@@ -49,11 +50,11 @@ public class PpuService : IPpuService
         _clockService = clockService;
         _mmuService = mmuService;
         _tileService = tileService;
-        _clockService.MClock += OnMClock;
+        _clockService.TClock += OnTClock;
         FrameBuffer = new int[ScreenDimensions.HEIGHT, ScreenDimensions.WIDTH];
     }
 
-    public void OnMClock(object? sender, ClockEventArgs e)
+    public void OnTClock(object? sender, ClockEventArgs e)
     {
         var stat = LcdStatusRegister.Clone();
         bool statInterruptRequested = false;
@@ -85,7 +86,7 @@ public class PpuService : IPpuService
             {
                 RenderFullBackgroundAndWindow();
                 VBlankInterruptRequest();
-                VBlankStartInvoke(this, EventArgs.Empty);
+                VBlankStartInvoke(this, new VBlankEventArgs() { FrameBuffer = FrameBuffer });
             }
             else if (ScanLine == 0)
             {
@@ -153,7 +154,7 @@ public class PpuService : IPpuService
         _mmuService.WriteByte(AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS, interruptRegister);
     }
 
-    public void VBlankStartInvoke(object? sender, EventArgs e)
+    public void VBlankStartInvoke(object? sender, VBlankEventArgs e)
     {
         VBlankStart?.Invoke(sender, e);
     }

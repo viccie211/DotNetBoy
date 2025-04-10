@@ -46,7 +46,6 @@ public class MiscellaneousInstructions : IInstructionSet
     public void NOP(ICpuRegistersService registers)
     {
         registers.ProgramCounter++;
-        _clockService.Clock();
     }
 
     public void DAA(ICpuRegistersService registers)
@@ -84,7 +83,6 @@ public class MiscellaneousInstructions : IInstructionSet
         registers.F.Zero = registers.A == 0; // the usual z flag
         registers.F.HalfCarry = false; // h flag is always cleared
         registers.ProgramCounter += 1;
-        _clockService.Clock();
     }
 
     public void ComplementA(ICpuRegistersService registers)
@@ -92,7 +90,6 @@ public class MiscellaneousInstructions : IInstructionSet
         registers.A = (byte)~registers.A;
         registers.F.Subtract = true;
         registers.F.HalfCarry = true;
-        _clockService.Clock();
         registers.ProgramCounter += 1;
     }
 
@@ -103,7 +100,6 @@ public class MiscellaneousInstructions : IInstructionSet
     public void DisableInterrupts(ICpuRegistersService registers)
     {
         registers.InterruptMasterEnable = false;
-        _clockService.Clock();
         registers.ProgramCounter += 1;
     }
 
@@ -111,7 +107,6 @@ public class MiscellaneousInstructions : IInstructionSet
     {
         registers.InterruptMasterEnable = true;
         registers.InterruptsJustEnabled = true;
-        _clockService.Clock();
         registers.ProgramCounter += 1;
     }
 
@@ -120,7 +115,6 @@ public class MiscellaneousInstructions : IInstructionSet
         registers.F.Subtract = false;
         registers.F.HalfCarry = false;
         registers.F.Carry = true;
-        _clockService.Clock();
         registers.ProgramCounter += 1;
     }
 
@@ -129,7 +123,6 @@ public class MiscellaneousInstructions : IInstructionSet
         registers.F.Subtract = false;
         registers.F.HalfCarry = false;
         registers.F.Carry = !registers.F.Carry;
-        _clockService.Clock();
         registers.ProgramCounter += 1;
     }
 

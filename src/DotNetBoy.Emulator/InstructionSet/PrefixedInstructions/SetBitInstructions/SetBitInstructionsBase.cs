@@ -11,7 +11,7 @@ public abstract class SetBitInstructionsBase(IClockService clockService)
         byte toShift = 0x01;
         var mask = (byte)(toShift << bitNumber);
         var result = (byte)(toMask | mask);
-        ClockService.Clock(2);
+        ClockService.Clock();
         registers.ProgramCounter += 2;
         return result;
     }

@@ -18,7 +18,6 @@ public class RotateInstructionsBase(IClockService clockService)
         registers.F.Zero = includeZeroFlag && result == 0;
         registers.F.Subtract = false;
         registers.F.HalfCarry = false;
-        ClockService.Clock();
         registers.ProgramCounter += 1;
         return result;
     }
@@ -36,7 +35,6 @@ public class RotateInstructionsBase(IClockService clockService)
         registers.F.Zero = includeZeroFlag && result == 0;
         registers.F.Subtract = false;
         registers.F.HalfCarry = false;
-        ClockService.Clock();
         registers.ProgramCounter += 1;
         return result;
     }
@@ -54,7 +52,6 @@ public class RotateInstructionsBase(IClockService clockService)
         registers.F.Zero = includeZeroFlag && result == 0;
         registers.F.Subtract = false;
         registers.F.HalfCarry = false;
-        ClockService.Clock();
         registers.ProgramCounter += 1;
         return result;
     }
@@ -72,7 +69,6 @@ public class RotateInstructionsBase(IClockService clockService)
         registers.F.Zero = includeZeroFlag && result == 0;
         registers.F.Subtract = false;
         registers.F.HalfCarry = false;
-        ClockService.Clock();
         registers.ProgramCounter += 1;
         return result;
     }

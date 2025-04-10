@@ -132,7 +132,6 @@ public class JumpInstructions : IInstructionSet
     public void JumpToAddressHL(ICpuRegistersService registers)
     {
         registers.ProgramCounter = registers.HL;
-        _clockService.Clock();
     }
 
     #endregion
@@ -271,7 +270,7 @@ public class JumpInstructions : IInstructionSet
         }
 
         registers.ProgramCounter += 2;
-        _clockService.Clock(2);
+        _clockService.Clock();
     }
 
     private void JumpRelative(ICpuRegistersService registers)
@@ -279,7 +278,7 @@ public class JumpInstructions : IInstructionSet
         var relative = _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
         registers.ProgramCounter += 2;
         registers.ProgramCounter = InstructionUtilFunctions.SignedAdd(registers.ProgramCounter, relative);
-        _clockService.Clock(3);
+        _clockService.Clock(2);
     }
 
     private void JumpA16OnCondition(bool shouldJump, ICpuRegistersService registers)
@@ -298,7 +297,7 @@ public class JumpInstructions : IInstructionSet
     {
         var address = _mmuService.ReadWordLittleEndian(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
         registers.ProgramCounter = address;
-        _clockService.Clock(4);
+        _clockService.Clock(3);
     }
 
     private void CallA16OnCondition(bool shouldCall, ICpuRegistersService registers)
@@ -310,7 +309,7 @@ public class JumpInstructions : IInstructionSet
         }
 
         registers.ProgramCounter += 3;
-        _clockService.Clock(3);
+        _clockService.Clock(2);
     }
 
     private void Call(ICpuRegistersService registers)
@@ -324,7 +323,7 @@ public class JumpInstructions : IInstructionSet
         _mmuService.WriteByte(registers.StackPointer, lower);
         registers.ProgramCounter =
             _mmuService.ReadWordLittleEndian(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
-        _clockService.Clock(6);
+        _clockService.Clock(5);
     }
 
     private void Reset(ushort address, ICpuRegistersService registers)
@@ -349,7 +348,7 @@ public class JumpInstructions : IInstructionSet
             return;
         }
 
-        _clockService.Clock(2);
+        _clockService.Clock();
         registers.ProgramCounter += 1;
     }
 
@@ -360,7 +359,7 @@ public class JumpInstructions : IInstructionSet
         var upper = _mmuService.ReadByte(registers.StackPointer);
         registers.StackPointer++;
         registers.ProgramCounter = _byteUshortService.CombineBytes(upper, lower);
-        _clockService.Clock(4);
+        _clockService.Clock(3);
     }
 
     #endregion

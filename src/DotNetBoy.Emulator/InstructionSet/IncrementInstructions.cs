@@ -148,7 +148,6 @@ public class IncrementInstructions : IInstructionSet
         registers.F.HalfCarry = InstructionUtilFunctions.HalfCarryFor8BitAddition(initial, 0x01);
         var result = (byte)(initial + 1);
         registers.F.Zero = result == 0;
-        _clockService.Clock();
         registers.ProgramCounter += 1;
         return result;
     }
@@ -156,7 +155,7 @@ public class IncrementInstructions : IInstructionSet
     private ushort Increment16Bits(ushort initial, ICpuRegistersService registers)
     {
         var result = (ushort)(initial + 1);
-        _clockService.Clock(2);
+        _clockService.Clock();
         registers.ProgramCounter += 1;
         return result;
     }

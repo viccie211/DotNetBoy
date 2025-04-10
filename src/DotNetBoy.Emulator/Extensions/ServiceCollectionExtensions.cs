@@ -16,6 +16,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddDotNetBoy(this IServiceCollection serviceCollection)
     {
         serviceCollection.AddScoped<IByteUshortService, ByteUshortService>();
+        serviceCollection.AddScoped<ITimerService, TimerService>();
         serviceCollection.AddScoped<IMmuService, MmuService>();
         serviceCollection.AddScoped<IClockService, ClockService>();
         serviceCollection.AddScoped<ITileService, TileService>();

@@ -27,3 +27,4 @@ Not yet implemented:
 * The developers of BGB (https://bgb.bircd.org/)
 * The developer SpecBoy: spec-chum (https://github.com/spec-chum/SpecBoy)
 For their emulators which I used as my hardware references on many occasions
+Also SpecBoy for some small code snippets that I "borrowed" from it. SpecBoy is licensed under the MIT License which you can find in it's own repo here: https://github.com/spec-chum/SpecBoy/blob/master/LICENSE

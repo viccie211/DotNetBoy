@@ -110,7 +110,7 @@ public class PushPopInstructions : IInstructionSet
         registers.StackPointer--;
         _mmuService.WriteByte(registers.StackPointer, lower);
         registers.ProgramCounter += 1;
-        _clockService.Clock(4);
+        _clockService.Clock(3);
     }
 
     private ushort PopWord(ICpuRegistersService registers)
@@ -120,7 +120,7 @@ public class PushPopInstructions : IInstructionSet
         var upper = _mmuService.ReadByte(registers.StackPointer);
         registers.StackPointer++;
         registers.ProgramCounter += 1;
-        _clockService.Clock(3);
+        _clockService.Clock(2);
         return _byteUshortService.CombineBytes(upper, lower);
     }
 }

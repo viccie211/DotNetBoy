@@ -5,21 +5,25 @@ namespace DotNetBoy.FrontEnd;
 public class EmulatorScreenDrawable : IDrawable
 {
     public int Scale { get; set; } = 1;
-    public int[,] FrameBuffer { get; set; } = new int[ScreenDimensions.HEIGHT, ScreenDimensions.WIDTH];
+    public int[,]? FrameBuffer { get; set; }
     public bool Drawing = false;
 
     public void Draw(ICanvas canvas, RectF dirtyRect)
     {
         Drawing = true;
-        for (var y = 0; y < ScreenDimensions.HEIGHT; y++)
+
+        if (FrameBuffer != null)
         {
-            for (var x = 0; x < ScreenDimensions.WIDTH; x++)
+            for (var y = 0; y < ScreenDimensions.HEIGHT; y++)
             {
-                var gbColor = FrameBuffer[y, x];
-                var color = 0.33f * gbColor;
-                canvas.StrokeColor = Color.FromRgb(color, color, color);
-                canvas.StrokeSize = Scale;
-                canvas.DrawRectangle(x * Scale, y * Scale, Scale, Scale);
+                for (var x = 0; x < ScreenDimensions.WIDTH; x++)
+                {
+                    var gbColor = FrameBuffer[y, x];
+                    var color = 0.33f * gbColor;
+                    canvas.StrokeColor = Color.FromRgb(color, color, color);
+                    canvas.StrokeSize = Scale;
+                    canvas.DrawRectangle(x * Scale, y * Scale, Scale, Scale);
+                }
             }
         }
 

@@ -2,32 +2,35 @@ namespace DotNetBoy.Emulator.Models;
 
 public class TimerControlRegister
 {
+    public byte TimerInputDivisionIndex { get; set; }
     public uint TimerInputDivisionFactor { get; set; }
     public bool TimerEnable { get; set; }
 
     public static implicit operator TimerControlRegister(byte input)
     {
-        var clockSelect = input & 0x03;
+        var clockSelect = (byte)(input & 0x03);
         uint divisionFactor = 1;
         switch (clockSelect)
         {
             case 0x00:
-                divisionFactor = 64;
+
+                divisionFactor = 1024;
                 break;
             case 0x01:
-                divisionFactor = 1;
+                divisionFactor = 16;
                 break;
             case 0x02:
-                divisionFactor = 4;
+                divisionFactor = 64;
                 break;
             case 0x03:
-                divisionFactor = 16;
+                divisionFactor = 256;
                 break;
         }
 
         return new TimerControlRegister()
         {
             TimerInputDivisionFactor = divisionFactor,
+            TimerInputDivisionIndex = clockSelect,
             TimerEnable = (input & 0x04) == 0x04,
         };
     }

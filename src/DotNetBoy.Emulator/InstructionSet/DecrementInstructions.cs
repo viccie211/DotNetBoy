@@ -93,7 +93,7 @@ public class DecrementInstructions : IInstructionSet
     {
         var toDecrement = _mmuService.ReadByte(registers.HL);
         _mmuService.WriteByte(registers.HL, Decrement8Bits(toDecrement, registers));
-        _clockService.Clock(3);
+        _clockService.Clock(2);
     }
 
     /// <summary>
@@ -132,7 +132,6 @@ public class DecrementInstructions : IInstructionSet
         var result = (byte)(initial - 1);
         registers.F.Zero = result == 0;
         registers.ProgramCounter += 1;
-        _clockService.Clock();
         return result;
     }
 
