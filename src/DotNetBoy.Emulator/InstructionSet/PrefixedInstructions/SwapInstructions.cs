@@ -85,7 +85,7 @@ public class SwapInstructions : IInstructionSet
             Carry = false,
         };
         registers.ProgramCounter += 2;
-        _clockService.Clock(2);
+        _clockService.Clock(1);
         return result;
     }
 }

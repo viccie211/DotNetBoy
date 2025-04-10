@@ -84,7 +84,7 @@ public class PpuService : IPpuService
 
             if (ScanLine == 144)
             {
-                RenderFullBackgroundAndWindow();
+                // RenderFullBackgroundAndWindow();
                 VBlankInterruptRequest();
                 VBlankStartInvoke(this, new VBlankEventArgs() { FrameBuffer = FrameBuffer });
             }
@@ -108,8 +108,8 @@ public class PpuService : IPpuService
         {
             Mode = PpuModes.ActivePicture;
             var screenX = Dot - 80;
-            // RenderBackgroundAndWindow(ScanLine, screenX);
-            // RenderSprites(screenX);
+            RenderBackgroundAndWindow(ScanLine, screenX);
+            RenderSprites(screenX);
         }
         else
         {

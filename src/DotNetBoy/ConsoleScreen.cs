@@ -17,6 +17,7 @@ public class ConsoleScreen
     public void RenderScreen(object? sender, EventArgs e)
     {
         var frameBuffer = _ppuService.FrameBuffer;
+        Console.SetWindowSize(ScreenDimensions.WIDTH, ScreenDimensions.HEIGHT);
         Console.SetCursorPosition(0,0);
         for (int y = 0; y < ScreenDimensions.HEIGHT; y++)
         {

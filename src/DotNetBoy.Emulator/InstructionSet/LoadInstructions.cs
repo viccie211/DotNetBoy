@@ -1,4 +1,5 @@
-﻿using DotNetBoy.Emulator.InstructionSet.Interfaces;
+﻿using System.Diagnostics;
+using DotNetBoy.Emulator.InstructionSet.Interfaces;
 using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.InstructionSet;
@@ -262,8 +263,9 @@ public class LoadInstructions : IInstructionSet
     {
         var address =
             (ushort)(0xFF00 + _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter)));
+        _clockService.Clock();
         registers.A = _mmuService.ReadByte(address);
-        _clockService.Clock(2);
+        _clockService.Clock();
         registers.ProgramCounter += 2;
     }
 
@@ -271,7 +273,7 @@ public class LoadInstructions : IInstructionSet
     {
         var address = (ushort)(0xFF00 + registers.C);
         registers.A = _mmuService.ReadByte(address);
-        _clockService.Clock(2);
+        _clockService.Clock(1);
         registers.ProgramCounter += 1;
     }
 
@@ -296,10 +298,9 @@ public class LoadInstructions : IInstructionSet
         registers.F.Subtract = false;
         registers.F.HalfCarry = ((registers.StackPointer & 0xF) + (toAddUnsigned & 0xF)) > 0xF;
         registers.F.Carry = ((registers.StackPointer & 0xFF) + toAddUnsigned) > 0xFF;
-
         registers.HL = result;
         registers.ProgramCounter += 2;
-        _clockService.Clock(3);
+        _clockService.Clock(2);
     }
 
     #region private methods

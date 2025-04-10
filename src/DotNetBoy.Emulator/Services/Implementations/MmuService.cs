@@ -11,6 +11,7 @@ public class MmuService : IMmuService
 {
     private readonly IByteUshortService _byteUshortService;
     private readonly ITimerService _timerService;
+    private JoyPadRegister _joyPadRegister = new JoyPadRegister();
 
     public MmuService(IByteUshortService byteUshortService, ITimerService timerService)
     {
@@ -24,7 +25,7 @@ public class MmuService : IMmuService
     public byte[] MappedMemory { get; init; }
     public EMbcType MbcType { get; set; } = EMbcType.NoMbc;
     public ICartridge Cartridge { get; set; }
-    
+
     public byte ReadByte(ushort address)
     {
         if (address is <= AddressConsts.ROM_BANK_1_UPPER_ADDRESS or (>= AddressConsts.CARTRIDGE_RAM_BASE_ADDRESS and <= AddressConsts.CARTRIDGE_RAM_UPPER_ADDRESS))
@@ -32,17 +33,23 @@ public class MmuService : IMmuService
             return Cartridge.ReadByte(address);
         }
 
-        if (address == AddressConsts.DIV_REGISTER)
-            return _timerService.Div;
 
-        if (address == AddressConsts.TIMA_REGISTER)
-            return _timerService.Tima;
+        switch (address)
+        {
+            case AddressConsts.DIV_REGISTER:
+                return _timerService.Div;
+            case AddressConsts.TIMA_REGISTER:
+                return _timerService.Tima;
+            case AddressConsts.TMA_REGISTER:
+                return _timerService.Tma;
+            case AddressConsts.TAC_REGISTER:
+                return _timerService.Tac;
+            case AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS:
+                return (byte)(MappedMemory[AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS] | 0xe0);
+            case AddressConsts.JOYPAD_INPUT_REGISTER:
+                return _joyPadRegister;
+        }
 
-        if (address == AddressConsts.TMA_REGISTER)
-            return _timerService.Tma;
-
-        if (address == AddressConsts.TAC_REGISTER)
-            return _timerService.Tac;
 
         return MappedMemory[address];
     }
@@ -61,24 +68,32 @@ public class MmuService : IMmuService
         }
 
         MappedMemory[address] = value;
-        if (address is >= 0xC000 and <= 0xDDFF)
+        switch (address)
+        {
             //Also write to echo WRAM
-            MappedMemory[(ushort)(address + 0x2000)] = value;
-        if (address is >= 0xE000 and <= 0xFDFF)
+            case >= 0xC000 and <= 0xDDFF:
+                MappedMemory[(ushort)(address + 0x2000)] = value;
+                break;
             //Also write to normal WRAM
-            MappedMemory[(ushort)(address - 0x2000)] = value;
-
-        if (address == AddressConsts.DIV_REGISTER)
-            _timerService.Div = value;
-
-        if (address == AddressConsts.TIMA_REGISTER)
-            _timerService.Tima = value;
-
-        if (address == AddressConsts.TMA_REGISTER)
-            _timerService.Tma = value;
-
-        if (address == AddressConsts.TAC_REGISTER)
-            _timerService.Tac = value;
+            case >= 0xE000 and <= 0xFDFF:
+                MappedMemory[(ushort)(address - 0x2000)] = value;
+                break;
+            case AddressConsts.DIV_REGISTER:
+                _timerService.Div = value;
+                break;
+            case AddressConsts.TIMA_REGISTER:
+                _timerService.Tima = value;
+                break;
+            case AddressConsts.TMA_REGISTER:
+                _timerService.Tma = value;
+                break;
+            case AddressConsts.TAC_REGISTER:
+                _timerService.Tac = value;
+                break;
+            case AddressConsts.JOYPAD_INPUT_REGISTER:
+                _joyPadRegister = value;
+                break;
+        }
     }
 
     /// <inheritdoc/>
@@ -127,9 +142,9 @@ public class MmuService : IMmuService
         {
             default:
             case ETileSet.TileSet0:
-                return MappedMemory[new Range(0x8000, 0x9000)];
-            case ETileSet.TileSet1:
                 return MappedMemory[new Range(0x8800, 0x9800)];
+            case ETileSet.TileSet1:
+                return MappedMemory[new Range(0x8000, 0x9000)];
         }
     }
 

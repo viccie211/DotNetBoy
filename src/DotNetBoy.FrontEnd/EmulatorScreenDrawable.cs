@@ -19,7 +19,12 @@ public class EmulatorScreenDrawable : IDrawable
                 for (var x = 0; x < ScreenDimensions.WIDTH; x++)
                 {
                     var gbColor = FrameBuffer[y, x];
-                    var color = 0.33f * gbColor;
+                    var color = 1f;
+                    if (gbColor != 0)
+                    {
+                        color -= 0.33f * gbColor;
+                    }
+
                     canvas.StrokeColor = Color.FromRgb(color, color, color);
                     canvas.StrokeSize = Scale;
                     canvas.DrawRectangle(x * Scale, y * Scale, Scale, Scale);

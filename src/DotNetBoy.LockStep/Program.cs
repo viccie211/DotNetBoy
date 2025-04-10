@@ -19,7 +19,7 @@ cpuRegisters.Reset();
 var romFileName = Roms.RomFileInfos.First(x => x.Name == "instr_timing.gb").FullName;
 var rom = File.ReadAllBytes(romFileName);
 var mmuService = scope.ServiceProvider.GetService<IMmuService>()!;
-mmuService.LoadRom(rom);    
+mmuService.LoadRom(rom);
 
 var ppuService = scope.ServiceProvider.GetService<IPpuService>()!;
 var cpu = scope.ServiceProvider.GetService<DotNetBoy.Emulator.Cpu>()!;
@@ -32,17 +32,34 @@ specBoy.LoadRom(romFileName);
 
 var dotNetBoyStatus = "";
 var specBoyStatus = "";
+var originalPc = cpuRegisters.ProgramCounter;
 while (dotNetBoyStatus == specBoyStatus)
 {
-    var originalPc = cpuRegisters.ProgramCounter;
+    originalPc = cpuRegisters.ProgramCounter;
     cpu.Step();
     specBoy.cpu.Execute();
     if (!cpu.Prefixed && cpu.Instruction == 0xF0 && mmuService.ReadByte((ushort)(originalPc + 1)) == 0x44)
     {
         cpuRegisters.A = specBoy.cpu.A;
     }
-    dotNetBoyStatus = $"{cpuRegisters} 0x{(cpu.Prefixed?DotNetBoy.Emulator.Cpu.INSTRUCTION_PREFIX.ToString("x2"):"")}{cpu.Instruction.ToString("x2")} DivCounter: {timerService.DivCounter} TIMA:{mmuService.ReadByte(AddressConsts.TIMA_REGISTER)}";
-    specBoyStatus = $"{specBoy.cpu} 0x{(specBoy.cpu.Prefixed?DotNetBoy.Emulator.Cpu.INSTRUCTION_PREFIX.ToString("x2"):"")}{specBoy.cpu.Instruction.ToString("x2")} DivCounter: {specBoy.timers.divCounter} TIMA:{specBoy.mem.ReadByte(AddressConsts.TIMA_REGISTER)}";
+
+    dotNetBoyStatus =
+        $"{cpuRegisters} 0x{(cpu.Prefixed ? DotNetBoy.Emulator.Cpu.INSTRUCTION_PREFIX.ToString("x2") : "")}{cpu.Instruction.ToString("x2")} DivCounter: {timerService.DivCounter} TIMA:{mmuService.ReadByte(AddressConsts.TIMA_REGISTER)}";
+    specBoyStatus =
+        $"{specBoy.cpu} 0x{(specBoy.cpu.Prefixed ? DotNetBoy.Emulator.Cpu.INSTRUCTION_PREFIX.ToString("x2") : "")}{specBoy.cpu.Instruction.ToString("x2")} DivCounter: {specBoy.timers.divCounter} TIMA:{specBoy.mem.ReadByte(AddressConsts.TIMA_REGISTER)}";
     Console.WriteLine($"DotNetBoy:\t\t{dotNetBoyStatus}");
     Console.WriteLine($"ReferenceEmulator:\t{specBoyStatus}");
+}
+
+if (cpu.Instruction == 0xf0)
+{
+    var lastpartofaddress = mmuService.ReadByte((ushort)(originalPc + 1));
+    var result = mmuService.ReadByte((ushort)(0xff00 + lastpartofaddress));
+    Console.WriteLine($"Read 0xff{lastpartofaddress:x2} got {result:x2}");
+}
+if (cpu.Instruction == 0xf2)
+{
+    var lastpartofaddress = cpuRegisters.C;
+    var result = mmuService.ReadByte((ushort)(0xff00 + lastpartofaddress));
+    Console.WriteLine($"Read 0xff{lastpartofaddress:x2} got {result:x2}");
 }

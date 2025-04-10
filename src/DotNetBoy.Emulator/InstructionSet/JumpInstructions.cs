@@ -290,7 +290,7 @@ public class JumpInstructions : IInstructionSet
         }
 
         registers.ProgramCounter += 3;
-        _clockService.Clock(3);
+        _clockService.Clock(2);
     }
 
     private void JumpToA16(ICpuRegistersService registers)
@@ -336,7 +336,7 @@ public class JumpInstructions : IInstructionSet
         registers.StackPointer--;
         _mmuService.WriteByte(registers.StackPointer, lower);
         registers.ProgramCounter = address;
-        _clockService.Clock(4);
+        _clockService.Clock(3);
     }
 
     private void ReturnOnCondition(bool condition, ICpuRegistersService registers)

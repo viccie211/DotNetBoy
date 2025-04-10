@@ -13,53 +13,53 @@ public class ResetBitAtAddressHLInstructions : ResetBitInstructionsBase, IInstru
         _mmuService = mmuService;
         Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
         {
-            { 0x86, ResetBit0InLRegister },
-            { 0x8E, ResetBit1InLRegister },
-            { 0x96, ResetBit2InLRegister },
-            { 0x9E, ResetBit3InLRegister },
-            { 0xA6, ResetBit4InLRegister },
-            { 0xAE, ResetBit5InLRegister },
-            { 0xB6, ResetBit6InLRegister },
-            { 0xBE, ResetBit7InLRegister },
+            { 0x86, ResetBit0AtAddressInHLRegister },
+            { 0x8E, ResetBit1AtAddressInHLRegister },
+            { 0x96, ResetBit2AtAddressInHLRegister },
+            { 0x9E, ResetBit3AtAddressInHLRegister },
+            { 0xA6, ResetBit4AtAddressInHLRegister },
+            { 0xAE, ResetBit5AtAddressInHLRegister },
+            { 0xB6, ResetBit6AtAddressInHLRegister },
+            { 0xBE, ResetBit7AtAddressInHLRegister },
         };
     }
 
-    public void ResetBit0InLRegister(ICpuRegistersService registers)
+    public void ResetBit0AtAddressInHLRegister(ICpuRegistersService registers)
     {
         ResetBitAtAddressHL(0, registers);
     }
 
-    public void ResetBit1InLRegister(ICpuRegistersService registers)
+    public void ResetBit1AtAddressInHLRegister(ICpuRegistersService registers)
     {
         ResetBitAtAddressHL(1, registers);
     }
 
-    public void ResetBit2InLRegister(ICpuRegistersService registers)
+    public void ResetBit2AtAddressInHLRegister(ICpuRegistersService registers)
     {
         ResetBitAtAddressHL(2, registers);
     }
 
-    public void ResetBit3InLRegister(ICpuRegistersService registers)
+    public void ResetBit3AtAddressInHLRegister(ICpuRegistersService registers)
     {
         ResetBitAtAddressHL(3, registers);
     }
 
-    public void ResetBit4InLRegister(ICpuRegistersService registers)
+    public void ResetBit4AtAddressInHLRegister(ICpuRegistersService registers)
     {
         ResetBitAtAddressHL(4, registers);
     }
 
-    public void ResetBit5InLRegister(ICpuRegistersService registers)
+    public void ResetBit5AtAddressInHLRegister(ICpuRegistersService registers)
     {
         ResetBitAtAddressHL(5, registers);
     }
 
-    public void ResetBit6InLRegister(ICpuRegistersService registers)
+    public void ResetBit6AtAddressInHLRegister(ICpuRegistersService registers)
     {
         ResetBitAtAddressHL(6, registers);
     }
 
-    public void ResetBit7InLRegister(ICpuRegistersService registers)
+    public void ResetBit7AtAddressInHLRegister(ICpuRegistersService registers)
     {
         ResetBitAtAddressHL(7, registers);
     }
@@ -69,6 +69,6 @@ public class ResetBitAtAddressHLInstructions : ResetBitInstructionsBase, IInstru
         var toReset = _mmuService.ReadByte(registers.HL);
         var reset = ResetBit(bitNumber, toReset, registers);
         _mmuService.WriteByte(registers.HL, reset);
-        ClockService.Clock();
+        ClockService.Clock(2);
     }
 }

@@ -59,17 +59,18 @@ public partial class MainPage : ContentPage
             drawable.Scale = viewModel.Scale;
             EmulatorScreen.WidthRequest = ScreenDimensions.WIDTH * viewModel.Scale;
             EmulatorScreen.HeightRequest = ScreenDimensions.HEIGHT * viewModel.Scale;
-            // if (count == 250)
-            // {
-            //     var joyPad = new JoyPadRegister()
-            //     {
-            //         AOrRight = true
-            //     };
-            //     viewModel.MmuService.WriteByte(AddressConsts.JOYPAD_INPUT_REGISTER,joyPad);
-            //     InterruptRegister irqr = viewModel.MmuService.ReadByte(AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS);
-            //     irqr.Joypad = true;
-            //     viewModel.MmuService.WriteByte(AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS,irqr);
-            // }
+            if (count == 100)
+            {
+                var joyPad = new JoyPadRegister()
+                {
+                    StartOrDown = true,
+                    SelectButtons = true
+                };
+                viewModel.MmuService.WriteByte(AddressConsts.JOYPAD_INPUT_REGISTER,joyPad);
+                InterruptRegister irqr = viewModel.MmuService.ReadByte(AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS);
+                irqr.Joypad = true;
+                viewModel.MmuService.WriteByte(AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS,irqr);
+            }
             EmulatorScreen.Invalidate();
         });
     }

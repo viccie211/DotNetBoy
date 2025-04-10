@@ -138,7 +138,7 @@ public class DecrementInstructions : IInstructionSet
     private ushort Decrement16Bits(ushort initial, ICpuRegistersService registers)
     {
         var result = (ushort)(initial - 1);
-        _clockService.Clock(2);
+        _clockService.Clock();
         registers.ProgramCounter += 1;
         return result;
     }

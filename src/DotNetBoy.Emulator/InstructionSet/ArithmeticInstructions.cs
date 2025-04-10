@@ -362,7 +362,7 @@ public class ArithmeticInstructions : IInstructionSet
         registers.F.Carry = (result & 0xff) < (registers.StackPointer & 0xff);
         registers.StackPointer = result;
         registers.ProgramCounter += 2;
-        _clockService.Clock(4);
+        _clockService.Clock(3);
     }
 
 
