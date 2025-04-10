@@ -9,8 +9,8 @@ public class JoyPadRegister
 
     public bool SelectDPad { get; set; }
     public bool SelectButtons { get; set; }
-    public bool Bit6 { get; set; }
-    public bool Bit7 { get; set; }
+    public bool Bit6 => true;
+    public bool Bit7 => true;
 
     public static implicit operator byte(JoyPadRegister joyPadRegister)
     {
@@ -36,8 +36,6 @@ public class JoyPadRegister
             StartOrDown = (0b00001000 & input) == 0,
             SelectDPad = (0b00010000 & input) == 0,
             SelectButtons = (0b00100000 & input) == 0,
-            Bit6 = (0b01000000 & input) != 0,
-            Bit7 = (0b10000000 & input) != 0,
         };
         return result;
     }

@@ -28,6 +28,7 @@ public static class AddressConsts
     public const ushort LYC_REGISTER_ADDRESS = 0xFF45;
     public const ushort SCY_ADDRESS = 0xFF42;
     public const ushort SCX_ADDRESS = 0xFF43;
+    public const ushort DMA_REGISTER = 0xFF46;
     public const ushort COLOR_PALETTE_REGISTER_ADDRESS = 0xFF47;
     public const ushort WY_ADDRESS = 0xFF4A;
     public const ushort WX_ADDRESS = 0xFF4B;

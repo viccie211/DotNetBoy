@@ -13,18 +13,22 @@ public class MmuService : IMmuService
     private readonly ITimerService _timerService;
     private JoyPadRegister _joyPadRegister = new JoyPadRegister();
 
-    public MmuService(IByteUshortService byteUshortService, ITimerService timerService)
+    public MmuService(IByteUshortService byteUshortService, ITimerService timerService, IClockService clockService)
     {
         _byteUshortService = byteUshortService;
         _timerService = timerService;
         MappedMemory = new byte[ushort.MaxValue + 1];
         MappedMemory[AddressConsts.LY_REGISTER_ADDRESS] = 0x00;
         Cartridge = new DefaultCartridge(new byte[0x8000]);
+        clockService.MClock += DoDMA;
     }
 
     public byte[] MappedMemory { get; init; }
     public EMbcType MbcType { get; set; } = EMbcType.NoMbc;
     public ICartridge Cartridge { get; set; }
+
+    private ushort _dmaSourceAddress = 0;
+    private ushort _dmaCycles = 0;
 
     public byte ReadByte(ushort address)
     {
@@ -32,7 +36,6 @@ public class MmuService : IMmuService
         {
             return Cartridge.ReadByte(address);
         }
-
 
         switch (address)
         {
@@ -92,6 +95,12 @@ public class MmuService : IMmuService
                 break;
             case AddressConsts.JOYPAD_INPUT_REGISTER:
                 _joyPadRegister = value;
+                break;
+            case AddressConsts.DMA_REGISTER:
+                if (_dmaCycles >= 160)
+                    break;
+                _dmaSourceAddress = (ushort)(value << 8);
+                _dmaCycles = 162;
                 break;
         }
     }
@@ -178,5 +187,17 @@ public class MmuService : IMmuService
         }
 
         return result;
+    }
+
+    public void DoDMA(object? sender, ClockEventArgs eventArgs)
+    {
+        if (_dmaCycles == 0)
+            return;
+        if (_dmaCycles <= 160)
+        {
+            byte index = (byte)(160 - _dmaCycles);
+            dmaLastByteWritten = ReadByte(dmaSrcAddr + index, true);
+            ppu.WriteOam(index, dmaLastByteWritten, true);
+        }
     }
 }

@@ -38,6 +38,11 @@ public class Cpu(
     public void Step()
     {
         Interrupts();
+        if (cpuRegistersService.InterruptsJustEnabled)
+        {
+            cpuRegistersService.InterruptsJustEnabled = false;
+        }
+        
         if (cpuRegistersService.HaltBug)
         {
             cpuRegistersService.HaltBug = false;
@@ -77,18 +82,26 @@ public class Cpu(
                 cpuRegistersService.ProgramCounter++;
             }
         }
-
-        if (cpuRegistersService.InterruptsJustEnabled)
-        {
-            cpuRegistersService.InterruptsJustEnabled = false;
-        }
     }
 
     private void Interrupts()
     {
-        if (!cpuRegistersService.InterruptMasterEnable || cpuRegistersService.InterruptsJustEnabled)
+        if ((InterruptEnableRegister & interruptRequestRegister & 0x1F) == 0)
             return;
 
+        if (!cpuRegistersService.Halted)
+        {
+            clockService.Clock();
+        }
+        if (cpuRegistersService.InterruptsJustEnabled)
+            return;
+
+        cpuRegistersService.Halted = false;
+
+        if (!cpuRegistersService.InterruptMasterEnable)
+            return;
+
+        clockService.Clock();
         InterruptRegister castRegister = interruptRequestRegister;
 
         if (InterruptEnableRegister.VBlank && castRegister.VBlank)
@@ -147,9 +160,11 @@ public class Cpu(
         var upper = byteUshortService.UpperByteOfSixteenBits(toStore);
         cpuRegistersService.StackPointer--;
         mmuService.WriteByte(cpuRegistersService.StackPointer, upper);
+        clockService.Clock();
         cpuRegistersService.StackPointer--;
         mmuService.WriteByte(cpuRegistersService.StackPointer, lower);
+        clockService.Clock();
         cpuRegistersService.ProgramCounter = address;
-        clockService.Clock(5, true);
+        clockService.Clock(2);
     }
 }
