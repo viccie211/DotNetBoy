@@ -16,7 +16,7 @@ var scope = serviceProvider.CreateScope();
 var cpuRegisters = scope.ServiceProvider.GetService<ICpuRegistersService>()!;
 cpuRegisters.Reset();
 
-var romFileName = Roms.RomFileInfos.First(x => x.Name == "instr_timing.gb").FullName;
+var romFileName = Roms.RomFileInfos.First(x => x.Name == "Tetris.gb").FullName;
 var rom = File.ReadAllBytes(romFileName);
 var mmuService = scope.ServiceProvider.GetService<IMmuService>()!;
 mmuService.LoadRom(rom);

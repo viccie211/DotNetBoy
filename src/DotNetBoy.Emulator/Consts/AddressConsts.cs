@@ -17,6 +17,8 @@ public static class AddressConsts
     public const ushort TIMER_INTERRUPT_VECTOR = 0x0050;
     public const ushort SERIAL_INTERRUPT_VECTOR = 0x0058;
     public const ushort JOYPAD_INTERRUPT_VECTOR = 0x0060;
+    public const ushort OAM_BASE_ADDRESS = 0xFE00;
+    public const ushort OAM_TOP_ADDRESS = 0xFE9F;
     public const ushort JOYPAD_INPUT_REGISTER = 0xFF00;
     public const ushort DIV_REGISTER = 0xFF04;
     public const ushort TIMA_REGISTER = 0xFF05;

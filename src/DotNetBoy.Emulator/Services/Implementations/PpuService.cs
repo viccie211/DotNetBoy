@@ -7,10 +7,9 @@ using DotNetBoy.Emulator.Services.Interfaces;
 public class PpuService : IPpuService
 {
     private const int TILE_SIZE = 8;
-
-    private readonly IClockService _clockService;
     private readonly IMmuService _mmuService;
     private readonly ITileService _tileService;
+    private readonly IEventService _eventService;
 
     private LcdControlRegister LcdControlRegister => _mmuService.ReadByte(AddressConsts.LCD_CONTROL_REGISTER_ADDRESS);
 
@@ -23,7 +22,7 @@ public class PpuService : IPpuService
     private byte WindowY => _mmuService.ReadByte(AddressConsts.WY_ADDRESS);
     private byte WindowX => _mmuService.ReadByte(AddressConsts.WX_ADDRESS);
     private OamObject[] OamObjects => _mmuService.GetOamObjects();
-    private List<OamObject> _oamObjectsThisScanLine;
+    private List<OamObject> _oamObjectsThisScanLine = [];
 
     private LcdStatusRegister LcdStatusRegister
     {
@@ -45,12 +44,12 @@ public class PpuService : IPpuService
     public int Dot { get; set; } = 0;
     public int[,] FrameBuffer { get; private set; }
 
-    public PpuService(IClockService clockService, IMmuService mmuService, ITileService tileService)
+    public PpuService(IMmuService mmuService, ITileService tileService, IEventService eventService)
     {
-        _clockService = clockService;
         _mmuService = mmuService;
         _tileService = tileService;
-        _clockService.TClock += OnTClock;
+        _eventService = eventService;
+        _eventService.TClock += OnTClock;
         FrameBuffer = new int[ScreenDimensions.HEIGHT, ScreenDimensions.WIDTH];
     }
 
@@ -84,7 +83,6 @@ public class PpuService : IPpuService
 
             if (ScanLine == 144)
             {
-                // RenderFullBackgroundAndWindow();
                 VBlankInterruptRequest();
                 VBlankStartInvoke(this, new VBlankEventArgs() { FrameBuffer = FrameBuffer });
             }
@@ -109,7 +107,7 @@ public class PpuService : IPpuService
             Mode = PpuModes.ActivePicture;
             var screenX = Dot - 80;
             RenderBackgroundAndWindow(ScanLine, screenX);
-            RenderSprites(screenX);
+            RenderSprites(ScanLine, screenX);
         }
         else
         {
@@ -214,16 +212,18 @@ public class PpuService : IPpuService
         }
     }
 
-    private void RenderSprites(int screenX)
+    private void RenderSprites(int scanLine, int screenX)
     {
         if (!LcdControlRegister.SpriteDisplayEnable) return;
+
+        if (_oamObjectsThisScanLine.Count == 0) return;
 
         foreach (var sprite in _oamObjectsThisScanLine.OrderByDescending(s => s.XPosition))
         {
             if (screenX >= sprite.XPosition && screenX < sprite.XPosition + 8)
             {
                 int tilePixelX = screenX - sprite.XPosition;
-                int tilePixelY = ScanLine - sprite.YPosition;
+                int tilePixelY = scanLine - sprite.YPosition;
 
                 if ((sprite.Flags & 0x40) != 0) tilePixelX = 7 - tilePixelX; // X flip
                 if ((sprite.Flags & 0x80) != 0) tilePixelY = 7 - tilePixelY; // Y flip
@@ -233,11 +233,11 @@ public class PpuService : IPpuService
                 if (colorIndex != 0) // 0 is transparent for sprites
                 {
                     bool bgPriority = (sprite.Flags & 0x80) != 0;
-                    if (!bgPriority || FrameBuffer[ScanLine, screenX] == 0)
+                    if (!bgPriority || FrameBuffer[scanLine, screenX] == 0)
                     {
                         byte paletteRegister = (sprite.Flags & 0x10) != 0 ? _mmuService.ReadByte(0xFF49) : _mmuService.ReadByte(0xFF48);
                         int color = (paletteRegister >> (colorIndex * 2)) & 0x03;
-                        FrameBuffer[ScanLine, screenX] = color;
+                        FrameBuffer[scanLine, screenX] = color;
                     }
                 }
             }

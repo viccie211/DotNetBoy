@@ -13,14 +13,14 @@ public class MmuService : IMmuService
     private readonly ITimerService _timerService;
     private JoyPadRegister _joyPadRegister = new JoyPadRegister();
 
-    public MmuService(IByteUshortService byteUshortService, ITimerService timerService, IClockService clockService)
+    public MmuService(IByteUshortService byteUshortService, ITimerService timerService, IEventService eventService)
     {
         _byteUshortService = byteUshortService;
         _timerService = timerService;
         MappedMemory = new byte[ushort.MaxValue + 1];
         MappedMemory[AddressConsts.LY_REGISTER_ADDRESS] = 0x00;
         Cartridge = new DefaultCartridge(new byte[0x8000]);
-        clockService.MClock += DoDMA;
+        eventService.MClock += DoDMA;
     }
 
     public byte[] MappedMemory { get; init; }
@@ -29,9 +29,16 @@ public class MmuService : IMmuService
 
     private ushort _dmaSourceAddress = 0;
     private ushort _dmaCycles = 0;
+    private byte _dmaLastByteWritten = 0;
 
-    public byte ReadByte(ushort address)
+    public byte ReadByte(ushort address, bool bypass = false)
     {
+        // if (!bypass && _dmaCycles != 0 && (address < 0xFF80 || address > 0xFFFE))
+        // {
+        //     //Return garbage data if doing DMA 
+        //     return 0xFF;
+        // }
+
         if (address is <= AddressConsts.ROM_BANK_1_UPPER_ADDRESS or (>= AddressConsts.CARTRIDGE_RAM_BASE_ADDRESS and <= AddressConsts.CARTRIDGE_RAM_UPPER_ADDRESS))
         {
             return Cartridge.ReadByte(address);
@@ -171,7 +178,7 @@ public class MmuService : IMmuService
 
     public byte[] GetOamBytes()
     {
-        return MappedMemory[new Range(0xFE00, 0xFE9F)];
+        return MappedMemory[new Range(AddressConsts.OAM_BASE_ADDRESS, AddressConsts.OAM_TOP_ADDRESS)];
     }
 
     public OamObject[] GetOamObjects()
@@ -193,11 +200,14 @@ public class MmuService : IMmuService
     {
         if (_dmaCycles == 0)
             return;
+        
         if (_dmaCycles <= 160)
         {
             byte index = (byte)(160 - _dmaCycles);
-            dmaLastByteWritten = ReadByte(dmaSrcAddr + index, true);
-            ppu.WriteOam(index, dmaLastByteWritten, true);
+            _dmaLastByteWritten = ReadByte((ushort)(_dmaSourceAddress + index), true);
+            WriteByteRaw((ushort)(AddressConsts.OAM_BASE_ADDRESS + index), _dmaLastByteWritten);
         }
+
+        _dmaCycles--;
     }
 }

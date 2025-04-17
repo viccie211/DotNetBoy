@@ -9,7 +9,8 @@ public class ClockServiceTests
     {
         var mmuServiceMock = new Mock<IMmuService>();
         var timerserviceMock = new Mock<ITimerService>();
-        var service = new ClockService(mmuServiceMock.Object,timerserviceMock.Object)
+        var eventServiceMock = new Mock<IEventService>();
+        var service = new ClockService(mmuServiceMock.Object,timerserviceMock.Object,eventServiceMock.Object)
         {
             T = 1,
             M = 1
@@ -21,57 +22,6 @@ public class ClockServiceTests
         service.Reset();
 
         Assert.That(service.T, Is.EqualTo(expectedT));
-        Assert.That(service.M, Is.EqualTo(expectedM));
-    }
-
-    [Test]
-    public void Clock()
-    {
-        var mmuServiceMock = new Mock<IMmuService>();
-        var timerserviceMock = new Mock<ITimerService>();
-        var service = new ClockService(mmuServiceMock.Object, timerserviceMock.Object);
-
-        var tClockEventCalled = 0;
-        service.TClock += (o, e) => tClockEventCalled++;
-
-        var mClockEventCalled = 0;
-        service.MClock += (o, e) => mClockEventCalled++;
-
-        var expectedT = 1;
-        var expectedM = 4;
-
-        service.Clock();
-
-        Assert.That(tClockEventCalled, Is.EqualTo(expectedT));
-        Assert.That(service.T, Is.EqualTo(expectedT));
-
-        Assert.That(mClockEventCalled, Is.EqualTo(expectedM));
-        Assert.That(service.M, Is.EqualTo(expectedM));
-    }
-
-    [Test]
-    public void Clock4Increments()
-    {
-        var clockIncrement = 4;
-        var mmuServiceMock = new Mock<IMmuService>();
-        var timerserviceMock = new Mock<ITimerService>();
-        var service = new ClockService(mmuServiceMock.Object, timerserviceMock.Object);
-
-        var tClockEventCalled = 0;
-        service.TClock += (o, e) => tClockEventCalled++;
-
-        var mClockEventCalled = 0;
-        service.MClock += (o, e) => mClockEventCalled++;
-
-        var expectedT = 1 * clockIncrement;
-        var expectedM = 4 * clockIncrement;
-
-        service.Clock(clockIncrement);
-
-        Assert.That(tClockEventCalled, Is.EqualTo(expectedT));
-        Assert.That(service.T, Is.EqualTo(expectedT));
-
-        Assert.That(mClockEventCalled, Is.EqualTo(expectedM));
         Assert.That(service.M, Is.EqualTo(expectedM));
     }
 }

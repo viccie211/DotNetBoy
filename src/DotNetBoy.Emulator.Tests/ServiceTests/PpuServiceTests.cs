@@ -10,10 +10,10 @@ public class PpuServiceTests
     [SetUp]
     public void SetUp()
     {
-        var clockServiceMock = new Mock<IClockService>();
         mmuServiceMock = new Mock<IMmuService>();
         var tileServiceMock = new Mock<ITileService>();
-        service = new PpuService(clockServiceMock.Object, mmuServiceMock.Object, tileServiceMock.Object);
+        var eventServiceMock = new Mock<IEventService>();
+        service = new PpuService(mmuServiceMock.Object, tileServiceMock.Object, eventServiceMock.Object);
     }
 
     [Test]

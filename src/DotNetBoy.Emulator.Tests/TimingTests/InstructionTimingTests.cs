@@ -50,10 +50,12 @@ public class InstructionTimingTests
         serviceCollection.AddScoped<IByteUshortService, ByteUshortService>();
         serviceCollection.AddScoped<ITimerService, TimerService>();
         serviceCollection.AddScoped<IMmuService, MmuService>();
+        serviceCollection.AddScoped<IEventService, EventService>();
         serviceCollection.AddScoped<IClockService>(provider =>
         {
             var underLyingClockService = new ClockService(provider.GetService<IMmuService>() ?? throw new InvalidOperationException(),
-                provider.GetService<ITimerService>() ?? throw new InvalidOperationException());
+                provider.GetService<ITimerService>() ?? throw new InvalidOperationException(),
+                provider.GetService<IEventService>() ?? throw new InvalidOperationException());
             clockServiceMock.Setup(x => x.Clock(It.IsAny<int>(), It.IsAny<bool>())).Callback(new Action<int, bool>((arg1, arg2) =>
             {
                 ClockPumped(arg1);
@@ -130,7 +132,7 @@ public class InstructionTimingTests
     [Test]
     public void NonPrefixeds()
     {
-        int[] skips = [0x10,0x76, 0xCB, 0xD3, 0xDB, 0xDD, 0xE3, 0xE4, 0xEB, 0xEC, 0xEC, 0xED, 0xF4, 0xFC, 0xFD];
+        int[] skips = [0x10, 0x76, 0xCB, 0xD3, 0xDB, 0xDD, 0xE3, 0xE4, 0xEB, 0xEC, 0xEC, 0xED, 0xF4, 0xFC, 0xFD];
         for (int instr = 0; instr < instructionTimings.Length; instr++)
         {
             if (skips.Contains(instr))
@@ -139,8 +141,7 @@ public class InstructionTimingTests
             clockIncremented = 0;
             _cpuRegistersService.ProgramCounter = 0xC000;
             _cpu.Step();
-            Assert.That(clockIncremented, Is.EqualTo(instructionTimings[instr]),()=>$"Instr:{instr:x2} Was {clockIncremented}, expected {instructionTimings[instr]}");
-            
+            Assert.That(clockIncremented, Is.EqualTo(instructionTimings[instr]), () => $"Instr:{instr:x2} Was {clockIncremented}, expected {instructionTimings[instr]}");
         }
     }
 }

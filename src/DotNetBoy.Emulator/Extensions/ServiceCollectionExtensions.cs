@@ -67,6 +67,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<RotateRightThroughCarryInstructions>();
         serviceCollection.AddScoped<RotateLeftThroughCarryInstructions>();
         serviceCollection.AddScoped<SwapInstructions>();
+        serviceCollection.AddScoped<IEventService, EventService>();
 
         serviceCollection.AddScoped<IInstructionSetService, InstructionSetService>();
 
