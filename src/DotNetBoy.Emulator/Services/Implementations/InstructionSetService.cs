@@ -357,6 +357,37 @@ public class InstructionSetService(
     {
         switch (opCode)
         {
+            case 0x46:
+            case 0x4E:
+            case 0x56:
+            case 0x5E:
+            case 0x66:
+            case 0x6E:
+            case 0x76:
+            case 0x7E:
+                bitAtAddressHlInstructions.ExecuteInstruction(opCode, registers);
+                break;
+            case 0x47:
+            case 0x4F:
+            case 0x57:
+            case 0x5F:
+            case 0x67:
+            case 0x6F:
+            case 0x77:
+            case 0x7F:
+                bitInARegisterInstructions.ExecuteInstruction(opCode, registers);
+                break;
+            
+            case 0x40:
+            case 0x48:
+            case 0x50:
+            case 0x58:
+            case 0x60:
+            case 0x68:
+            case 0x70:
+            case 0x78:
+                bitInBRegisterInstructions.ExecuteInstruction(opCode, registers);
+                break;
             default:
                 throw new NotImplementedException($"Opcode 0x{opCode:X2} not handled in Prefixed Instructions.");
         }
