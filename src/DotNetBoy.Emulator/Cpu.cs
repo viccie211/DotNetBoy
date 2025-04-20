@@ -42,7 +42,7 @@ public class Cpu(
         {
             cpuRegistersService.InterruptsJustEnabled = false;
         }
-        
+
         if (cpuRegistersService.HaltBug)
         {
             cpuRegistersService.HaltBug = false;
@@ -61,16 +61,15 @@ public class Cpu(
             if (Instruction == INSTRUCTION_PREFIX)
             {
                 var actualInstruction = mmuService.ReadByte((ushort)(cpuRegistersService.ProgramCounter + 1));
-                var decodedInstruction = instructionSetService.PrefixedInstructions[actualInstruction];
+
                 Prefixed = true;
                 Instruction = actualInstruction;
-                decodedInstruction(cpuRegistersService);
+                instructionSetService.PrefixedInstruction(actualInstruction, cpuRegistersService);
             }
             else
             {
-                var decodedInstruction = instructionSetService.NonPrefixedInstructions[Instruction];
                 Prefixed = false;
-                decodedInstruction(cpuRegistersService);
+                instructionSetService.NonPrefixedInstruction(Instruction,cpuRegistersService);
             }
         }
 
@@ -93,6 +92,7 @@ public class Cpu(
         {
             clockService.Clock();
         }
+
         if (cpuRegistersService.InterruptsJustEnabled)
             return;
 

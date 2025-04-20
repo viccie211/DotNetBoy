@@ -214,4 +214,62 @@ public class StoreInstructions : IInstructionSet
         _clockService.Clock();
         registers.ProgramCounter += 1;
     }
+    
+    public void ExecuteInstruction(byte opCode, ICpuRegistersService registers)
+    {
+        switch (opCode)
+        {
+            case 0x08:
+                StoreStackPointerAtAddressD16(registers);
+                break;
+            case 0x02:
+                StoreAtAddressBCFromA(registers);
+                break;
+            case 0x12:
+                StoreAtAddressDEFromA(registers);
+                break;
+            case 0x22:
+                StoreAtAddressHLFromAIncrementHL(registers);
+                break;
+            case 0x32:
+                StoreAtAddressHLFromADecrementHL(registers);
+                break;
+            case 0x36:
+                StoreAtAddressHLFromD8(registers);
+                break;
+            case 0x70:
+                StoreAtAddressHLFromB(registers);
+                break;
+            case 0x71:
+                StoreAtAddressHLFromC(registers);
+                break;
+            case 0x72:
+                StoreAtAddressHLFromD(registers);
+                break;
+            case 0x73:
+                StoreAtAddressHLFromE(registers);
+                break;
+            case 0x74:
+                StoreAtAddressHLFromH(registers);
+                break;
+            case 0x75:
+                StoreAtAddressHLFromL(registers);
+                break;
+            case 0x77:
+                StoreAtAddressHLFromA(registers);
+                break;
+            case 0xE0:
+                StoreAtAddressFF00PlusD8FromA(registers);
+                break;
+            case 0xE2:
+                StoreAtAddressFF00PlusCFromA(registers);
+                break;
+            case 0xEA:
+                StoreAtA16FromA(registers);
+                break;
+            default:
+                throw new NotImplementedException($"Opcode 0x{opCode:X2} not implemented in StoreInstructions.");
+        }
+    }
+
 }

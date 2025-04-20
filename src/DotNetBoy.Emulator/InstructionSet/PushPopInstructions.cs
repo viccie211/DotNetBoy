@@ -3,32 +3,8 @@ using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.InstructionSet;
 
-public class PushPopInstructions : IInstructionSet
+public class PushPopInstructions(IClockService clockService, IMmuService mmuService, IByteUshortService byteUshortService) : IInstructionSet
 {
-    private readonly IClockService _clockService;
-    private readonly IMmuService _mmuService;
-    private readonly IByteUshortService _byteUshortService;
-
-    public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
-
-    public PushPopInstructions(IClockService clockService, IMmuService mmuService, IByteUshortService byteUshortService)
-    {
-        Instructions = new Dictionary<byte, Action<ICpuRegistersService>>
-        {
-            { 0xC1, PopBC },
-            { 0xC5, PushBC },
-            { 0xD1, PopDE },
-            { 0xD5, PushDE },
-            { 0xE1, PopHL },
-            { 0xE5, PushHL },
-            { 0xF1, PopAF },
-            { 0xF5, PushAF },
-        };
-        _clockService = clockService;
-        _mmuService = mmuService;
-        _byteUshortService = byteUshortService;
-    }
-
     /// <summary>
     /// Pop the first word of the stack and store it in the BC register
     /// </summary>
@@ -103,24 +79,58 @@ public class PushPopInstructions : IInstructionSet
 
     private void PushWord(ushort wordToPush, ICpuRegistersService registers)
     {
-        var upper = _byteUshortService.UpperByteOfSixteenBits(wordToPush);
-        var lower = _byteUshortService.LowerByteOfSixteenBits(wordToPush);
+        var upper = byteUshortService.UpperByteOfSixteenBits(wordToPush);
+        var lower = byteUshortService.LowerByteOfSixteenBits(wordToPush);
         registers.StackPointer--;
-        _mmuService.WriteByte(registers.StackPointer, upper);
+        mmuService.WriteByte(registers.StackPointer, upper);
         registers.StackPointer--;
-        _mmuService.WriteByte(registers.StackPointer, lower);
+        mmuService.WriteByte(registers.StackPointer, lower);
         registers.ProgramCounter += 1;
-        _clockService.Clock(3);
+        clockService.Clock(3);
     }
 
     private ushort PopWord(ICpuRegistersService registers)
     {
-        var lower = _mmuService.ReadByte(registers.StackPointer);
+        var lower = mmuService.ReadByte(registers.StackPointer);
         registers.StackPointer++;
-        var upper = _mmuService.ReadByte(registers.StackPointer);
+        var upper = mmuService.ReadByte(registers.StackPointer);
         registers.StackPointer++;
         registers.ProgramCounter += 1;
-        _clockService.Clock(2);
-        return _byteUshortService.CombineBytes(upper, lower);
+        clockService.Clock(2);
+        return byteUshortService.CombineBytes(upper, lower);
     }
+    
+    public void ExecuteInstruction(byte opCode, ICpuRegistersService registers)
+    {
+        switch (opCode)
+        {
+            case 0xC1:
+                PopBC(registers);
+                break;
+            case 0xC5:
+                PushBC(registers);
+                break;
+            case 0xD1:
+                PopDE(registers);
+                break;
+            case 0xD5:
+                PushDE(registers);
+                break;
+            case 0xE1:
+                PopHL(registers);
+                break;
+            case 0xE5:
+                PushHL(registers);
+                break;
+            case 0xF1:
+                PopAF(registers);
+                break;
+            case 0xF5:
+                PushAF(registers);
+                break;
+            default:
+                throw new NotImplementedException($"Opcode 0x{opCode:X2} not implemented in PushPopInstructions.");
+        }
+    }
+
 }

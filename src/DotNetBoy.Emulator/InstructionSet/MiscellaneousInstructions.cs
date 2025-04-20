@@ -4,41 +4,8 @@ using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.InstructionSet;
 
-public class MiscellaneousInstructions : IInstructionSet
+public class MiscellaneousInstructions(IClockService clockService, IMmuService mmuService) : IInstructionSet
 {
-    private readonly IClockService _clockService;
-    private readonly IMmuService _mmuService;
-
-    public MiscellaneousInstructions(IClockService clockService, IMmuService mmuService)
-    {
-        Instructions = new Dictionary<byte, Action<ICpuRegistersService>>
-        {
-            { 0x00, NOP },
-            { 0x10, Stop },
-            { 0x27, DAA },
-            { 0x2F, ComplementA },
-            { 0x37, SetCarryFlag },
-            { 0x3F, FlipCarryFlag },
-            { 0x76, Halt },
-            { 0xCB, NOP },
-            { 0xD3, NOP },
-            { 0xDB, NOP },
-            { 0xDD, NOP },
-            { 0xE3, NOP },
-            { 0xE4, NOP },
-            { 0xEB, NOP },
-            { 0xEC, NOP },
-            { 0xED, NOP },
-            { 0xF4, NOP },
-            { 0xFC, NOP },
-            { 0xFD, NOP },
-            { 0xF3, DisableInterrupts },
-            { 0xFB, EnableInterrupts },
-        };
-        _clockService = clockService;
-        _mmuService = mmuService;
-    }
-
     /// <summary>
     /// Does nothing but increment the Program Counter and pump the clock one cycle
     /// </summary>
@@ -133,8 +100,8 @@ public class MiscellaneousInstructions : IInstructionSet
     /// Verified against BGB
     public void Halt(ICpuRegistersService registers)
     {
-        var interruptEnableRegister = _mmuService.ReadByte(AddressConsts.INTERRUPT_ENABLE_REGISTER_ADDRESS);
-        var interruptRequestRegister = _mmuService.ReadByte(AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS);
+        var interruptEnableRegister = mmuService.ReadByte(AddressConsts.INTERRUPT_ENABLE_REGISTER_ADDRESS);
+        var interruptRequestRegister = mmuService.ReadByte(AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS);
         if (registers.InterruptMasterEnable || (interruptEnableRegister & interruptRequestRegister & 0x1f) == 0)
         {
             registers.Halted = true;
@@ -153,8 +120,55 @@ public class MiscellaneousInstructions : IInstructionSet
     public void Stop(ICpuRegistersService registers)
     {
         registers.ProgramCounter += 2;
-        _clockService.Clock();
+        clockService.Clock();
+    }
+    
+    public void ExecuteInstruction(byte opCode, ICpuRegistersService registers)
+    {
+        switch (opCode)
+        {
+            case 0x00:
+            case 0xCB:
+            case 0xD3:
+            case 0xDB:
+            case 0xDD:
+            case 0xE3:
+            case 0xE4:
+            case 0xEB:
+            case 0xEC:
+            case 0xED:
+            case 0xF4:
+            case 0xFC:
+            case 0xFD:
+                NOP(registers);
+                break;
+            case 0x10:
+                Stop(registers);
+                break;
+            case 0x27:
+                DAA(registers);
+                break;
+            case 0x2F:
+                ComplementA(registers);
+                break;
+            case 0x37:
+                SetCarryFlag(registers);
+                break;
+            case 0x3F:
+                FlipCarryFlag(registers);
+                break;
+            case 0x76:
+                Halt(registers);
+                break;
+            case 0xF3:
+                DisableInterrupts(registers);
+                break;
+            case 0xFB:
+                EnableInterrupts(registers);
+                break;
+            default:
+                throw new NotImplementedException($"Opcode 0x{opCode:X2} not implemented in MiscellaneousInstructions.");
+        }
     }
 
-    public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
 }

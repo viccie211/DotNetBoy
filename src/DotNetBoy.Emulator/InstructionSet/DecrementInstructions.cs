@@ -4,33 +4,8 @@ using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.InstructionSet;
 
-public class DecrementInstructions : IInstructionSet
+public class DecrementInstructions(IClockService clockService, IMmuService mmuService) : IInstructionSet
 {
-    public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
-    private readonly IClockService _clockService;
-    private readonly IMmuService _mmuService;
-
-    public DecrementInstructions(IClockService clockService, IMmuService mmuService)
-    {
-        Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
-        {
-            { 0x05, DecrementB },
-            { 0x0B, DecrementBC },
-            { 0x0D, DecrementC },
-            { 0x15, DecrementD },
-            { 0x1B, DecrementDE },
-            { 0x1D, DecrementE },
-            { 0x25, DecrementH },
-            { 0x2B, DecrementHL },
-            { 0x2D, DecrementL },
-            { 0x35, DecrementAtAddressHL },
-            { 0x3B, DecrementStackPointer },
-            { 0x3D, DecrementA },
-        };
-        _clockService = clockService;
-        _mmuService = mmuService;
-    }
-
     /// <summary>
     /// Decrement the contents of the B register Z 1 H - 
     /// </summary>
@@ -91,9 +66,9 @@ public class DecrementInstructions : IInstructionSet
     /// 
     public void DecrementAtAddressHL(ICpuRegistersService registers)
     {
-        var toDecrement = _mmuService.ReadByte(registers.HL);
-        _mmuService.WriteByte(registers.HL, Decrement8Bits(toDecrement, registers));
-        _clockService.Clock(2);
+        var toDecrement = mmuService.ReadByte(registers.HL);
+        mmuService.WriteByte(registers.HL, Decrement8Bits(toDecrement, registers));
+        clockService.Clock(2);
     }
 
     /// <summary>
@@ -138,8 +113,55 @@ public class DecrementInstructions : IInstructionSet
     private ushort Decrement16Bits(ushort initial, ICpuRegistersService registers)
     {
         var result = (ushort)(initial - 1);
-        _clockService.Clock();
+        clockService.Clock();
         registers.ProgramCounter += 1;
         return result;
     }
+    
+    public void ExecuteInstruction(byte opCode, ICpuRegistersService registers)
+    {
+        switch (opCode)
+        {
+            case 0x05:
+                DecrementB(registers);
+                break;
+            case 0x0B:
+                DecrementBC(registers);
+                break;
+            case 0x0D:
+                DecrementC(registers);
+                break;
+            case 0x15:
+                DecrementD(registers);
+                break;
+            case 0x1B:
+                DecrementDE(registers);
+                break;
+            case 0x1D:
+                DecrementE(registers);
+                break;
+            case 0x25:
+                DecrementH(registers);
+                break;
+            case 0x2B:
+                DecrementHL(registers);
+                break;
+            case 0x2D:
+                DecrementL(registers);
+                break;
+            case 0x35:
+                DecrementAtAddressHL(registers);
+                break;
+            case 0x3B:
+                DecrementStackPointer(registers);
+                break;
+            case 0x3D:
+                DecrementA(registers);
+                break;
+
+            default:
+                throw new NotImplementedException($"Opcode 0x{opCode:X2} not implemented in DecrementInstructions.");
+        }
+    }
+
 }

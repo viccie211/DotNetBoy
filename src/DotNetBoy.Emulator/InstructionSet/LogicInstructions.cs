@@ -4,57 +4,8 @@ using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.InstructionSet;
 
-public class LogicInstructions : IInstructionSet
+public class LogicInstructions(IMmuService mmuService, IClockService clockService) : IInstructionSet
 {
-    private readonly IMmuService _mmuService;
-    private readonly IClockService _clockService;
-
-    public LogicInstructions(IMmuService mmuService, IClockService clockService)
-    {
-        _mmuService = mmuService;
-        Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
-        {
-            { 0xA0, ANDBWithA },
-            { 0xA1, ANDCWithA },
-            { 0xA2, ANDDWithA },
-            { 0xA3, ANDEWithA },
-            { 0xA4, ANDHWithA },
-            { 0xA5, ANDLWithA },
-            { 0xA6, ANDAtAddressHLWithA },
-            { 0xA7, ANDAWithA },
-            { 0xA8, XORBWithA },
-            { 0xA9, XORCWithA },
-            { 0xAA, XORDWithA },
-            { 0xAB, XOREWithA },
-            { 0xAC, XORHWithA },
-            { 0xAD, XORLWithA },
-            { 0xAE, XORAtAddressHLWithA },
-            { 0xAF, XORAWithA },
-            { 0xB0, ORBWithA },
-            { 0xB1, ORCWithA },
-            { 0xB2, ORDWithA },
-            { 0xB3, OREWithA },
-            { 0xB4, ORHWithA },
-            { 0xB5, ORLWithA },
-            { 0xB6, ORAtAddressHLWithA },
-            { 0xB7, ORAWithA },
-            { 0xB8, CompareBWithA },
-            { 0xB9, CompareCWithA },
-            { 0xBA, CompareDWithA },
-            { 0xBB, CompareEWithA },
-            { 0xBC, CompareHWithA },
-            { 0xBD, CompareLWithA },
-            { 0xBE, CompareAtAddressHLWithA },
-            { 0xBF, CompareAWithA },
-            { 0xE6, ANDD8WithA },
-            { 0xEE, XORD8WithA },
-            { 0xF6, ORD8WithA },
-            { 0xFE, CompareD8WithA },
-        };
-        _clockService = clockService;
-    }
-
-
     #region AND
 
     public void ANDBWithA(ICpuRegistersService registers)
@@ -89,8 +40,8 @@ public class LogicInstructions : IInstructionSet
 
     public void ANDAtAddressHLWithA(ICpuRegistersService registers)
     {
-        var toAND = _mmuService.ReadByte(registers.HL);
-        _clockService.Clock();
+        var toAND = mmuService.ReadByte(registers.HL);
+        clockService.Clock();
         ANDByteWithA(toAND, registers);
     }
 
@@ -175,8 +126,8 @@ public class LogicInstructions : IInstructionSet
     /// Verified against BGB
     public void XORAtAddressHLWithA(ICpuRegistersService registers)
     {
-        var toXOR = _mmuService.ReadByte(registers.HL);
-        _clockService.Clock();
+        var toXOR = mmuService.ReadByte(registers.HL);
+        clockService.Clock();
         XORByteWithA(toXOR, registers);
     }
 
@@ -187,10 +138,10 @@ public class LogicInstructions : IInstructionSet
     /// Verified against BGB
     public void XORD8WithA(ICpuRegistersService registers)
     {
-        var toXor = _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
+        var toXor = mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
         //Since it's a D8 we need to add one extra to the PC and pump the clock once more than normal
         registers.ProgramCounter += 1;
-        _clockService.Clock();
+        clockService.Clock();
         XORByteWithA(toXor, registers);
     }
 
@@ -267,15 +218,15 @@ public class LogicInstructions : IInstructionSet
     /// Verified with BGB
     public void ORAtAddressHLWithA(ICpuRegistersService registers)
     {
-        var toOR = _mmuService.ReadByte(registers.HL);
-        _clockService.Clock();
+        var toOR = mmuService.ReadByte(registers.HL);
+        clockService.Clock();
         ORByteWithA(toOR, registers);
     }
 
     public void ORD8WithA(ICpuRegistersService registers)
     {
-        var toOR = _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
-        _clockService.Clock();
+        var toOR = mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
+        clockService.Clock();
         registers.ProgramCounter++;
         ORByteWithA(toOR, registers);
     }
@@ -316,8 +267,8 @@ public class LogicInstructions : IInstructionSet
 
     public void CompareAtAddressHLWithA(ICpuRegistersService registers)
     {
-        var toCompare = _mmuService.ReadByte(registers.HL);
-        _clockService.Clock();
+        var toCompare = mmuService.ReadByte(registers.HL);
+        clockService.Clock();
         CompareByteWithA(toCompare, registers);
     }
 
@@ -328,9 +279,9 @@ public class LogicInstructions : IInstructionSet
 
     public void CompareD8WithA(ICpuRegistersService registers)
     {
-        var d8 = _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
+        var d8 = mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
 
-        _clockService.Clock();
+        clockService.Clock();
         registers.ProgramCounter += 1;
         CompareByteWithA(d8, registers);
     }
@@ -344,10 +295,10 @@ public class LogicInstructions : IInstructionSet
     /// Verified against BGB
     public void ANDD8WithA(ICpuRegistersService registers)
     {
-        var toAnd = _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
+        var toAnd = mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
         //Since it's a D8 we need to add one extra to the PC and pump the clock once more than normal
         registers.ProgramCounter += 1;
-        _clockService.Clock();
+        clockService.Clock();
         ANDByteWithA(toAnd, registers);
     }
 
@@ -391,5 +342,120 @@ public class LogicInstructions : IInstructionSet
         registers.ProgramCounter += 1;
     }
 
-    public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
+    public void ExecuteInstruction(byte opCode, ICpuRegistersService registers)
+    {
+        switch (opCode)
+        {
+            case 0xA0:
+                ANDBWithA(registers);
+                break;
+            case 0xA1:
+                ANDCWithA(registers);
+                break;
+            case 0xA2:
+                ANDDWithA(registers);
+                break;
+            case 0xA3:
+                ANDEWithA(registers);
+                break;
+            case 0xA4:
+                ANDHWithA(registers);
+                break;
+            case 0xA5:
+                ANDLWithA(registers);
+                break;
+            case 0xA6:
+                ANDAtAddressHLWithA(registers);
+                break;
+            case 0xA7:
+                ANDAWithA(registers);
+                break;
+            case 0xA8:
+                XORBWithA(registers);
+                break;
+            case 0xA9:
+                XORCWithA(registers);
+                break;
+            case 0xAA:
+                XORDWithA(registers);
+                break;
+            case 0xAB:
+                XOREWithA(registers);
+                break;
+            case 0xAC:
+                XORHWithA(registers);
+                break;
+            case 0xAD:
+                XORLWithA(registers);
+                break;
+            case 0xAE:
+                XORAtAddressHLWithA(registers);
+                break;
+            case 0xAF:
+                XORAWithA(registers);
+                break;
+            case 0xB0:
+                ORBWithA(registers);
+                break;
+            case 0xB1:
+                ORCWithA(registers);
+                break;
+            case 0xB2:
+                ORDWithA(registers);
+                break;
+            case 0xB3:
+                OREWithA(registers);
+                break;
+            case 0xB4:
+                ORHWithA(registers);
+                break;
+            case 0xB5:
+                ORLWithA(registers);
+                break;
+            case 0xB6:
+                ORAtAddressHLWithA(registers);
+                break;
+            case 0xB7:
+                ORAWithA(registers);
+                break;
+            case 0xB8:
+                CompareBWithA(registers);
+                break;
+            case 0xB9:
+                CompareCWithA(registers);
+                break;
+            case 0xBA:
+                CompareDWithA(registers);
+                break;
+            case 0xBB:
+                CompareEWithA(registers);
+                break;
+            case 0xBC:
+                CompareHWithA(registers);
+                break;
+            case 0xBD:
+                CompareLWithA(registers);
+                break;
+            case 0xBE:
+                CompareAtAddressHLWithA(registers);
+                break;
+            case 0xBF:
+                CompareAWithA(registers);
+                break;
+            case 0xE6:
+                ANDD8WithA(registers);
+                break;
+            case 0xEE:
+                XORD8WithA(registers);
+                break;
+            case 0xF6:
+                ORD8WithA(registers);
+                break;
+            case 0xFE:
+                CompareD8WithA(registers);
+                break;
+            default:
+                throw new NotImplementedException($"Opcode 0x{opCode:X2} not implemented in LogicInstructions.");
+        }
+    }
 }

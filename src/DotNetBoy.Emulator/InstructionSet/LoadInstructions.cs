@@ -1,51 +1,10 @@
-﻿using System.Diagnostics;
-using DotNetBoy.Emulator.InstructionSet.Interfaces;
+﻿using DotNetBoy.Emulator.InstructionSet.Interfaces;
 using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.InstructionSet;
 
-public class LoadInstructions : IInstructionSet
+public class LoadInstructions(IMmuService mmuService, IClockService clockService) : IInstructionSet
 {
-    private readonly IMmuService _mmuService;
-    private readonly IClockService _clockService;
-
-    public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
-
-    public LoadInstructions(IMmuService mmuService, IClockService clockService)
-    {
-        Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
-        {
-            { 0x01, LoadD16IntoBC },
-            { 0x06, LoadD8IntoB },
-            { 0x0E, LoadD8IntoC },
-            { 0x11, LoadD16IntoDE },
-            { 0x16, LoadD8IntoD },
-            { 0x0A, LoadAtAddressBCIntoA },
-            { 0x1A, LoadAtAddressDEIntoA },
-            { 0x1E, LoadD8IntoE },
-            { 0x21, LoadD16IntoHL },
-            { 0x26, LoadD8IntoH },
-            { 0x2A, LoadAtAddressHLIntoAIncrementHL },
-            { 0x3A, LoadAtAddressHLIntoADecrementHL },
-            { 0x2E, LoadD8IntoL },
-            { 0x3E, LoadD8IntoA },
-            { 0x31, LoadD16IntoStackPointer },
-            { 0x46, LoadAtAddressHLIntoB },
-            { 0x4E, LoadAtAddressHLIntoC },
-            { 0x56, LoadAtAddressHLIntoD },
-            { 0x5E, LoadAtAddressHLIntoE },
-            { 0x66, LoadAtAddressHLIntoH },
-            { 0x6E, LoadAtAddressHLIntoL },
-            { 0x7E, LoadAtAddressHLIntoA },
-            { 0xF0, LoadAtAddressFF00PlusD8IntoA },
-            { 0xF2, LoadAtAddressFF00PlusCIntoA },
-            { 0xF8, LoadStackPointerPlusS8IntoHL },
-            { 0xFA, LoadAtAddressA16IntoA }
-        };
-        _mmuService = mmuService;
-        _clockService = clockService;
-    }
-
     /// <summary>
     /// Load the next word from memory into the BC register
     /// </summary>
@@ -53,7 +12,6 @@ public class LoadInstructions : IInstructionSet
     public void LoadD16IntoBC(ICpuRegistersService registers)
     {
         registers.BC = LoadD16(registers);
-        
     }
 
     /// <summary>
@@ -89,8 +47,8 @@ public class LoadInstructions : IInstructionSet
     /// Verified with BGB
     public void LoadAtAddressBCIntoA(ICpuRegistersService registers)
     {
-        registers.A = _mmuService.ReadByte(registers.BC);
-        _clockService.Clock();
+        registers.A = mmuService.ReadByte(registers.BC);
+        clockService.Clock();
         registers.ProgramCounter += 1;
     }
 
@@ -101,8 +59,8 @@ public class LoadInstructions : IInstructionSet
     /// Verified with BGB
     public void LoadAtAddressDEIntoA(ICpuRegistersService registers)
     {
-        registers.A = _mmuService.ReadByte(registers.DE);
-        _clockService.Clock();
+        registers.A = mmuService.ReadByte(registers.DE);
+        clockService.Clock();
         registers.ProgramCounter += 1;
     }
 
@@ -175,10 +133,10 @@ public class LoadInstructions : IInstructionSet
     /// Verified against BGB
     public void LoadAtAddressHLIntoAIncrementHL(ICpuRegistersService registers)
     {
-        registers.A = _mmuService.ReadByte(registers.HL);
+        registers.A = mmuService.ReadByte(registers.HL);
         registers.HL++;
         registers.ProgramCounter += 1;
-        _clockService.Clock();
+        clockService.Clock();
     }
 
     /// <summary>
@@ -187,10 +145,10 @@ public class LoadInstructions : IInstructionSet
     /// 
     public void LoadAtAddressHLIntoADecrementHL(ICpuRegistersService registers)
     {
-        registers.A = _mmuService.ReadByte(registers.HL);
+        registers.A = mmuService.ReadByte(registers.HL);
         registers.HL--;
         registers.ProgramCounter += 1;
-        _clockService.Clock();
+        clockService.Clock();
     }
 
     /// <summary>
@@ -262,18 +220,18 @@ public class LoadInstructions : IInstructionSet
     public void LoadAtAddressFF00PlusD8IntoA(ICpuRegistersService registers)
     {
         var address =
-            (ushort)(0xFF00 + _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter)));
-        _clockService.Clock();
-        registers.A = _mmuService.ReadByte(address);
-        _clockService.Clock();
+            (ushort)(0xFF00 + mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter)));
+        clockService.Clock();
+        registers.A = mmuService.ReadByte(address);
+        clockService.Clock();
         registers.ProgramCounter += 2;
     }
 
     public void LoadAtAddressFF00PlusCIntoA(ICpuRegistersService registers)
     {
         var address = (ushort)(0xFF00 + registers.C);
-        registers.A = _mmuService.ReadByte(address);
-        _clockService.Clock(1);
+        registers.A = mmuService.ReadByte(address);
+        clockService.Clock();
         registers.ProgramCounter += 1;
     }
 
@@ -282,15 +240,15 @@ public class LoadInstructions : IInstructionSet
     /// </summary>
     public void LoadAtAddressA16IntoA(ICpuRegistersService registers)
     {
-        var address = _mmuService.ReadWordLittleEndian(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
-        registers.A = _mmuService.ReadByte(address);
+        var address = mmuService.ReadWordLittleEndian(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
+        registers.A = mmuService.ReadByte(address);
         registers.ProgramCounter += 3;
-        _clockService.Clock(3);
+        clockService.Clock(3);
     }
 
     public void LoadStackPointerPlusS8IntoHL(ICpuRegistersService registers)
     {
-        var toAddUnsigned = _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
+        var toAddUnsigned = mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
         var signedToAdd = InstructionUtilFunctions.ByteToSignedByte(toAddUnsigned);
         var resultInt = registers.StackPointer + signedToAdd;
         var result = (ushort)resultInt;
@@ -300,34 +258,121 @@ public class LoadInstructions : IInstructionSet
         registers.F.Carry = ((registers.StackPointer & 0xFF) + toAddUnsigned) > 0xFF;
         registers.HL = result;
         registers.ProgramCounter += 2;
-        _clockService.Clock(2);
+        clockService.Clock(2);
     }
 
     #region private methods
 
     private ushort LoadD16(ICpuRegistersService registers)
     {
-        var result = _mmuService.ReadWordLittleEndian(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
-        _clockService.Clock(2);
+        var result = mmuService.ReadWordLittleEndian(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
+        clockService.Clock(2);
         registers.ProgramCounter += 3;
         return result;
     }
 
     private byte LoadD8(ICpuRegistersService registers)
     {
-        var result = _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
-        _clockService.Clock();
+        var result = mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
+        clockService.Clock();
         registers.ProgramCounter += 2;
         return result;
     }
 
     private byte LoadByteAtAddressHL(ICpuRegistersService registers)
     {
-        var result = _mmuService.ReadByte(registers.HL);
+        var result = mmuService.ReadByte(registers.HL);
         registers.ProgramCounter += 1;
-        _clockService.Clock();
+        clockService.Clock();
         return result;
     }
 
     #endregion
+
+    public void ExecuteInstruction(byte opCode, ICpuRegistersService registers)
+    {
+        switch (opCode)
+        {
+            case 0x01:
+                LoadD16IntoBC(registers);
+                break;
+            case 0x06:
+                LoadD8IntoB(registers);
+                break;
+            case 0x0E:
+                LoadD8IntoC(registers);
+                break;
+            case 0x11:
+                LoadD16IntoDE(registers);
+                break;
+            case 0x16:
+                LoadD8IntoD(registers);
+                break;
+            case 0x0A:
+                LoadAtAddressBCIntoA(registers);
+                break;
+            case 0x1A:
+                LoadAtAddressDEIntoA(registers);
+                break;
+            case 0x1E:
+                LoadD8IntoE(registers);
+                break;
+            case 0x21:
+                LoadD16IntoHL(registers);
+                break;
+            case 0x26:
+                LoadD8IntoH(registers);
+                break;
+            case 0x2A:
+                LoadAtAddressHLIntoAIncrementHL(registers);
+                break;
+            case 0x3A:
+                LoadAtAddressHLIntoADecrementHL(registers);
+                break;
+            case 0x2E:
+                LoadD8IntoL(registers);
+                break;
+            case 0x3E:
+                LoadD8IntoA(registers);
+                break;
+            case 0x31:
+                LoadD16IntoStackPointer(registers);
+                break;
+            case 0x46:
+                LoadAtAddressHLIntoB(registers);
+                break;
+            case 0x4E:
+                LoadAtAddressHLIntoC(registers);
+                break;
+            case 0x56:
+                LoadAtAddressHLIntoD(registers);
+                break;
+            case 0x5E:
+                LoadAtAddressHLIntoE(registers);
+                break;
+            case 0x66:
+                LoadAtAddressHLIntoH(registers);
+                break;
+            case 0x6E:
+                LoadAtAddressHLIntoL(registers);
+                break;
+            case 0x7E:
+                LoadAtAddressHLIntoA(registers);
+                break;
+            case 0xF0:
+                LoadAtAddressFF00PlusD8IntoA(registers);
+                break;
+            case 0xF2:
+                LoadAtAddressFF00PlusCIntoA(registers);
+                break;
+            case 0xF8:
+                LoadStackPointerPlusS8IntoHL(registers);
+                break;
+            case 0xFA:
+                LoadAtAddressA16IntoA(registers);
+                break;
+            default:
+                throw new NotImplementedException($"Opcode 0x{opCode:X2} not implemented in LoadInstructions.");
+        }
+    }
 }

@@ -4,22 +4,9 @@ using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.InstructionSet;
 
-public class RotateInstructions : RotateInstructionsBase, IInstructionSet
+public class RotateInstructions(IClockService clockService) : RotateInstructionsBase(clockService)
 {
-    private readonly IClockService _clockService;
-    public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
 
-    public RotateInstructions(IClockService clockService) : base(clockService)
-    {
-        _clockService = clockService;
-        Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
-        {
-            { 0x07, RotateALeft },
-            { 0x0F, RotateARight },
-            { 0x17, RotateALeftThroughCarry },
-            { 0x1F, RotateARightThroughCarry }
-        };
-    }
 
     public void RotateALeft(ICpuRegistersService registers)
     {
@@ -40,5 +27,26 @@ public class RotateInstructions : RotateInstructionsBase, IInstructionSet
     public void RotateARightThroughCarry(ICpuRegistersService registers)
     {
         registers.A = RotateByteRightThroughCarry(registers.A, registers, false);
+    }
+
+    public void ExecuteInstruction(byte opCode, ICpuRegistersService registers)
+    {
+        switch (opCode)
+        {
+            case 0x07:
+                RotateALeft(registers);
+                break;
+            case 0x0F:
+                RotateARight(registers);
+                break;
+            case 0x17:
+                RotateALeftThroughCarry(registers);
+                break;
+            case 0x1F:
+                RotateARightThroughCarry(registers);
+                break;
+            default:
+                throw new NotImplementedException($"Opcode 0x{opCode:X2} not implemented.");
+        }
     }
 }

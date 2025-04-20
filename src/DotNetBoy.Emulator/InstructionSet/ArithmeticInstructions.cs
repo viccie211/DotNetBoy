@@ -3,62 +3,8 @@ using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.InstructionSet;
 
-public class ArithmeticInstructions : IInstructionSet
+public class ArithmeticInstructions(IClockService clockService, IMmuService mmuService) : IInstructionSet
 {
-    private readonly IClockService _clockService;
-    private readonly IMmuService _mmuService;
-    public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; init; }
-
-    public ArithmeticInstructions(IClockService clockService, IMmuService mmuService)
-    {
-        _clockService = clockService;
-        _mmuService = mmuService;
-        Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
-        {
-            { 0x09, AddBCToHL },
-            { 0x19, AddDEToHL },
-            { 0x29, AddHLToHL },
-            { 0x39, AddStackPointerToHL },
-            { 0x80, AddBToA },
-            { 0x81, AddCToA },
-            { 0x82, AddDToA },
-            { 0x83, AddEToA },
-            { 0x84, AddHToA },
-            { 0x85, AddLToA },
-            { 0x86, AddAtAddressHLToA },
-            { 0x87, AddAToA },
-            { 0x88, AddBWithCarryToA },
-            { 0x89, AddCWithCarryToA },
-            { 0x8A, AddDWithCarryToA },
-            { 0x8B, AddEWithCarryToA },
-            { 0x8C, AddHWithCarryToA },
-            { 0x8D, AddLWithCarryToA },
-            { 0x8E, AddAtAddressHLWithCarryToA },
-            { 0x8F, AddAWithCarryToA },
-            { 0x90, SubtractBFromA },
-            { 0x91, SubtractCFromA },
-            { 0x92, SubtractDFromA },
-            { 0x93, SubtractEFromA },
-            { 0x94, SubtractHFromA },
-            { 0x95, SubtractLFromA },
-            { 0x96, SubtractAtAddressHLFromA },
-            { 0x97, SubtractAFromA },
-            { 0x98, SubtractBWithCarryFromA },
-            { 0x99, SubtractCWithCarryFromA },
-            { 0x9A, SubtractDWithCarryFromA },
-            { 0x9B, SubtractEWithCarryFromA },
-            { 0x9C, SubtractHWithCarryFromA },
-            { 0x9D, SubtractLWithCarryFromA },
-            { 0x9E, SubtractAtAddressHLWithCarryFromA },
-            { 0x9F, SubtractAWithCarryFromA },
-            { 0xC6, AddD8ToA },
-            { 0xCE, AddD8WithCarryToA },
-            { 0xD6, SubtractD8FromA },
-            { 0xDE, SubtractD8WithCarryFromA },
-            { 0xE8, AddSignedByteToStackPointer }
-        };
-    }
-
     #region Add
 
     /// <summary>
@@ -123,8 +69,8 @@ public class ArithmeticInstructions : IInstructionSet
 
     public void AddAtAddressHLToA(ICpuRegistersService registers)
     {
-        var toAdd = _mmuService.ReadByte(registers.HL);
-        _clockService.Clock();
+        var toAdd = mmuService.ReadByte(registers.HL);
+        clockService.Clock();
         AddByteToA(toAdd, registers);
     }
 
@@ -145,8 +91,8 @@ public class ArithmeticInstructions : IInstructionSet
     /// 
     public void AddD8ToA(ICpuRegistersService registers)
     {
-        var toAdd = _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
-        _clockService.Clock();
+        var toAdd = mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
+        clockService.Clock();
         registers.ProgramCounter += 1;
         AddByteToA(toAdd, registers);
     }
@@ -187,8 +133,8 @@ public class ArithmeticInstructions : IInstructionSet
 
     public void AddAtAddressHLWithCarryToA(ICpuRegistersService registers)
     {
-        var toAdd = _mmuService.ReadByte(registers.HL);
-        _clockService.Clock();
+        var toAdd = mmuService.ReadByte(registers.HL);
+        clockService.Clock();
         AddByteWithCarryToA(toAdd, registers);
     }
 
@@ -199,8 +145,8 @@ public class ArithmeticInstructions : IInstructionSet
 
     public void AddD8WithCarryToA(ICpuRegistersService registers)
     {
-        var toAdd = _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
-        _clockService.Clock();
+        var toAdd = mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
+        clockService.Clock();
         registers.ProgramCounter += 1;
         AddByteWithCarryToA(toAdd, registers);
     }
@@ -241,8 +187,8 @@ public class ArithmeticInstructions : IInstructionSet
 
     public void SubtractAtAddressHLFromA(ICpuRegistersService registers)
     {
-        var toSubtract = _mmuService.ReadByte(registers.HL);
-        _clockService.Clock();
+        var toSubtract = mmuService.ReadByte(registers.HL);
+        clockService.Clock();
         SubtractByteFromA(toSubtract, registers);
     }
 
@@ -258,8 +204,8 @@ public class ArithmeticInstructions : IInstructionSet
     /// 
     public void SubtractD8FromA(ICpuRegistersService registers)
     {
-        var toSubtract = _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
-        _clockService.Clock();
+        var toSubtract = mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
+        clockService.Clock();
         registers.ProgramCounter += 1;
         SubtractByteFromA(toSubtract, registers);
     }
@@ -300,8 +246,8 @@ public class ArithmeticInstructions : IInstructionSet
 
     public void SubtractAtAddressHLWithCarryFromA(ICpuRegistersService registers)
     {
-        var toSubtract = _mmuService.ReadByte(registers.HL);
-        _clockService.Clock();
+        var toSubtract = mmuService.ReadByte(registers.HL);
+        clockService.Clock();
         SubtractByteWithCarryFromA(toSubtract, registers);
     }
 
@@ -317,8 +263,8 @@ public class ArithmeticInstructions : IInstructionSet
     /// 
     public void SubtractD8WithCarryFromA(ICpuRegistersService registers)
     {
-        var toSubtract = _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
-        _clockService.Clock();
+        var toSubtract = mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
+        clockService.Clock();
         registers.ProgramCounter += 1;
         SubtractByteWithCarryFromA(toSubtract, registers);
     }
@@ -352,7 +298,7 @@ public class ArithmeticInstructions : IInstructionSet
 
     public void AddSignedByteToStackPointer(ICpuRegistersService registers)
     {
-        var toAddUnsigned = _mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
+        var toAddUnsigned = mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));
         var signedToAdd = InstructionUtilFunctions.ByteToSignedByte(toAddUnsigned);
         var resultInt = registers.StackPointer + signedToAdd;
         var result = (ushort)resultInt;
@@ -362,7 +308,7 @@ public class ArithmeticInstructions : IInstructionSet
         registers.F.Carry = (result & 0xff) < (registers.StackPointer & 0xff);
         registers.StackPointer = result;
         registers.ProgramCounter += 2;
-        _clockService.Clock(3);
+        clockService.Clock(3);
     }
 
 
@@ -418,10 +364,142 @@ public class ArithmeticInstructions : IInstructionSet
         registers.F.HalfCarry = InstructionUtilFunctions.HalfCarryFor16BitAddition(a, b);
         registers.F.Subtract = false;
         var result = (ushort)(a + b);
-        _clockService.Clock();
+        clockService.Clock();
         registers.ProgramCounter += 1;
         return result;
     }
 
     #endregion
+
+    public void ExecuteInstruction(byte opCode, ICpuRegistersService registers)
+    {
+        switch (opCode)
+        {
+            case 0x09:
+                AddBCToHL(registers);
+                break;
+            case 0x19:
+                AddDEToHL(registers);
+                break;
+            case 0x29:
+                AddHLToHL(registers);
+                break;
+            case 0x39:
+                AddStackPointerToHL(registers);
+                break;
+            case 0x80:
+                AddBToA(registers);
+                break;
+            case 0x81:
+                AddCToA(registers);
+                break;
+            case 0x82:
+                AddDToA(registers);
+                break;
+            case 0x83:
+                AddEToA(registers);
+                break;
+            case 0x84:
+                AddHToA(registers);
+                break;
+            case 0x85:
+                AddLToA(registers);
+                break;
+            case 0x86:
+                AddAtAddressHLToA(registers);
+                break;
+            case 0x87:
+                AddAToA(registers);
+                break;
+            case 0x88:
+                AddBWithCarryToA(registers);
+                break;
+            case 0x89:
+                AddCWithCarryToA(registers);
+                break;
+            case 0x8A:
+                AddDWithCarryToA(registers);
+                break;
+            case 0x8B:
+                AddEWithCarryToA(registers);
+                break;
+            case 0x8C:
+                AddHWithCarryToA(registers);
+                break;
+            case 0x8D:
+                AddLWithCarryToA(registers);
+                break;
+            case 0x8E:
+                AddAtAddressHLWithCarryToA(registers);
+                break;
+            case 0x8F:
+                AddAWithCarryToA(registers);
+                break;
+            case 0x90:
+                SubtractBFromA(registers);
+                break;
+            case 0x91:
+                SubtractCFromA(registers);
+                break;
+            case 0x92:
+                SubtractDFromA(registers);
+                break;
+            case 0x93:
+                SubtractEFromA(registers);
+                break;
+            case 0x94:
+                SubtractHFromA(registers);
+                break;
+            case 0x95:
+                SubtractLFromA(registers);
+                break;
+            case 0x96:
+                SubtractAtAddressHLFromA(registers);
+                break;
+            case 0x97:
+                SubtractAFromA(registers);
+                break;
+            case 0x98:
+                SubtractBWithCarryFromA(registers);
+                break;
+            case 0x99:
+                SubtractCWithCarryFromA(registers);
+                break;
+            case 0x9A:
+                SubtractDWithCarryFromA(registers);
+                break;
+            case 0x9B:
+                SubtractEWithCarryFromA(registers);
+                break;
+            case 0x9C:
+                SubtractHWithCarryFromA(registers);
+                break;
+            case 0x9D:
+                SubtractLWithCarryFromA(registers);
+                break;
+            case 0x9E:
+                SubtractAtAddressHLWithCarryFromA(registers);
+                break;
+            case 0x9F:
+                SubtractAWithCarryFromA(registers);
+                break;
+            case 0xC6:
+                AddD8ToA(registers);
+                break;
+            case 0xCE:
+                AddD8WithCarryToA(registers);
+                break;
+            case 0xD6:
+                SubtractD8FromA(registers);
+                break;
+            case 0xDE:
+                SubtractD8WithCarryFromA(registers);
+                break;
+            case 0xE8:
+                AddSignedByteToStackPointer(registers);
+                break;
+            default:
+                throw new NotImplementedException($"Opcode 0x{opCode:X2} not implemented.");
+        }
+    }
 }

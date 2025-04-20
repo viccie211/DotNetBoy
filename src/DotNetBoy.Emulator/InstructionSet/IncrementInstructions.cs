@@ -4,34 +4,8 @@ using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.InstructionSet;
 
-public class IncrementInstructions : IInstructionSet
+public class IncrementInstructions(IClockService clockService, IMmuService mmuService) : IInstructionSet
 {
-    private readonly IClockService _clockService;
-    private readonly IMmuService _mmuService;
-
-    public IncrementInstructions(IClockService clockService, IMmuService mmuService)
-    {
-        Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
-        {
-            { 0x03, IncrementBC },
-            { 0x04, IncrementB },
-            { 0x0C, IncrementC },
-            { 0x13, IncrementDE },
-            { 0x14, IncrementD },
-            { 0x1C, IncrementE },
-            { 0x23, IncrementHL },
-            { 0x24, IncrementH },
-            { 0x2C, IncrementL },
-            { 0x33, IncrementStackPointer },
-            { 0x34, IncrementAtAddressHL },
-            { 0x3C, IncrementA }
-        };
-        _clockService = clockService;
-        _mmuService = mmuService;
-    }
-
-    public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
-
     /// <summary>
     /// Increment the BC register by one. 
     /// </summary>
@@ -133,12 +107,58 @@ public class IncrementInstructions : IInstructionSet
 
     public void IncrementAtAddressHL(ICpuRegistersService registers)
     {
-        var toIncrement = _mmuService.ReadByte(registers.HL);
-        _clockService.Clock();
+        var toIncrement = mmuService.ReadByte(registers.HL);
+        clockService.Clock();
         var incremented = Increment8Bits(toIncrement, registers);
-        _mmuService.WriteByte(registers.HL, incremented);
-        _clockService.Clock();
+        mmuService.WriteByte(registers.HL, incremented);
+        clockService.Clock();
     }
+    
+    public void ExecuteInstruction(byte opCode, ICpuRegistersService registers)
+    {
+        switch (opCode)
+        {
+            case 0x03:
+                IncrementBC(registers);
+                break;
+            case 0x04:
+                IncrementB(registers);
+                break;
+            case 0x0C:
+                IncrementC(registers);
+                break;
+            case 0x13:
+                IncrementDE(registers);
+                break;
+            case 0x14:
+                IncrementD(registers);
+                break;
+            case 0x1C:
+                IncrementE(registers);
+                break;
+            case 0x23:
+                IncrementHL(registers);
+                break;
+            case 0x24:
+                IncrementH(registers);
+                break;
+            case 0x2C:
+                IncrementL(registers);
+                break;
+            case 0x33:
+                IncrementStackPointer(registers);
+                break;
+            case 0x34:
+                IncrementAtAddressHL(registers);
+                break;
+            case 0x3C:
+                IncrementA(registers);
+                break;
+            default:
+                throw new NotImplementedException($"Opcode 0x{opCode:X2} not implemented in IncrementInstructions.");
+        }
+    }
+
 
     #region private methods
 
@@ -155,7 +175,7 @@ public class IncrementInstructions : IInstructionSet
     private ushort Increment16Bits(ushort initial, ICpuRegistersService registers)
     {
         var result = (ushort)(initial + 1);
-        _clockService.Clock();
+        clockService.Clock();
         registers.ProgramCounter += 1;
         return result;
     }
