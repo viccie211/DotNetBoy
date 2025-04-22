@@ -106,8 +106,11 @@ public class PpuService : IPpuService
         {
             Mode = PpuModes.ActivePicture;
             var screenX = Dot - 80;
-            RenderBackgroundAndWindow(ScanLine, screenX);
-            RenderSprites(ScanLine, screenX);
+            if (screenX > 0 && screenX < 160)
+            {
+                RenderBackgroundAndWindow(ScanLine, screenX);
+                RenderSprites(ScanLine, screenX);
+            }
         }
         else
         {
@@ -167,7 +170,7 @@ public class PpuService : IPpuService
         for (int i = 0; i < 40; i++)
         {
             var currentOamObject = OamObjects[i];
-            int spriteY = currentOamObject.YPosition;
+            int spriteY = currentOamObject.YPosition - 16;
 
             if (ScanLine >= spriteY && ScanLine < spriteY + spriteHeight)
             {
@@ -220,25 +223,29 @@ public class PpuService : IPpuService
 
         foreach (var sprite in _oamObjectsThisScanLine.OrderByDescending(s => s.XPosition))
         {
-            if (screenX >= sprite.XPosition && screenX < sprite.XPosition + 8)
+            if (sprite.XPosition == 0 || sprite.XPosition >= 168) continue;
+            if (!LcdControlRegister.SpriteSize && sprite.YPosition <= 7 || LcdControlRegister.SpriteSize && sprite.YPosition == 0 || sprite.YPosition >= 160) continue;
+
+            var onScreenSpriteXPosition = sprite.XPosition - 8;
+            var onScreenSpriteYPosition = sprite.YPosition - 16;
+
+
+            int tilePixelX = screenX - onScreenSpriteXPosition;
+            int tilePixelY = scanLine - onScreenSpriteYPosition;
+
+
+            if (sprite.Flags.XFlip) tilePixelX = 7 - tilePixelX; // X flip
+            if (sprite.Flags.YFlip) tilePixelY = 7 - tilePixelY; // Y flip
+
+            int colorIndex = _tileService.GetSpritePixel(sprite.TileIndex, tilePixelX, tilePixelY, LcdControlRegister.SpriteSize);
+
+            if (colorIndex != 0) // 0 is transparent for sprites
             {
-                int tilePixelX = screenX - sprite.XPosition;
-                int tilePixelY = scanLine - sprite.YPosition;
-
-                if ((sprite.Flags & 0x40) != 0) tilePixelX = 7 - tilePixelX; // X flip
-                if ((sprite.Flags & 0x80) != 0) tilePixelY = 7 - tilePixelY; // Y flip
-
-                int colorIndex = _tileService.GetSpritePixel(sprite.TileIndex, tilePixelX, tilePixelY);
-
-                if (colorIndex != 0) // 0 is transparent for sprites
+                if (!sprite.Flags.Priority || FrameBuffer[scanLine, screenX] == 0)
                 {
-                    bool bgPriority = (sprite.Flags & 0x80) != 0;
-                    if (!bgPriority || FrameBuffer[scanLine, screenX] == 0)
-                    {
-                        byte paletteRegister = (sprite.Flags & 0x10) != 0 ? _mmuService.ReadByte(0xFF49) : _mmuService.ReadByte(0xFF48);
-                        int color = (paletteRegister >> (colorIndex * 2)) & 0x03;
-                        FrameBuffer[scanLine, screenX] = color;
-                    }
+                    byte paletteRegister = sprite.Flags.DmgPalette ? _mmuService.ReadByte(0xFF49) : _mmuService.ReadByte(0xFF48);
+                    int color = (paletteRegister >> (colorIndex * 2)) & 0x03;
+                    FrameBuffer[scanLine, screenX] = color;
                 }
             }
         }

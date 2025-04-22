@@ -12,11 +12,11 @@ public abstract class LoadInstructionTestsBase
     {
         var mmuServiceMock = new Mock<IMmuService>();
         mmuServiceMock.Setup(m => m.ReadWordLittleEndian(0x0001)).Returns(0xFFAA);
-        mmuServiceMock.Setup(m => m.ReadByte(0x0000)).Returns(0x67);
-        mmuServiceMock.Setup(m => m.ReadByte(0xFFAA)).Returns(0x88);
-        mmuServiceMock.Setup(m => m.ReadByte(0x1010)).Returns(0xAB);
-        mmuServiceMock.Setup(m => m.ReadByte(0xFFAB)).Returns(0x12);
-        mmuServiceMock.Setup(m => m.ReadByte(0xFFFF)).Returns(0x34);
+        mmuServiceMock.Setup(m => m.ReadByte(0x0000,false)).Returns(0x67);
+        mmuServiceMock.Setup(m => m.ReadByte(0xFFAA,false)).Returns(0x88);
+        mmuServiceMock.Setup(m => m.ReadByte(0x1010,false)).Returns(0xAB);
+        mmuServiceMock.Setup(m => m.ReadByte(0xFFAB,false)).Returns(0x12);
+        mmuServiceMock.Setup(m => m.ReadByte(0xFFFF,false)).Returns(0x34);
 
         var clockServiceMock = new Mock<IClockService>();
 

@@ -52,7 +52,7 @@ public class StoreInstructionsTests
         const ushort expectedProgramCounter = 0x0002;
         byte writtenByte = 0x00;
 
-        _mmuServiceMock.Setup(m => m.ReadByte(0x0001)).Returns(0xAA);
+        _mmuServiceMock.Setup(m => m.ReadByte(0x0001,false)).Returns(0xAA);
         _mmuServiceMock.Setup(m => m.WriteByte(0xFFAA, It.IsAny<byte>())).Callback((ushort address, byte value) => writtenByte = value);
         _registers.A = 0xFF;
         _instructions.StoreAtAddressFF00PlusD8FromA(_registers);

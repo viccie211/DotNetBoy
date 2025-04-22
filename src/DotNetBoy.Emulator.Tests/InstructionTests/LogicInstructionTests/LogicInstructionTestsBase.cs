@@ -11,12 +11,12 @@ public abstract class LogicInstructionsTestsBase
     public void SetUp()
     {
         var mmuServiceMock = new Mock<IMmuService>();
-        mmuServiceMock.Setup(m => m.ReadByte(0x0001)).Returns(0x00);
-        mmuServiceMock.Setup(m => m.ReadByte(0x0010)).Returns(0x01);
-        mmuServiceMock.Setup(m => m.ReadByte(0x0020)).Returns(0x10);
-        mmuServiceMock.Setup(m => m.ReadByte(0x0030)).Returns(0x0F);
-        mmuServiceMock.Setup(m => m.ReadByte(0x0041)).Returns(0xFF);
-        mmuServiceMock.Setup(m => m.ReadByte(0x0050)).Returns(0x88);
+        mmuServiceMock.Setup(m => m.ReadByte(0x0001,false)).Returns(0x00);
+        mmuServiceMock.Setup(m => m.ReadByte(0x0010,false)).Returns(0x01);
+        mmuServiceMock.Setup(m => m.ReadByte(0x0020,false)).Returns(0x10);
+        mmuServiceMock.Setup(m => m.ReadByte(0x0030,false)).Returns(0x0F);
+        mmuServiceMock.Setup(m => m.ReadByte(0x0041,false)).Returns(0xFF);
+        mmuServiceMock.Setup(m => m.ReadByte(0x0050,false)).Returns(0x88);
         var clockServiceMock = new Mock<IClockService>();
 
         _registers = new TestCpuRegisterService();

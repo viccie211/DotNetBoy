@@ -22,10 +22,10 @@ public abstract class JumpInstructionTestsBase
         byteUshortServiceMock.Setup(b => b.CombineBytes(0x00, 0x23)).Returns(0x0023);
 
         _mmuServiceMock.Setup(m => m.ReadWordLittleEndian(0x0001)).Returns(0xFFAA);
-        _mmuServiceMock.Setup(m => m.ReadByte(0x0001)).Returns(0x08);
-        _mmuServiceMock.Setup(m => m.ReadByte(0x0010)).Returns(0xFF);
-        _mmuServiceMock.Setup(m => m.ReadByte(0xFFFD)).Returns(0x00);
-        _mmuServiceMock.Setup(m => m.ReadByte(0xFFFC)).Returns(0x23);
+        _mmuServiceMock.Setup(m => m.ReadByte(0x0001,false)).Returns(0x08);
+        _mmuServiceMock.Setup(m => m.ReadByte(0x0010,false)).Returns(0xFF);
+        _mmuServiceMock.Setup(m => m.ReadByte(0xFFFD,false)).Returns(0x00);
+        _mmuServiceMock.Setup(m => m.ReadByte(0xFFFC,false)).Returns(0x23);
         _mmuServiceMock.Setup(m => m.ReadWordLittleEndian(0x0021)).Returns(0xCCDD);
         _mmuServiceMock.Setup(m => m.ReadWordLittleEndian(0x0023)).Returns(0xABCD);
 

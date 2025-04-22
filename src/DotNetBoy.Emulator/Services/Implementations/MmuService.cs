@@ -178,7 +178,7 @@ public class MmuService : IMmuService
 
     public byte[] GetOamBytes()
     {
-        return MappedMemory[new Range(AddressConsts.OAM_BASE_ADDRESS, AddressConsts.OAM_TOP_ADDRESS)];
+        return MappedMemory.Skip(AddressConsts.OAM_BASE_ADDRESS).Take(AddressConsts.OAM_TOP_ADDRESS - AddressConsts.OAM_BASE_ADDRESS).ToArray();
     }
 
     public OamObject[] GetOamObjects()
@@ -200,7 +200,7 @@ public class MmuService : IMmuService
     {
         if (_dmaCycles == 0)
             return;
-        
+
         if (_dmaCycles <= 160)
         {
             byte index = (byte)(160 - _dmaCycles);
