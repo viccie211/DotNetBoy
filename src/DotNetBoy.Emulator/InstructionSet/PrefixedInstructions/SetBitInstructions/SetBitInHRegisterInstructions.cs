@@ -3,25 +3,8 @@ using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.SetBitInstructions;
 
-public class SetBitInHRegisterInstructions : SetBitInstructionsBase, IInstructionSet
+public class SetBitInHRegisterInstructions(IClockService clockService) : SetBitInstructionsBase(clockService), IInstructionSet
 {
-    public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
-
-    public SetBitInHRegisterInstructions(IClockService clockService) : base(clockService)
-    {
-        Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
-        {
-            { 0xC4, SetBit0InHRegister },
-            { 0xCC, SetBit1InHRegister },
-            { 0xD4, SetBit2InHRegister },
-            { 0xDC, SetBit3InHRegister },
-            { 0xE4, SetBit4InHRegister },
-            { 0xEC, SetBit5InHRegister },
-            { 0xF4, SetBit6InHRegister },
-            { 0xFC, SetBit7InHRegister },
-        };
-    }
-
     public void SetBit0InHRegister(ICpuRegistersService registers)
     {
         registers.H = SetBit(0, registers.H, registers);
@@ -61,4 +44,38 @@ public class SetBitInHRegisterInstructions : SetBitInstructionsBase, IInstructio
     {
         registers.H = SetBit(7, registers.H, registers);
     }
+    
+    public void ExecuteInstruction(byte opCode, ICpuRegistersService registers)
+    {
+        switch (opCode)
+        {
+            case 0xC4:
+                SetBit0InHRegister(registers);
+                break;
+            case 0xCC:
+                SetBit1InHRegister(registers);
+                break;
+            case 0xD4:
+                SetBit2InHRegister(registers);
+                break;
+            case 0xDC:
+                SetBit3InHRegister(registers);
+                break;
+            case 0xE4:
+                SetBit4InHRegister(registers);
+                break;
+            case 0xEC:
+                SetBit5InHRegister(registers);
+                break;
+            case 0xF4:
+                SetBit6InHRegister(registers);
+                break;
+            case 0xFC:
+                SetBit7InHRegister(registers);
+                break;
+            default:
+                throw new NotImplementedException($"Opcode 0x{opCode:X2} not implemented in SetBitInHRegisterInstructions.");
+        }
+    }
+
 }
