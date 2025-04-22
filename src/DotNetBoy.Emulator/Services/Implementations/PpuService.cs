@@ -227,8 +227,9 @@ public class PpuService : IPpuService
             if (!LcdControlRegister.SpriteSize && sprite.YPosition <= 7 || LcdControlRegister.SpriteSize && sprite.YPosition == 0 || sprite.YPosition >= 160) continue;
 
             var onScreenSpriteXPosition = sprite.XPosition - 8;
-            var onScreenSpriteYPosition = sprite.YPosition - 16;
+            if (screenX < onScreenSpriteXPosition || screenX >= onScreenSpriteXPosition + 8) continue;
 
+            var onScreenSpriteYPosition = sprite.YPosition - 16;
 
             int tilePixelX = screenX - onScreenSpriteXPosition;
             int tilePixelY = scanLine - onScreenSpriteYPosition;
