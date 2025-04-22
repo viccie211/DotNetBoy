@@ -3,78 +3,8 @@ using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.InstructionSet;
 
-public class LoadBetweenRegistersInstructions : IInstructionSet
+public class LoadBetweenRegistersInstructions(IClockService clockService) : IInstructionSet
 {
-    private readonly IClockService _clockService;
-
-    public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
-
-    public LoadBetweenRegistersInstructions(IClockService clockService)
-    {
-        Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
-        {
-            { 0x40, LoadBIntoB },
-            { 0x41, LoadCIntoB },
-            { 0x42, LoadDIntoB },
-            { 0x43, LoadEIntoB },
-            { 0x44, LoadHIntoB },
-            { 0x45, LoadLIntoB },
-            //0x46 is in LoadInstructions since it doesn't load between registers
-            { 0x47, LoadAIntoB },
-            { 0x48, LoadBIntoC },
-            { 0x49, LoadCIntoC },
-            { 0x4A, LoadDIntoC },
-            { 0x4B, LoadEIntoC },
-            { 0x4C, LoadHIntoC },
-            { 0x4D, LoadLIntoC },
-            //0x4E is in LoadInstructions since it doesn't load between registers
-            { 0x4F, LoadAIntoC },
-            { 0x50, LoadBIntoD },
-            { 0x51, LoadCIntoD },
-            { 0x52, LoadDIntoD },
-            { 0x53, LoadEIntoD },
-            { 0x54, LoadHIntoD },
-            { 0x55, LoadLIntoD },
-            //0x56 is in LoadInstructions since it doesn't load between registers
-            { 0x57, LoadAIntoD },
-            { 0x58, LoadBIntoE },
-            { 0x59, LoadCIntoE },
-            { 0x5A, LoadDIntoE },
-            { 0x5B, LoadEIntoE },
-            { 0x5C, LoadHIntoE },
-            { 0x5D, LoadLIntoE },
-            //0x5E is in LoadInstructions since it doesn't load between registers
-            { 0x5F, LoadAIntoE },
-            { 0x60, LoadBIntoH },
-            { 0x61, LoadCIntoH },
-            { 0x62, LoadDIntoH },
-            { 0x63, LoadEIntoH },
-            { 0x64, LoadHIntoH },
-            { 0x65, LoadLIntoH },
-            //0x66 is in LoadInstructions since it doesn't load between registers
-            { 0x67, LoadAIntoH },
-            { 0x68, LoadBIntoL },
-            { 0x69, LoadCIntoL },
-            { 0x6A, LoadDIntoL },
-            { 0x6B, LoadEIntoL },
-            { 0x6C, LoadHIntoL },
-            { 0x6D, LoadLIntoL },
-            //0x6E is in LoadInstructions since it doesn't load between registers
-            { 0x6F, LoadAIntoL },
-            { 0x78, LoadBIntoA },
-            { 0x79, LoadCIntoA },
-            { 0x7A, LoadDIntoA },
-            { 0x7B, LoadEIntoA },
-            { 0x7C, LoadHIntoA },
-            { 0x7D, LoadLIntoA },
-            //0x7E is in LoadInstructions since it doesn't load between registers
-            { 0x7F, LoadAIntoA },
-            { 0xF9, LoadHLIntoStackPointer }
-        };
-
-        _clockService = clockService;
-    }
-
     #region LoadIntoB
 
     /// <summary>
@@ -547,7 +477,7 @@ public class LoadBetweenRegistersInstructions : IInstructionSet
     public void LoadHLIntoStackPointer(ICpuRegistersService registers)
     {
         registers.StackPointer = registers.HL;
-        _clockService.Clock();
+        clockService.Clock();
         registers.ProgramCounter += 1;
     }
 
@@ -591,5 +521,164 @@ public class LoadBetweenRegistersInstructions : IInstructionSet
     {
         registers.L = toLoad;
         registers.ProgramCounter += 1;
+    }
+
+    public void ExecuteInstruction(byte opCode, ICpuRegistersService registers)
+    {
+        switch (opCode)
+        {
+            case 0x40:
+                LoadBIntoB(registers);
+                break;
+            case 0x41:
+                LoadCIntoB(registers);
+                break;
+            case 0x42:
+                LoadDIntoB(registers);
+                break;
+            case 0x43:
+                LoadEIntoB(registers);
+                break;
+            case 0x44:
+                LoadHIntoB(registers);
+                break;
+            case 0x45:
+                LoadLIntoB(registers);
+                break;
+            case 0x47:
+                LoadAIntoB(registers);
+                break;
+            case 0x48:
+                LoadBIntoC(registers);
+                break;
+            case 0x49:
+                LoadCIntoC(registers);
+                break;
+            case 0x4A:
+                LoadDIntoC(registers);
+                break;
+            case 0x4B:
+                LoadEIntoC(registers);
+                break;
+            case 0x4C:
+                LoadHIntoC(registers);
+                break;
+            case 0x4D:
+                LoadLIntoC(registers);
+                break;
+            case 0x4F:
+                LoadAIntoC(registers);
+                break;
+            case 0x50:
+                LoadBIntoD(registers);
+                break;
+            case 0x51:
+                LoadCIntoD(registers);
+                break;
+            case 0x52:
+                LoadDIntoD(registers);
+                break;
+            case 0x53:
+                LoadEIntoD(registers);
+                break;
+            case 0x54:
+                LoadHIntoD(registers);
+                break;
+            case 0x55:
+                LoadLIntoD(registers);
+                break;
+            case 0x57:
+                LoadAIntoD(registers);
+                break;
+            case 0x58:
+                LoadBIntoE(registers);
+                break;
+            case 0x59:
+                LoadCIntoE(registers);
+                break;
+            case 0x5A:
+                LoadDIntoE(registers);
+                break;
+            case 0x5B:
+                LoadEIntoE(registers);
+                break;
+            case 0x5C:
+                LoadHIntoE(registers);
+                break;
+            case 0x5D:
+                LoadLIntoE(registers);
+                break;
+            case 0x5F:
+                LoadAIntoE(registers);
+                break;
+            case 0x60:
+                LoadBIntoH(registers);
+                break;
+            case 0x61:
+                LoadCIntoH(registers);
+                break;
+            case 0x62:
+                LoadDIntoH(registers);
+                break;
+            case 0x63:
+                LoadEIntoH(registers);
+                break;
+            case 0x64:
+                LoadHIntoH(registers);
+                break;
+            case 0x65:
+                LoadLIntoH(registers);
+                break;
+            case 0x67:
+                LoadAIntoH(registers);
+                break;
+            case 0x68:
+                LoadBIntoL(registers);
+                break;
+            case 0x69:
+                LoadCIntoL(registers);
+                break;
+            case 0x6A:
+                LoadDIntoL(registers);
+                break;
+            case 0x6B:
+                LoadEIntoL(registers);
+                break;
+            case 0x6C:
+                LoadHIntoL(registers);
+                break;
+            case 0x6D:
+                LoadLIntoL(registers);
+                break;
+            case 0x6F:
+                LoadAIntoL(registers);
+                break;
+            case 0x78:
+                LoadBIntoA(registers);
+                break;
+            case 0x79:
+                LoadCIntoA(registers);
+                break;
+            case 0x7A:
+                LoadDIntoA(registers);
+                break;
+            case 0x7B:
+                LoadEIntoA(registers);
+                break;
+            case 0x7C:
+                LoadHIntoA(registers);
+                break;
+            case 0x7D:
+                LoadLIntoA(registers);
+                break;
+            case 0x7F:
+                LoadAIntoA(registers);
+                break;
+            case 0xF9:
+                LoadHLIntoStackPointer(registers);
+                break;
+            default:
+                throw new NotImplementedException($"Opcode 0x{opCode:X2} not implemented in LoadBetweenRegistersInstructions.");
+        }
     }
 }

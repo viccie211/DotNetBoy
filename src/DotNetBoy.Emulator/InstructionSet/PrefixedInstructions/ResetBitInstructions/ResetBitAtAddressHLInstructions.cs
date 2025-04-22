@@ -3,27 +3,8 @@ using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.ResetBitInstructions;
 
-public class ResetBitAtAddressHLInstructions : ResetBitInstructionsBase, IInstructionSet
+public class ResetBitAtAddressHLInstructions(IClockService clockService, IMmuService mmuService) : ResetBitInstructionsBase(clockService), IInstructionSet
 {
-    private readonly IMmuService _mmuService;
-    public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
-
-    public ResetBitAtAddressHLInstructions(IClockService clockService, IMmuService mmuService) : base(clockService)
-    {
-        _mmuService = mmuService;
-        Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
-        {
-            { 0x86, ResetBit0AtAddressInHLRegister },
-            { 0x8E, ResetBit1AtAddressInHLRegister },
-            { 0x96, ResetBit2AtAddressInHLRegister },
-            { 0x9E, ResetBit3AtAddressInHLRegister },
-            { 0xA6, ResetBit4AtAddressInHLRegister },
-            { 0xAE, ResetBit5AtAddressInHLRegister },
-            { 0xB6, ResetBit6AtAddressInHLRegister },
-            { 0xBE, ResetBit7AtAddressInHLRegister },
-        };
-    }
-
     public void ResetBit0AtAddressInHLRegister(ICpuRegistersService registers)
     {
         ResetBitAtAddressHL(0, registers);
@@ -66,9 +47,43 @@ public class ResetBitAtAddressHLInstructions : ResetBitInstructionsBase, IInstru
 
     private void ResetBitAtAddressHL(int bitNumber, ICpuRegistersService registers)
     {
-        var toReset = _mmuService.ReadByte(registers.HL);
+        var toReset = mmuService.ReadByte(registers.HL);
         var reset = ResetBit(bitNumber, toReset, registers);
-        _mmuService.WriteByte(registers.HL, reset);
+        mmuService.WriteByte(registers.HL, reset);
         ClockService.Clock(2);
     }
+    
+    public void ExecuteInstruction(byte opCode, ICpuRegistersService registers)
+    {
+        switch (opCode)
+        {
+            case 0x86:
+                ResetBit0AtAddressInHLRegister(registers);
+                break;
+            case 0x8E:
+                ResetBit1AtAddressInHLRegister(registers);
+                break;
+            case 0x96:
+                ResetBit2AtAddressInHLRegister(registers);
+                break;
+            case 0x9E:
+                ResetBit3AtAddressInHLRegister(registers);
+                break;
+            case 0xA6:
+                ResetBit4AtAddressInHLRegister(registers);
+                break;
+            case 0xAE:
+                ResetBit5AtAddressInHLRegister(registers);
+                break;
+            case 0xB6:
+                ResetBit6AtAddressInHLRegister(registers);
+                break;
+            case 0xBE:
+                ResetBit7AtAddressInHLRegister(registers);
+                break;
+            default:
+                throw new NotImplementedException($"Opcode 0x{opCode:X2} not implemented in ResetBitAtAddressHLInstructions.");
+        }
+    }
+
 }

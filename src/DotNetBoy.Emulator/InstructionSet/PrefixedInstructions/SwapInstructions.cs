@@ -4,30 +4,8 @@ using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.InstructionSet.PrefixedInstructions;
 
-public class SwapInstructions : IInstructionSet
+public class SwapInstructions(IClockService clockService, IMmuService mmuService) : IInstructionSet
 {
-    private readonly IClockService _clockService;
-    private readonly IMmuService _mmuService;
-
-    public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
-
-    public SwapInstructions(IClockService clockService, IMmuService mmuService)
-    {
-        _clockService = clockService;
-        _mmuService = mmuService;
-        Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
-        {
-            { 0x30, SwapB },
-            { 0x31, SwapC },
-            { 0x32, SwapD },
-            { 0x33, SwapE },
-            { 0x34, SwapH },
-            { 0x35, SwapL },
-            { 0x36, SwapAtAddressHL },
-            { 0x37, SwapA },
-        };
-    }
-
     public void SwapB(ICpuRegistersService registers)
     {
         registers.B = SwapNibbles(registers.B, registers);
@@ -60,11 +38,11 @@ public class SwapInstructions : IInstructionSet
 
     public void SwapAtAddressHL(ICpuRegistersService registers)
     {
-        var toSwap = _mmuService.ReadByte(registers.HL);
-        _clockService.Clock();
+        var toSwap = mmuService.ReadByte(registers.HL);
+        clockService.Clock();
         var swapped = SwapNibbles(toSwap, registers);
-        _mmuService.WriteByte(registers.HL, swapped);
-        _clockService.Clock();
+        mmuService.WriteByte(registers.HL, swapped);
+        clockService.Clock();
     }
 
     public void SwapA(ICpuRegistersService registers)
@@ -85,7 +63,41 @@ public class SwapInstructions : IInstructionSet
             Carry = false,
         };
         registers.ProgramCounter += 2;
-        _clockService.Clock(1);
+        clockService.Clock(1);
         return result;
     }
+    
+    public void ExecuteInstruction(byte opCode, ICpuRegistersService registers)
+    {
+        switch (opCode)
+        {
+            case 0x30:
+                SwapB(registers);
+                break;
+            case 0x31:
+                SwapC(registers);
+                break;
+            case 0x32:
+                SwapD(registers);
+                break;
+            case 0x33:
+                SwapE(registers);
+                break;
+            case 0x34:
+                SwapH(registers);
+                break;
+            case 0x35:
+                SwapL(registers);
+                break;
+            case 0x36:
+                SwapAtAddressHL(registers);
+                break;
+            case 0x37:
+                SwapA(registers);
+                break;
+            default:
+                throw new NotImplementedException($"Opcode 0x{opCode:X2} not implemented in SwapInstructions.");
+        }
+    }
+
 }

@@ -3,28 +3,8 @@ using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.ShiftInstructions;
 
-public class ShiftRightLogicalInstructions : ShiftInstructionsBase, IInstructionSet
+public class ShiftRightLogicalInstructions(IClockService clockService, IMmuService mmuService) : ShiftInstructionsBase(clockService), IInstructionSet
 {
-    public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
-    
-    private readonly IMmuService _mmuService;
-
-    public ShiftRightLogicalInstructions(IClockService clockService, IMmuService mmuService) : base(clockService)
-    {
-        _mmuService = mmuService;
-        Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
-        {
-            { 0x38, ShiftRightLogicalB },
-            { 0x39, ShiftRightLogicalC },
-            { 0x3A, ShiftRightLogicalD },
-            { 0x3B, ShiftRightLogicalE },
-            { 0x3C, ShiftRightLogicalH },
-            { 0x3D, ShiftRightLogicalL },
-            { 0x3E, ShiftRightLogicalAtAddressHL },
-            { 0x3F, ShiftRightLogicalA },
-        };
-    }
-
     public void ShiftRightLogicalB(ICpuRegistersService registers)
     {
         registers.B = ShiftRightLogicalByte(registers.B, registers);
@@ -57,10 +37,10 @@ public class ShiftRightLogicalInstructions : ShiftInstructionsBase, IInstruction
 
     public void ShiftRightLogicalAtAddressHL(ICpuRegistersService registers)
     {
-        var toSRL = _mmuService.ReadByte(registers.HL);
+        var toSRL = mmuService.ReadByte(registers.HL);
         ClockService.Clock();
         var srled = ShiftRightLogicalByte(toSRL, registers);
-        _mmuService.WriteByte(registers.HL, srled);
+        mmuService.WriteByte(registers.HL, srled);
         ClockService.Clock();
     }
     
@@ -68,4 +48,38 @@ public class ShiftRightLogicalInstructions : ShiftInstructionsBase, IInstruction
     {
         registers.A = ShiftRightLogicalByte(registers.A, registers);
     }
+    
+    public void ExecuteInstruction(byte opCode, ICpuRegistersService registers)
+    {
+        switch (opCode)
+        {
+            case 0x38:
+                ShiftRightLogicalB(registers);
+                break;
+            case 0x39:
+                ShiftRightLogicalC(registers);
+                break;
+            case 0x3A:
+                ShiftRightLogicalD(registers);
+                break;
+            case 0x3B:
+                ShiftRightLogicalE(registers);
+                break;
+            case 0x3C:
+                ShiftRightLogicalH(registers);
+                break;
+            case 0x3D:
+                ShiftRightLogicalL(registers);
+                break;
+            case 0x3E:
+                ShiftRightLogicalAtAddressHL(registers);
+                break;
+            case 0x3F:
+                ShiftRightLogicalA(registers);
+                break;
+            default:
+                throw new NotImplementedException($"Opcode 0x{opCode:X2} not implemented in ShiftRightLogicalInstructions.");
+        }
+    }
+
 }

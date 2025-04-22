@@ -3,25 +3,8 @@ using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.BitInstructions;
 
-public class BitInHRegisterInstructions : BitInstructionsBase, IInstructionSet
+public class BitInHRegisterInstructions(IClockService clockService) : BitInstructionsBase(clockService), IInstructionSet
 {
-    public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
-
-    public BitInHRegisterInstructions(IClockService clockService) : base(clockService)
-    {
-        Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
-        {
-            { 0x44, Bit0InHRegister },
-            { 0x4C, Bit1InHRegister },
-            { 0x54, Bit2InHRegister },
-            { 0x5C, Bit3InHRegister },
-            { 0x64, Bit4InHRegister },
-            { 0x6C, Bit5InHRegister },
-            { 0x74, Bit6InHRegister },
-            { 0x7C, Bit7InHRegister },
-        };
-    }
-
     public void Bit0InHRegister(ICpuRegistersService registers)
     {
         SetComplementOfBitToZeroFlag(0, registers.H, registers);
@@ -60,5 +43,38 @@ public class BitInHRegisterInstructions : BitInstructionsBase, IInstructionSet
     public void Bit7InHRegister(ICpuRegistersService registers)
     {
         SetComplementOfBitToZeroFlag(7, registers.H, registers);
+    }
+    
+    public void ExecuteInstruction(byte opCode, ICpuRegistersService registers)
+    {
+        switch (opCode)
+        {
+            case 0x44:
+                Bit0InHRegister(registers);
+                break;
+            case 0x4C:
+                Bit1InHRegister(registers);
+                break;
+            case 0x54:
+                Bit2InHRegister(registers);
+                break;
+            case 0x5C:
+                Bit3InHRegister(registers);
+                break;
+            case 0x64:
+                Bit4InHRegister(registers);
+                break;
+            case 0x6C:
+                Bit5InHRegister(registers);
+                break;
+            case 0x74:
+                Bit6InHRegister(registers);
+                break;
+            case 0x7C:
+                Bit7InHRegister(registers);
+                break;
+            default:
+                throw new NotImplementedException($"Opcode 0x{opCode:X2} not implemented in BitInHRegisterInstructions.");
+        }
     }
 }

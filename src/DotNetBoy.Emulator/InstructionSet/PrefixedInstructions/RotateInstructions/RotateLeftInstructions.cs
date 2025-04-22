@@ -4,28 +4,8 @@ using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.RotateInstructions;
 
-public class RotateLeftInstructions : RotateInstructionsBase, IInstructionSet
+public class RotateLeftInstructions(IClockService clockService, IMmuService mmuService) : RotateInstructionsBase(clockService), IInstructionSet
 {
-    private readonly IMmuService _mmuService;
-
-    public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
-
-    public RotateLeftInstructions(IClockService clockService, IMmuService mmuService) : base(clockService)
-    {
-        _mmuService = mmuService;
-        Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
-        {
-            { 0x00, RotateB },
-            { 0x01, RotateC },
-            { 0x02, RotateD },
-            { 0x03, RotateE },
-            { 0x04, RotateH },
-            { 0x05, RotateL },
-            { 0x06, RotateAtAddresssHL },
-            { 0x07, RotateA },
-        };
-    }
-
     public void RotateB(ICpuRegistersService registers)
     {
         registers.B = RotateLeft(registers.B, registers);
@@ -58,10 +38,10 @@ public class RotateLeftInstructions : RotateInstructionsBase, IInstructionSet
 
     public void RotateAtAddresssHL(ICpuRegistersService registers)
     {
-        var toRotate = _mmuService.ReadByte(registers.HL);
+        var toRotate = mmuService.ReadByte(registers.HL);
         ClockService.Clock();
         var rotated = RotateLeft(toRotate, registers);
-        _mmuService.WriteByte(registers.HL, rotated);
+        mmuService.WriteByte(registers.HL, rotated);
         ClockService.Clock();
     }
 
@@ -77,4 +57,38 @@ public class RotateLeftInstructions : RotateInstructionsBase, IInstructionSet
         ClockService.Clock();
         return result;
     }
+    
+    public void ExecuteInstruction(byte opCode, ICpuRegistersService registers)
+    {
+        switch (opCode)
+        {
+            case 0x00:
+                RotateB(registers);
+                break;
+            case 0x01:
+                RotateC(registers);
+                break;
+            case 0x02:
+                RotateD(registers);
+                break;
+            case 0x03:
+                RotateE(registers);
+                break;
+            case 0x04:
+                RotateH(registers);
+                break;
+            case 0x05:
+                RotateL(registers);
+                break;
+            case 0x06:
+                RotateAtAddresssHL(registers);
+                break;
+            case 0x07:
+                RotateA(registers);
+                break;
+            default:
+                throw new NotImplementedException($"Opcode 0x{opCode:X2} not implemented in RotateLeftInstructions.");
+        }
+    }
+
 }

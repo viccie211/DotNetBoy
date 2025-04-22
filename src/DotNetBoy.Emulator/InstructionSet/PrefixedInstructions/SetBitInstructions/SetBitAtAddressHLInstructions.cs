@@ -3,27 +3,8 @@ using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.SetBitInstructions;
 
-public class SetBitAtAddressHLInstructions : SetBitInstructionsBase, IInstructionSet
+public class SetBitAtAddressHLInstructions(IClockService clockService, IMmuService mmuService) : SetBitInstructionsBase(clockService), IInstructionSet
 {
-    private readonly IMmuService _mmuService;
-    public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
-
-    public SetBitAtAddressHLInstructions(IClockService clockService, IMmuService mmuService) : base(clockService)
-    {
-        _mmuService = mmuService;
-        Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
-        {
-            { 0xC6, SetBit0AtAddressInHLRegister },
-            { 0xCE, SetBit1AtAddressInHLRegister },
-            { 0xD6, SetBit2AtAddressInHLRegister },
-            { 0xDE, SetBit3AtAddressInHLRegister },
-            { 0xE6, SetBit4AtAddressInHLRegister },
-            { 0xEE, SetBit5AtAddressInHLRegister },
-            { 0xF6, SetBit6AtAddressInHLRegister },
-            { 0xFE, SetBit7AtAddressInHLRegister },
-        };
-    }
-
     public void SetBit0AtAddressInHLRegister(ICpuRegistersService registers)
     {
         SetBitAtAddressHL(0, registers);
@@ -66,9 +47,43 @@ public class SetBitAtAddressHLInstructions : SetBitInstructionsBase, IInstructio
 
     private void SetBitAtAddressHL(int bitNumber, ICpuRegistersService registers)
     {
-        var toSet = _mmuService.ReadByte(registers.HL);
+        var toSet = mmuService.ReadByte(registers.HL);
         var reset = SetBit(bitNumber, toSet, registers);
-        _mmuService.WriteByte(registers.HL, reset);
+        mmuService.WriteByte(registers.HL, reset);
         ClockService.Clock(2);
     }
+    
+    public void ExecuteInstruction(byte opCode, ICpuRegistersService registers)
+    {
+        switch (opCode)
+        {
+            case 0xC6:
+                SetBit0AtAddressInHLRegister(registers);
+                break;
+            case 0xCE:
+                SetBit1AtAddressInHLRegister(registers);
+                break;
+            case 0xD6:
+                SetBit2AtAddressInHLRegister(registers);
+                break;
+            case 0xDE:
+                SetBit3AtAddressInHLRegister(registers);
+                break;
+            case 0xE6:
+                SetBit4AtAddressInHLRegister(registers);
+                break;
+            case 0xEE:
+                SetBit5AtAddressInHLRegister(registers);
+                break;
+            case 0xF6:
+                SetBit6AtAddressInHLRegister(registers);
+                break;
+            case 0xFE:
+                SetBit7AtAddressInHLRegister(registers);
+                break;
+            default:
+                throw new NotImplementedException($"Opcode 0x{opCode:X2} not implemented in SetBitAtAddressHLInstructions.");
+        }
+    }
+
 }

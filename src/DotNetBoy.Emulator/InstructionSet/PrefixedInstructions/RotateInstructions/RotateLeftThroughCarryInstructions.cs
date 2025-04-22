@@ -4,28 +4,8 @@ using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.RotateInstructions;
 
-public class RotateLeftThroughCarryInstructions : RotateInstructionsBase, IInstructionSet
+public class RotateLeftThroughCarryInstructions(IClockService clockService, IMmuService mmuService) : RotateInstructionsBase(clockService), IInstructionSet
 {
-    private readonly IMmuService _mmuService;
-
-    public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
-
-    public RotateLeftThroughCarryInstructions(IClockService clockService, IMmuService mmuService) : base(clockService)
-    {
-        _mmuService = mmuService;
-        Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
-        {
-            { 0x10, RotateThroughCarryB },
-            { 0x11, RotateThroughCarryC },
-            { 0x12, RotateThroughCarryD },
-            { 0x13, RotateThroughCarryE },
-            { 0x14, RotateThroughCarryH },
-            { 0x15, RotateThroughCarryL },
-            { 0x16, RotateThroughCarryAtAddresssHL },
-            { 0x17, RotateThroughCarryA },
-        };
-    }
-
     public void RotateThroughCarryB(ICpuRegistersService registers)
     {
         registers.B = RotateLeftThroughCarry(registers.B, registers);
@@ -58,10 +38,10 @@ public class RotateLeftThroughCarryInstructions : RotateInstructionsBase, IInstr
 
     public void RotateThroughCarryAtAddresssHL(ICpuRegistersService registers)
     {
-        var toRotate = _mmuService.ReadByte(registers.HL);
+        var toRotate = mmuService.ReadByte(registers.HL);
         ClockService.Clock();
         var rotated = RotateLeftThroughCarry(toRotate, registers);
-        _mmuService.WriteByte(registers.HL, rotated);
+        mmuService.WriteByte(registers.HL, rotated);
         ClockService.Clock();
     }
 
@@ -77,4 +57,38 @@ public class RotateLeftThroughCarryInstructions : RotateInstructionsBase, IInstr
         ClockService.Clock();
         return result;
     }
+    
+    public void ExecuteInstruction(byte opCode, ICpuRegistersService registers)
+    {
+        switch (opCode)
+        {
+            case 0x10:
+                RotateThroughCarryB(registers);
+                break;
+            case 0x11:
+                RotateThroughCarryC(registers);
+                break;
+            case 0x12:
+                RotateThroughCarryD(registers);
+                break;
+            case 0x13:
+                RotateThroughCarryE(registers);
+                break;
+            case 0x14:
+                RotateThroughCarryH(registers);
+                break;
+            case 0x15:
+                RotateThroughCarryL(registers);
+                break;
+            case 0x16:
+                RotateThroughCarryAtAddresssHL(registers);
+                break;
+            case 0x17:
+                RotateThroughCarryA(registers);
+                break;
+            default:
+                throw new NotImplementedException($"Opcode 0x{opCode:X2} not implemented in RotateLeftThroughCarryInstructions.");
+        }
+    }
+
 }

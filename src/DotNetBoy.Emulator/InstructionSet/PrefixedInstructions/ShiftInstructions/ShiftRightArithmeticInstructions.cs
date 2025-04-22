@@ -3,28 +3,8 @@ using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.ShiftInstructions;
 
-public class ShiftRightArithmeticInstructions : ShiftInstructionsBase, IInstructionSet
+public class ShiftRightArithmeticInstructions(IClockService clockService, IMmuService mmuService) : ShiftInstructionsBase(clockService), IInstructionSet
 {
-    public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
-
-    private readonly IMmuService _mmuService;
-
-    public ShiftRightArithmeticInstructions(IClockService clockService, IMmuService mmuService) : base(clockService)
-    {
-        _mmuService = mmuService;
-        Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
-        {
-            { 0x28, ShiftRightArithmeticB },
-            { 0x29, ShiftRightArithmeticC },
-            { 0x2A, ShiftRightArithmeticD },
-            { 0x2B, ShiftRightArithmeticE },
-            { 0x2C, ShiftRightArithmeticH },
-            { 0x2D, ShiftRightArithmeticL },
-            { 0x2E, ShiftRightArithmeticAtAddressHL },
-            { 0x2F, ShiftRightArithmeticA },
-        };
-    }
-
     public void ShiftRightArithmeticB(ICpuRegistersService registers)
     {
         registers.B = ShiftRightArithmeticByte(registers.B, registers);
@@ -57,10 +37,10 @@ public class ShiftRightArithmeticInstructions : ShiftInstructionsBase, IInstruct
 
     public void ShiftRightArithmeticAtAddressHL(ICpuRegistersService registers)
     {
-        var toSRL = _mmuService.ReadByte(registers.HL);
+        var toSRL = mmuService.ReadByte(registers.HL);
         ClockService.Clock();
         var srled = ShiftRightArithmeticByte(toSRL, registers);
-        _mmuService.WriteByte(registers.HL, srled);
+        mmuService.WriteByte(registers.HL, srled);
         ClockService.Clock();
     }
 
@@ -68,4 +48,38 @@ public class ShiftRightArithmeticInstructions : ShiftInstructionsBase, IInstruct
     {
         registers.A = ShiftRightArithmeticByte(registers.A, registers);
     }
+    
+    public void ExecuteInstruction(byte opCode, ICpuRegistersService registers)
+    {
+        switch (opCode)
+        {
+            case 0x28:
+                ShiftRightArithmeticB(registers);
+                break;
+            case 0x29:
+                ShiftRightArithmeticC(registers);
+                break;
+            case 0x2A:
+                ShiftRightArithmeticD(registers);
+                break;
+            case 0x2B:
+                ShiftRightArithmeticE(registers);
+                break;
+            case 0x2C:
+                ShiftRightArithmeticH(registers);
+                break;
+            case 0x2D:
+                ShiftRightArithmeticL(registers);
+                break;
+            case 0x2E:
+                ShiftRightArithmeticAtAddressHL(registers);
+                break;
+            case 0x2F:
+                ShiftRightArithmeticA(registers);
+                break;
+            default:
+                throw new NotImplementedException($"Opcode 0x{opCode:X2} not implemented in ShiftRightArithmeticInstructions.");
+        }
+    }
+
 }

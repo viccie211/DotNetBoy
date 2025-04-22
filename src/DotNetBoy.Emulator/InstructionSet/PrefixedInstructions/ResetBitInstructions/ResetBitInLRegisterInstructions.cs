@@ -3,25 +3,8 @@ using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.InstructionSet.PrefixedInstructions.ResetBitInstructions;
 
-public class ResetBitInLRegisterInstructions : ResetBitInstructionsBase, IInstructionSet
+public class ResetBitInLRegisterInstructions(IClockService clockService) : ResetBitInstructionsBase(clockService), IInstructionSet
 {
-    public Dictionary<byte, Action<ICpuRegistersService>> Instructions { get; }
-
-    public ResetBitInLRegisterInstructions(IClockService clockService) : base(clockService)
-    {
-        Instructions = new Dictionary<byte, Action<ICpuRegistersService>>()
-        {
-            { 0x85, ResetBit0InLRegister },
-            { 0x8D, ResetBit1InLRegister },
-            { 0x95, ResetBit2InLRegister },
-            { 0x9D, ResetBit3InLRegister },
-            { 0xA5, ResetBit4InLRegister },
-            { 0xAD, ResetBit5InLRegister },
-            { 0xB5, ResetBit6InLRegister },
-            { 0xBD, ResetBit7InLRegister },
-        };
-    }
-
     public void ResetBit0InLRegister(ICpuRegistersService registers)
     {
         registers.L = ResetBit(0, registers.L, registers);
@@ -61,4 +44,38 @@ public class ResetBitInLRegisterInstructions : ResetBitInstructionsBase, IInstru
     {
         registers.L = ResetBit(7, registers.L, registers);
     }
+    
+    public void ExecuteInstruction(byte opCode, ICpuRegistersService registers)
+    {
+        switch (opCode)
+        {
+            case 0x85:
+                ResetBit0InLRegister(registers);
+                break;
+            case 0x8D:
+                ResetBit1InLRegister(registers);
+                break;
+            case 0x95:
+                ResetBit2InLRegister(registers);
+                break;
+            case 0x9D:
+                ResetBit3InLRegister(registers);
+                break;
+            case 0xA5:
+                ResetBit4InLRegister(registers);
+                break;
+            case 0xAD:
+                ResetBit5InLRegister(registers);
+                break;
+            case 0xB5:
+                ResetBit6InLRegister(registers);
+                break;
+            case 0xBD:
+                ResetBit7InLRegister(registers);
+                break;
+            default:
+                throw new NotImplementedException($"Opcode 0x{opCode:X2} not implemented in ResetBitInLRegisterInstructions.");
+        }
+    }
+
 }

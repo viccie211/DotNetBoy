@@ -61,4 +61,38 @@ public class BitInBRegisterInstructions : BitInstructionsBase, IInstructionSet
     {
         SetComplementOfBitToZeroFlag(7, registers.B, registers);
     }
+    
+    public void ExecuteInstruction(byte opCode, ICpuRegistersService registers)
+    {
+        switch (opCode)
+        {
+            case 0x40:
+                Bit0InBRegister(registers);
+                break;
+            case 0x48:
+                Bit1InBRegister(registers);
+                break;
+            case 0x50:
+                Bit2InBRegister(registers);
+                break;
+            case 0x58:
+                Bit3InBRegister(registers);
+                break;
+            case 0x60:
+                Bit4InBRegister(registers);
+                break;
+            case 0x68:
+                Bit5InBRegister(registers);
+                break;
+            case 0x70:
+                Bit6InBRegister(registers);
+                break;
+            case 0x78:
+                Bit7InBRegister(registers);
+                break;
+            default:
+                throw new NotImplementedException($"Opcode 0x{opCode:X2} not implemented in BitInBRegisterInstructions.");
+        }
+    }
+
 }
