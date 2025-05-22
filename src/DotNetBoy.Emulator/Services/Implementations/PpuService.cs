@@ -84,7 +84,7 @@ public class PpuService : IPpuService
             if (ScanLine == 144)
             {
                 VBlankInterruptRequest();
-                VBlankStartInvoke(this, new VBlankEventArgs() { FrameBuffer = FrameBuffer });
+                _eventService.VBlankStartInvoke(this, new VBlankEventArgs() { FrameBuffer = FrameBuffer });
             }
             else if (ScanLine == 0)
             {
@@ -140,9 +140,7 @@ public class PpuService : IPpuService
         // Trigger STAT interrupt if conditions are met
         if (statInterruptRequested)
         {
-            InterruptRegister interruptRegister = _mmuService.ReadByte(AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS);
-            interruptRegister.LCD = true;
-            _mmuService.WriteByte(AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS, interruptRegister);
+            _eventService.InvokeInterruptRaised(this, new() { InterruptRegister = new() { LCD = true } });
         }
     }
 
@@ -150,14 +148,7 @@ public class PpuService : IPpuService
 
     private void VBlankInterruptRequest()
     {
-        InterruptRegister interruptRegister = _mmuService.ReadByte(AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS);
-        interruptRegister.VBlank = true;
-        _mmuService.WriteByte(AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS, interruptRegister);
-    }
-
-    public void VBlankStartInvoke(object? sender, VBlankEventArgs e)
-    {
-        VBlankStart?.Invoke(sender, e);
+        _eventService.InvokeInterruptRaised(this, new() { InterruptRegister = new() { VBlank = true } });
     }
 
 

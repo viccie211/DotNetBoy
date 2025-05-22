@@ -21,6 +21,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddScoped<IClockService, ClockService>();
         serviceCollection.AddScoped<ITileService, TileService>();
         serviceCollection.AddScoped<IPpuService, PpuService>();
+        serviceCollection.AddScoped<IJoyPadService, JoyPadService>();
         serviceCollection.AddScoped<ICpuRegistersService, CpuRegistersService>();
         serviceCollection.AddScoped<RotateInstructions>();
         serviceCollection.AddScoped<JumpInstructions>();

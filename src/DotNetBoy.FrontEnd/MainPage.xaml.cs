@@ -1,5 +1,6 @@
 ﻿using DotNetBoy.Emulator;
 using DotNetBoy.Emulator.Consts;
+using DotNetBoy.Emulator.Enums;
 using DotNetBoy.Emulator.Events;
 using DotNetBoy.Emulator.Models;
 using DotNetBoy.FrontEnd.Drawables;
@@ -16,7 +17,7 @@ public partial class MainPage : ContentPage
     {
         InitializeComponent();
         BindingContext = viewModel;
-        viewModel.PpuService.VBlankStart += OnVBlankStart;
+        viewModel.EventService.VBlankStart += OnVBlankStart;
         Dispatcher.DispatchAsync(() =>
         {
             EmulatorScreen.WidthRequest = ScreenDimensions.WIDTH * viewModel.Scale;
@@ -49,9 +50,6 @@ public partial class MainPage : ContentPage
         count++;
 
         var viewModel = BindingContext as MainPageViewModel;
-        var frameBuffer = viewModel?.PpuService.FrameBuffer;
-        if (frameBuffer == null)
-            return;
         Dispatcher.DispatchAsync(() =>
         {
             CounterBtn.Text = $"VBlanked {count} times";
@@ -74,5 +72,86 @@ public partial class MainPage : ContentPage
     public void PauseButtonClicked(object sender, EventArgs e)
     {
         paused = !paused;
+    }
+
+
+    public void ButtonPressed(object sender, EventArgs e)
+    {
+        var button = (Button)sender;
+        var classId = button.ClassId;
+        EJoyPadButton? buttonPressed = null;
+        switch (classId)
+        {
+            case "Up":
+                buttonPressed = EJoyPadButton.Up;
+                break;
+            case "Down":
+                buttonPressed = EJoyPadButton.Down;
+                break;
+            case "Left":
+                buttonPressed = EJoyPadButton.Left;
+                break;
+            case "Right":
+                buttonPressed = EJoyPadButton.Right;
+                break;
+            case "Start":
+                buttonPressed = EJoyPadButton.Start;
+                break;
+            case "Select":
+                buttonPressed = EJoyPadButton.Select;
+                break;
+            case "A":
+                buttonPressed = EJoyPadButton.A;
+                break;
+            case "B":
+                buttonPressed = EJoyPadButton.B;
+                break;
+        }
+
+        if (buttonPressed == null)
+            return;
+
+        var viewModel = BindingContext as MainPageViewModel;
+        viewModel.JoyPadService.PressButtons(buttonPressed.Value);
+    }
+    
+    public void ButtonReleased(object sender, EventArgs e)
+    {
+        var button = (Button)sender;
+        var classId = button.ClassId;
+        EJoyPadButton? buttonPressed = null;
+        switch (classId)
+        {
+            case "Up":
+                buttonPressed = EJoyPadButton.Up;
+                break;
+            case "Down":
+                buttonPressed = EJoyPadButton.Down;
+                break;
+            case "Left":
+                buttonPressed = EJoyPadButton.Left;
+                break;
+            case "Right":
+                buttonPressed = EJoyPadButton.Right;
+                break;
+            case "Start":
+                buttonPressed = EJoyPadButton.Start;
+                break;
+            case "Select":
+                buttonPressed = EJoyPadButton.Select;
+                break;
+            case "A":
+                buttonPressed = EJoyPadButton.A;
+                break;
+            case "B":
+                buttonPressed = EJoyPadButton.B;
+                break;
+        }
+
+        if (buttonPressed == null)
+            return;
+
+        var viewModel = BindingContext as MainPageViewModel;
+        viewModel.JoyPadService.ReleaseButtons(buttonPressed.Value);
     }
 }

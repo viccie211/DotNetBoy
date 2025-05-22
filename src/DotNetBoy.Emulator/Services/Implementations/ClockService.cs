@@ -1,10 +1,11 @@
 using DotNetBoy.Emulator.Consts;
+using DotNetBoy.Emulator.Events;
 using DotNetBoy.Emulator.Models;
 using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.Services.Implementations;
 
-public class ClockService(IMmuService mmuService, ITimerService timerService, IEventService eventService) : IClockService
+public class ClockService(ITimerService timerService, IEventService eventService) : IClockService
 {
     public byte M { get; set; } = 0;
     public byte T { get; set; } = 0;
@@ -25,9 +26,7 @@ public class ClockService(IMmuService mmuService, ITimerService timerService, IE
 
                 if (timerService.Tick())
                 {
-                    var interruptRequestRegister = (InterruptRegister)mmuService.ReadByte(AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS);
-                    interruptRequestRegister.Timer = true;
-                    mmuService.WriteByte(AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS, interruptRequestRegister);
+                    eventService.InvokeInterruptRaised(this,new RaiseInterruptEventArgs(){InterruptRegister = new InterruptRegister(){Timer = true}});
                 }
             }
         }

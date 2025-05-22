@@ -164,7 +164,9 @@ public class JumpInstructions(IMmuService mmuService, IClockService clockService
     public void ReturnFromInterrupt(ICpuRegistersService registers)
     {
         registers.InterruptMasterEnable = true;
+        registers.InterruptsJustEnabled = true;
         Return(registers);
+        clockService.Clock();
     }
 
     #endregion

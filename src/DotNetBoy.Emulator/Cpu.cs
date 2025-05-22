@@ -103,10 +103,10 @@ public class Cpu(
 
         clockService.Clock();
         InterruptRegister castRegister = interruptRequestRegister;
+        cpuRegistersService.InterruptMasterEnable = false;
 
         if (InterruptEnableRegister.VBlank && castRegister.VBlank)
         {
-            cpuRegistersService.InterruptMasterEnable = false;
             castRegister.VBlank = false;
             interruptRequestRegister = castRegister;
             CallInterruptVector(AddressConsts.VBLANK_INTERRUPT_VECTOR);
@@ -115,7 +115,6 @@ public class Cpu(
 
         if (InterruptEnableRegister.LCD && castRegister.LCD && !StatBlock)
         {
-            cpuRegistersService.InterruptMasterEnable = false;
             castRegister.LCD = false;
             interruptRequestRegister = castRegister;
             CallInterruptVector(AddressConsts.LCD_INTERRUPT_VECTOR);
@@ -127,7 +126,6 @@ public class Cpu(
 
         if (InterruptEnableRegister.Timer && castRegister.Timer)
         {
-            cpuRegistersService.InterruptMasterEnable = false;
             castRegister.Timer = false;
             interruptRequestRegister = castRegister;
             CallInterruptVector(AddressConsts.TIMER_INTERRUPT_VECTOR);
@@ -136,7 +134,6 @@ public class Cpu(
 
         if (InterruptEnableRegister.Serial && castRegister.Serial)
         {
-            cpuRegistersService.InterruptMasterEnable = false;
             castRegister.Serial = false;
             interruptRequestRegister = castRegister;
             CallInterruptVector(AddressConsts.SERIAL_INTERRUPT_VECTOR);
@@ -145,7 +142,6 @@ public class Cpu(
 
         if (InterruptEnableRegister.Joypad && castRegister.Joypad)
         {
-            cpuRegistersService.InterruptMasterEnable = false;
             castRegister.Joypad = false;
             interruptRequestRegister = castRegister;
             CallInterruptVector(AddressConsts.JOYPAD_INTERRUPT_VECTOR);
@@ -165,6 +161,6 @@ public class Cpu(
         mmuService.WriteByte(cpuRegistersService.StackPointer, lower);
         clockService.Clock();
         cpuRegistersService.ProgramCounter = address;
-        clockService.Clock(2);
+        clockService.Clock();
     }
 }

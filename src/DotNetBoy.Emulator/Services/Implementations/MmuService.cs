@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using DotNetBoy.Emulator.Consts;
 using DotNetBoy.Emulator.Enums;
+using DotNetBoy.Emulator.Events;
 using DotNetBoy.Emulator.Models;
 using DotNetBoy.Emulator.Models.Cartridges;
 using DotNetBoy.Emulator.Services.Interfaces;
@@ -11,16 +12,18 @@ public class MmuService : IMmuService
 {
     private readonly IByteUshortService _byteUshortService;
     private readonly ITimerService _timerService;
-    private JoyPadRegister _joyPadRegister = new JoyPadRegister();
+    private readonly IJoyPadService _joyPadService;
 
-    public MmuService(IByteUshortService byteUshortService, ITimerService timerService, IEventService eventService)
+    public MmuService(IByteUshortService byteUshortService, ITimerService timerService, IEventService eventService, IJoyPadService joyPadService)
     {
         _byteUshortService = byteUshortService;
         _timerService = timerService;
+        _joyPadService = joyPadService;
         MappedMemory = new byte[ushort.MaxValue + 1];
         MappedMemory[AddressConsts.LY_REGISTER_ADDRESS] = 0x00;
         Cartridge = new DefaultCartridge(new byte[0x8000]);
         eventService.MClock += DoDMA;
+        eventService.InterruptRaised += HandleInterruptRaised;
     }
 
     public byte[] MappedMemory { get; init; }
@@ -57,7 +60,7 @@ public class MmuService : IMmuService
             case AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS:
                 return (byte)(MappedMemory[AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS] | 0xe0);
             case AddressConsts.JOYPAD_INPUT_REGISTER:
-                return _joyPadRegister;
+                return _joyPadService.Register;
         }
 
 
@@ -101,7 +104,8 @@ public class MmuService : IMmuService
                 _timerService.Tac = value;
                 break;
             case AddressConsts.JOYPAD_INPUT_REGISTER:
-                _joyPadRegister = value;
+                _joyPadService.SelectDPad = (value & 0x10) == 0;
+                _joyPadService.SelectButtons = (value & 0x20) == 0;
                 break;
             case AddressConsts.DMA_REGISTER:
                 if (_dmaCycles >= 160)
@@ -209,5 +213,10 @@ public class MmuService : IMmuService
         }
 
         _dmaCycles--;
+    }
+
+    public void HandleInterruptRaised(object? sender, RaiseInterruptEventArgs interruptEventArgs)
+    {
+        WriteByteRaw(AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS, (byte)(MappedMemory[AddressConsts.INTERRUPT_REQUEST_REGISTER_ADDRESS] | interruptEventArgs.InterruptRegister));
     }
 }

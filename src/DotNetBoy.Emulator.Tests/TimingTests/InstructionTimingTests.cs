@@ -53,7 +53,7 @@ public class InstructionTimingTests
         serviceCollection.AddScoped<IEventService, EventService>();
         serviceCollection.AddScoped<IClockService>(provider =>
         {
-            var underLyingClockService = new ClockService(provider.GetService<IMmuService>() ?? throw new InvalidOperationException(),
+            var underLyingClockService = new ClockService(
                 provider.GetService<ITimerService>() ?? throw new InvalidOperationException(),
                 provider.GetService<IEventService>() ?? throw new InvalidOperationException());
             clockServiceMock.Setup(x => x.Clock(It.IsAny<int>(), It.IsAny<bool>())).Callback(new Action<int, bool>((arg1, arg2) =>

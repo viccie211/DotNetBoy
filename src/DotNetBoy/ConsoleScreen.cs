@@ -1,24 +1,22 @@
 using DotNetBoy.Emulator.Consts;
+using DotNetBoy.Emulator.Events;
 using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy;
 
 public class ConsoleScreen
 {
-    private readonly IPpuService _ppuService;
-
-    public ConsoleScreen(IPpuService ppuService)
+    public ConsoleScreen(IEventService eventService)
     {
-        _ppuService = ppuService;
-        _ppuService.VBlankStart += RenderScreen;
+        eventService.VBlankStart += RenderScreen;
         Console.SetWindowSize(ScreenDimensions.WIDTH, ScreenDimensions.HEIGHT);
     }
 
-    public void RenderScreen(object? sender, EventArgs e)
+    public void RenderScreen(object? sender, VBlankEventArgs e)
     {
-        var frameBuffer = _ppuService.FrameBuffer;
+        var frameBuffer = e.FrameBuffer;
         Console.SetWindowSize(ScreenDimensions.WIDTH, ScreenDimensions.HEIGHT);
-        Console.SetCursorPosition(0,0);
+        Console.SetCursorPosition(0, 0);
         for (int y = 0; y < ScreenDimensions.HEIGHT; y++)
         {
             for (int x = 0; x < ScreenDimensions.WIDTH; x++)
