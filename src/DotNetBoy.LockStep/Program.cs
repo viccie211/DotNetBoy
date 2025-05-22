@@ -26,29 +26,29 @@ var cpu = scope.ServiceProvider.GetService<DotNetBoy.Emulator.Cpu>()!;
 var instructionSetService = scope.ServiceProvider.GetService<IInstructionSetService>()!;
 var timerService = scope.ServiceProvider.GetService<ITimerService>()!;
 
-var specBoy = scope.ServiceProvider.GetService<ReferenceEmulator>()!;
-specBoy.LoadRom(romFileName);
+var referenceEmulator = scope.ServiceProvider.GetService<ReferenceEmulator>()!;
+referenceEmulator.LoadRom(romFileName);
 
 
 var dotNetBoyStatus = "";
-var specBoyStatus = "";
+var referenceEmulatorStatus = "";
 var originalPc = cpuRegisters.ProgramCounter;
-while (dotNetBoyStatus == specBoyStatus)
+while (dotNetBoyStatus == referenceEmulatorStatus)
 {
     originalPc = cpuRegisters.ProgramCounter;
     cpu.Step();
-    specBoy.cpu.Execute();
+    referenceEmulator.cpu.Execute();
     if (!cpu.Prefixed && cpu.Instruction == 0xF0 && mmuService.ReadByte((ushort)(originalPc + 1)) == 0x44)
     {
-        cpuRegisters.A = specBoy.cpu.A;
+        cpuRegisters.A = referenceEmulator.cpu.A;
     }
 
     dotNetBoyStatus =
         $"{cpuRegisters} 0x{(cpu.Prefixed ? DotNetBoy.Emulator.Cpu.INSTRUCTION_PREFIX.ToString("x2") : "")}{cpu.Instruction.ToString("x2")} DivCounter: {timerService.DivCounter} TIMA:{mmuService.ReadByte(AddressConsts.TIMA_REGISTER)}";
-    specBoyStatus =
-        $"{specBoy.cpu} 0x{(specBoy.cpu.Prefixed ? DotNetBoy.Emulator.Cpu.INSTRUCTION_PREFIX.ToString("x2") : "")}{specBoy.cpu.Instruction.ToString("x2")} DivCounter: {specBoy.timers.divCounter} TIMA:{specBoy.mem.ReadByte(AddressConsts.TIMA_REGISTER)}";
+    referenceEmulatorStatus =
+        $"{referenceEmulator.cpu} 0x{(referenceEmulator.cpu.Prefixed ? DotNetBoy.Emulator.Cpu.INSTRUCTION_PREFIX.ToString("x2") : "")}{referenceEmulator.cpu.Instruction.ToString("x2")} DivCounter: {referenceEmulator.timers.divCounter} TIMA:{referenceEmulator.mem.ReadByte(AddressConsts.TIMA_REGISTER)}";
     Console.WriteLine($"DotNetBoy:\t\t{dotNetBoyStatus}");
-    Console.WriteLine($"ReferenceEmulator:\t{specBoyStatus}");
+    Console.WriteLine($"ReferenceEmulator:\t{referenceEmulatorStatus}");
 }
 
 if (cpu.Instruction == 0xf0)
