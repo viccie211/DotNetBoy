@@ -23,7 +23,7 @@ public partial class MainViewModel : ViewModelBase, INotifyPropertyChanged
     private readonly IMmuService MmuService;
     private readonly ICpuRegistersService CpuRegistersService;
     private readonly IPpuService PpuService;
-    private readonly IJoyPadService JoyPadService;
+    public readonly IJoyPadService JoyPadService;
     public event PropertyChangedEventHandler PropertyChanged;
     public WriteableBitmap FrameBitmap { get; set; }
     public string FrameCounterString { get; set; } = "Frame 0";
@@ -67,25 +67,35 @@ public partial class MainViewModel : ViewModelBase, INotifyPropertyChanged
     {
         Dispatcher.UIThread.Post(() =>
         {
-            FrameCounter++;
             int w = ScreenDimensions.WIDTH;
             int h = ScreenDimensions.HEIGHT;
+            var bmp = new WriteableBitmap(
+                new PixelSize(ScreenDimensions.WIDTH, ScreenDimensions.HEIGHT),
+                new Vector(96, 96),
+                PixelFormat.Bgra8888,
+                AlphaFormat.Premul);
 
 
-            using var fb = FrameBitmap.Lock();
+            using var fb = bmp.Lock();
             int stride = fb.RowBytes;
             byte[] pixelData = new byte[stride * h];
+            Task[] tasks = new Task[h * w];
 
             for (int y = 0; y < h; y++)
             {
                 for (int x = 0; x < w; x++)
                 {
-                    SetPixel(y, x, e.FrameBuffer, stride, pixelData);
+                    var taskY = y;
+                    var taskX = x;
+                    tasks[y*w+x] =Task.Run(()=>SetPixel(taskY, taskX, e.FrameBuffer, stride, pixelData));
                 }
             }
 
+            Task.WaitAll(tasks);
             Marshal.Copy(pixelData, 0, fb.Address, pixelData.Length);
+            FrameCounter++;
             FrameCounterString = $"Frame {FrameCounter}";
+            FrameBitmap = bmp;
             OnPropertyChanged(nameof(FrameBitmap));
             OnPropertyChanged(nameof(FrameCounterString));
         });
