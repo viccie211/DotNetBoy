@@ -1,12 +1,10 @@
-﻿using System;
+﻿using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Avalonia;
-using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Threading;
-using CommunityToolkit.Mvvm.ComponentModel;
 using DotNetBoy.Emulator;
 using DotNetBoy.Emulator.Consts;
 using DotNetBoy.Emulator.Events;
@@ -17,7 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace DotNetBoy.AvaloniaFrontend.ViewModels;
 
-public partial class MainViewModel : ViewModelBase
+public partial class MainViewModel : ViewModelBase, INotifyPropertyChanged
 {
     private readonly IServiceScope ServiceScope;
     private readonly Cpu Cpu;
@@ -26,9 +24,10 @@ public partial class MainViewModel : ViewModelBase
     private readonly ICpuRegistersService CpuRegistersService;
     private readonly IPpuService PpuService;
     private readonly IJoyPadService JoyPadService;
-
-    // This is the bitmap we’ll bind to the Image
-    public WriteableBitmap FrameBitmap { get; }
+    public event PropertyChangedEventHandler PropertyChanged;
+    public WriteableBitmap FrameBitmap { get; set; }
+    public string FrameCounterString { get; set; } = "Frame 0";
+    public int FrameCounter { get; set; }
 
     public MainViewModel()
     {
@@ -45,14 +44,16 @@ public partial class MainViewModel : ViewModelBase
         CpuRegistersService.Reset();
         MmuService.LoadRom(Roms.GetRom("Tetris.gb"));
 
+
         FrameBitmap = new WriteableBitmap(
             new PixelSize(ScreenDimensions.WIDTH, ScreenDimensions.HEIGHT),
-            new Vector(96, 96), // DPI X/Y
+            new Vector(96, 96),
             PixelFormat.Bgra8888,
             AlphaFormat.Premul);
 
         // subscribe to VBlankStart
         EventService.VBlankStart += OnVBlank;
+
         Task.Run(() =>
         {
             while (true)
@@ -64,40 +65,48 @@ public partial class MainViewModel : ViewModelBase
 
     private void OnVBlank(object sender, VBlankEventArgs e)
     {
-        Drawing = true;
         Dispatcher.UIThread.Post(() =>
         {
-            using (var fb = FrameBitmap.Lock())
+            FrameCounter++;
+            int w = ScreenDimensions.WIDTH;
+            int h = ScreenDimensions.HEIGHT;
+
+
+            using var fb = FrameBitmap.Lock();
+            int stride = fb.RowBytes;
+            byte[] pixelData = new byte[stride * h];
+
+            for (int y = 0; y < h; y++)
             {
-                int w = ScreenDimensions.WIDTH;
-                int h = ScreenDimensions.HEIGHT;
-                int stride = fb.RowBytes;
-
-                // allocate a managed buffer the size of the bitmap
-                byte[] pixelData = new byte[stride * h];
-
-                for (int y = 0; y < h; y++)
+                for (int x = 0; x < w; x++)
                 {
-                    for (int x = 0; x < w; x++)
-                    {
-                        int gray = e.FrameBuffer[y, x];
-                        byte intensity = (byte)(255 - gray * 85); // 0=white, 3=black
-
-                        int idx = y * stride + x * 4;
-fra
-                        pixelData[idx + 0] = intensity; // B
-                        pixelData[idx + 1] = intensity; // G
-                        pixelData[idx + 2] = intensity; // R
-                        pixelData[idx + 3] = 255; // A
-                    }
+                    SetPixel(y, x, e.FrameBuffer, stride, pixelData);
                 }
-
-                // copy to native buffer
-                System.Runtime.InteropServices.Marshal.Copy(pixelData, 0, fb.Address, pixelData.Length);
-                Drawing = false;
             }
+
+            Marshal.Copy(pixelData, 0, fb.Address, pixelData.Length);
+            FrameCounterString = $"Frame {FrameCounter}";
+            OnPropertyChanged(nameof(FrameBitmap));
+            OnPropertyChanged(nameof(FrameCounterString));
         });
     }
 
+    private void SetPixel(int y, int x, int[,] frameBuffer, int stride, byte[] pixelData)
+    {
+        var gray = frameBuffer[y, x];
+        byte intensity = (byte)(255 - gray * 85);
+        int idx = y * stride + x * 4;
+
+        pixelData[idx + 0] = intensity;
+        pixelData[idx + 1] = intensity;
+        pixelData[idx + 2] = intensity;
+        pixelData[idx + 3] = 255;
+    }
+
     public bool Drawing { get; set; }
+
+    protected void OnPropertyChanged(string name)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+    }
 }

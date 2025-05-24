@@ -8,6 +8,8 @@ public partial class MainView : UserControl
     public MainView()
     {
         InitializeComponent();
-        DataContext = new MainViewModel();
+        var dataContext = new MainViewModel();
+        DataContext = dataContext;
+       
     }
 }
