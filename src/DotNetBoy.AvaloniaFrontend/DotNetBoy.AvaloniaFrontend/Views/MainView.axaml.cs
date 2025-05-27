@@ -18,55 +18,55 @@ public partial class MainView : UserControl
         InitializeComponent();
         _dataContext = new MainViewModel();
         DataContext = _dataContext;
-        var buttonMappings = new Dictionary<EJoyPadButton, InputElement>
+        List<(EJoyPadButton, InputElement, Key)> buttonMappings =
+        [
+            new(EJoyPadButton.Up, Up, Key.Up),
+            new(EJoyPadButton.Down, Down, Key.Down),
+            new(EJoyPadButton.Left, Left, Key.Left),
+            new(EJoyPadButton.Right, Right, Key.Right),
+            new(EJoyPadButton.A, A, Key.S),
+            new(EJoyPadButton.B, B, Key.D),
+            new(EJoyPadButton.Select, Select, Key.RightShift), // Or Key.Back if you prefer
+            new(EJoyPadButton.Start, Start, Key.Enter)
+        ];
+        foreach (var mapping in buttonMappings)
         {
-            { EJoyPadButton.Up, Up },
-            { EJoyPadButton.Down, Down },
-            { EJoyPadButton.Left, Left },
-            { EJoyPadButton.Right, Right },
-            { EJoyPadButton.A, A },
-            { EJoyPadButton.B, B },
-            { EJoyPadButton.Select, Select },
-            { EJoyPadButton.Start, Start }
-        };
-
-        foreach (var (button, element) in buttonMappings)
-        {
-            element.AddHandler(
+            mapping.Item2.AddHandler(
                 InputElement.PointerPressedEvent,
-                (_, _) => ButtonPressed(button),
+                (_, _) => ButtonPressed(mapping.Item1),
                 RoutingStrategies.Tunnel | RoutingStrategies.Bubble,
                 handledEventsToo: true
             );
 
-            element.AddHandler(
+            mapping.Item2.AddHandler(
                 InputElement.PointerReleasedEvent,
-                (_, _) => ButtonReleased(button),
+                (_, _) => ButtonReleased(mapping.Item1),
                 RoutingStrategies.Tunnel | RoutingStrategies.Bubble,
                 handledEventsToo: true
             );
+            Loaded += (_, _) =>
+            {
+                var topLevel = TopLevel.GetTopLevel(this)!;
+                topLevel.AddHandler(KeyDownEvent, (sender, args) =>
+                    {
+                        if (args.Key == mapping.Item3)
+                            ButtonPressed(mapping.Item1);
+                    },
+                    RoutingStrategies.Tunnel | RoutingStrategies.Bubble,
+                    handledEventsToo:
+                    true);
+                topLevel.AddHandler(KeyUpEvent, (sender, args) =>
+                    {
+                        if (args.Key == mapping.Item3)
+                            ButtonReleased(mapping.Item1);
+                    },
+                    RoutingStrategies.Tunnel | RoutingStrategies.Bubble,
+                    handledEventsToo: true
+                );
+            };
         }
     }
 
-    private void ButtonStartPressed(object? sender, RoutedEventArgs e)
-    {
-        ButtonPressed(EJoyPadButton.Start);
-    }
-
-    private void ButtonStartReleased(object? sender, RoutedEventArgs e)
-    {
-        ButtonReleased(EJoyPadButton.Start);
-    }
-
-    private void ButtonAPressed(object? sender, RoutedEventArgs e)
-    {
-        ButtonPressed(EJoyPadButton.A);
-    }
-
-    private void ButtonAReleased(object? sender, RoutedEventArgs e)
-    {
-        ButtonReleased(EJoyPadButton.A);
-    }
 
     private void ButtonPressed(EJoyPadButton button)
     {
