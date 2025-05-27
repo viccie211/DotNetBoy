@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Avalonia;
@@ -26,8 +28,9 @@ public partial class MainViewModel : ViewModelBase, INotifyPropertyChanged
     public readonly IJoyPadService JoyPadService;
     public event PropertyChangedEventHandler PropertyChanged;
     public WriteableBitmap FrameBitmap { get; set; }
-    public string FrameCounterString { get; set; } = "Frame 0";
-    public int FrameCounter { get; set; }
+    public string FrameCounterString { get; set; } = "";
+    private int FrameCounter { get; set; }
+    private static Stopwatch Stopwatch { get; set; } = new();
 
     public MainViewModel()
     {
@@ -56,6 +59,7 @@ public partial class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
         Task.Run(() =>
         {
+            Stopwatch.Start();
             while (true)
             {
                 Cpu.Step();
@@ -78,40 +82,55 @@ public partial class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
             using var fb = bmp.Lock();
             int stride = fb.RowBytes;
-            byte[] pixelData = new byte[stride * h];
-            Task[] tasks = new Task[h * w];
 
-            for (int y = 0; y < h; y++)
+            unsafe
             {
-                for (int x = 0; x < w; x++)
+                byte* ptr = (byte*)fb.Address;
+                for (int y = 0; y < h; y++)
                 {
-                    var taskY = y;
-                    var taskX = x;
-                    tasks[y*w+x] =Task.Run(()=>SetPixel(taskY, taskX, e.FrameBuffer, stride, pixelData));
+                    for (int x = 0; x < w; x++)
+                    {
+                        byte fbPixel = e.FrameBuffer[y, x];
+                        byte intensity = (byte)(255 - fbPixel * 85);
+                        int idx = y * stride + x * 4;
+
+                        ptr[idx + 0] = intensity;
+                        ptr[idx + 1] = intensity;
+                        ptr[idx + 2] = intensity;
+                        ptr[idx + 3] = 255;
+                    }
                 }
             }
-
-            Task.WaitAll(tasks);
-            Marshal.Copy(pixelData, 0, fb.Address, pixelData.Length);
-            FrameCounter++;
-            FrameCounterString = $"Frame {FrameCounter}";
             FrameBitmap = bmp;
             OnPropertyChanged(nameof(FrameBitmap));
+            FrameCounter++;
+            Stopwatch.Stop();
+            var elapsed = Stopwatch.Elapsed.TotalMilliseconds;
+            double fps = 0;
+            double percentage = 0;
+            if (elapsed > 0)
+            {
+                fps = 1000 / elapsed;
+                percentage = 16.72 / elapsed * 100;
+            }
+
+            FrameCounterString = $"Frame {FrameCounter} - {fps:F1}FPS - {percentage:F1}%";
+            Stopwatch.Reset();
+            Stopwatch.Start();
             OnPropertyChanged(nameof(FrameCounterString));
         });
     }
 
-    private void SetPixel(int y, int x, int[,] frameBuffer, int stride, byte[] pixelData)
-    {
-        var gray = frameBuffer[y, x];
-        byte intensity = (byte)(255 - gray * 85);
-        int idx = y * stride + x * 4;
-
-        pixelData[idx + 0] = intensity;
-        pixelData[idx + 1] = intensity;
-        pixelData[idx + 2] = intensity;
-        pixelData[idx + 3] = 255;
-    }
+    // private void SetPixel(int y, int x, byte fbPixel, int stride, byte[] pixelData)
+    // {
+    //     byte intensity = (byte)(255 - fbPixel * 85);
+    //     int idx = y * stride + x * 4;
+    //
+    //     pixelData[idx + 0] = intensity;
+    //     pixelData[idx + 1] = intensity;
+    //     pixelData[idx + 2] = intensity;
+    //     pixelData[idx + 3] = 255;
+    // }
 
     public bool Drawing { get; set; }
 

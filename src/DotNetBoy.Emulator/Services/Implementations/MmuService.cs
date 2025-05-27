@@ -182,7 +182,10 @@ public class MmuService : IMmuService
 
     public byte[] GetOamBytes()
     {
-        return MappedMemory.Skip(AddressConsts.OAM_BASE_ADDRESS).Take(AddressConsts.OAM_TOP_ADDRESS - AddressConsts.OAM_BASE_ADDRESS).ToArray();
+        int length = AddressConsts.OAM_TOP_ADDRESS + 1 - AddressConsts.OAM_BASE_ADDRESS;
+        byte[] oamBytes = new byte[length];
+        Array.Copy(MappedMemory, AddressConsts.OAM_BASE_ADDRESS, oamBytes, 0, length);
+        return oamBytes;
     }
 
     public OamObject[] GetOamObjects()
@@ -192,10 +195,12 @@ public class MmuService : IMmuService
         var oamRam = GetOamBytes();
         var result = new OamObject[totalOamObjects];
 
-        for (int i = 0; i < totalOamObjects; i++)
+        Parallel.For(0, totalOamObjects, (i) =>
         {
-            result[i] = oamRam.Skip(i * oamObjectLength).Take(oamObjectLength).ToArray();
-        }
+            byte[] objectBytes = new byte[oamObjectLength];
+            Array.Copy(oamRam, i * oamObjectLength, objectBytes, 0, oamObjectLength);
+            result[i] = objectBytes;
+        });
 
         return result;
     }

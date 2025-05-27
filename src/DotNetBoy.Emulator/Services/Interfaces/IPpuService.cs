@@ -6,7 +6,7 @@ namespace DotNetBoy.Emulator.Services.Interfaces;
 public interface IPpuService
 {
     PpuModes Mode { get; }
-    int[,] FrameBuffer { get; }
+    byte[,] FrameBuffer { get; }
     byte LyRegister { get; set; }
     int ScanLine { get; set; }
 }

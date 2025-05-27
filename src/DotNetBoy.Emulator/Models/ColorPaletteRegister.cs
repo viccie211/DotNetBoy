@@ -2,16 +2,16 @@
 
 public class ColorPaletteRegister
 {
-    public int[] Colors { get; set; } = new int[4];
+    public byte[] Colors { get; set; } = new byte[4];
 
     public static implicit operator ColorPaletteRegister(byte input)
     {
-        var colors = new int[4];
+        var colors = new byte[4];
 
         for (int i = 0; i < 4; i++)
         {
             var shifted = input >> i*2;
-            var masked = shifted & 0b00000011;
+            var masked = (byte)(shifted & 0b00000011);
             colors[i] = masked;
         }
 

@@ -42,7 +42,7 @@ public class PpuService : IPpuService
     public PpuModes Mode { get; internal set; }
     public int ScanLine { get; set; } = 0x00;
     public int Dot { get; set; } = 0;
-    public int[,] FrameBuffer { get; private set; }
+    public byte[,] FrameBuffer { get; private set; }
 
     public PpuService(IMmuService mmuService, ITileService tileService, IEventService eventService)
     {
@@ -50,7 +50,7 @@ public class PpuService : IPpuService
         _tileService = tileService;
         _eventService = eventService;
         _eventService.TClock += OnTClock;
-        FrameBuffer = new int[ScreenDimensions.HEIGHT, ScreenDimensions.WIDTH];
+        FrameBuffer = new byte[ScreenDimensions.HEIGHT, ScreenDimensions.WIDTH];
     }
 
     public void OnTClock(object? sender, ClockEventArgs e)
@@ -88,7 +88,7 @@ public class PpuService : IPpuService
             }
             else if (ScanLine == 0)
             {
-                FrameBuffer = new int[ScreenDimensions.HEIGHT, ScreenDimensions.WIDTH];
+                FrameBuffer = new byte[ScreenDimensions.HEIGHT, ScreenDimensions.WIDTH];
             }
         }
 
@@ -236,7 +236,7 @@ public class PpuService : IPpuService
                 if (!sprite.Flags.Priority || FrameBuffer[scanLine, screenX] == 0)
                 {
                     byte paletteRegister = sprite.Flags.DmgPalette ? _mmuService.ReadByte(0xFF49) : _mmuService.ReadByte(0xFF48);
-                    int color = (paletteRegister >> (colorIndex * 2)) & 0x03;
+                    byte color = (byte)((paletteRegister >> (colorIndex * 2)) & 0x03);
                     FrameBuffer[scanLine, screenX] = color;
                 }
             }
