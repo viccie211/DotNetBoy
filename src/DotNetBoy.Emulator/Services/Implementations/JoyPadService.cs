@@ -65,12 +65,15 @@ public class JoyPadService(IEventService eventService) : IJoyPadService
 
     public void PressButtons(params EJoyPadButton[] buttons)
     {
+        var debounceInterrupt = false;
         foreach (var button in buttons)
         {
+            if (!Status[button])
+                debounceInterrupt = true;
             Status[button] = true;
         }
 
-        if (buttons.Length != 0)
+        if (debounceInterrupt)
         {
             eventService.InvokeInterruptRaised(this, new() { InterruptRegister = new InterruptRegister() { Joypad = true } });
         }

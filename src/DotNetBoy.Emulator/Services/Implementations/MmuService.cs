@@ -195,12 +195,12 @@ public class MmuService : IMmuService
         var oamRam = GetOamBytes();
         var result = new OamObject[totalOamObjects];
 
-        Parallel.For(0, totalOamObjects, (i) =>
+        for (int i = 0; i < totalOamObjects; i++)
         {
             byte[] objectBytes = new byte[oamObjectLength];
             Array.Copy(oamRam, i * oamObjectLength, objectBytes, 0, oamObjectLength);
             result[i] = objectBytes;
-        });
+        }
 
         return result;
     }

@@ -1,4 +1,5 @@
-﻿using DotNetBoy.Emulator.InstructionSet.Interfaces;
+﻿using System.Runtime.CompilerServices;
+using DotNetBoy.Emulator.InstructionSet.Interfaces;
 using DotNetBoy.Emulator.Services.Interfaces;
 
 namespace DotNetBoy.Emulator.InstructionSet;
@@ -228,7 +229,7 @@ public class JumpInstructions(IMmuService mmuService, IClockService clockService
         registers.ProgramCounter += 2;
         clockService.Clock();
     }
-
+    
     private void JumpRelative(ICpuRegistersService registers)
     {
         var relative = mmuService.ReadByte(InstructionUtilFunctions.NextAddress(registers.ProgramCounter));

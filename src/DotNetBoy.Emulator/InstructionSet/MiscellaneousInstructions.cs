@@ -75,6 +75,7 @@ public class MiscellaneousInstructions(IClockService clockService, IMmuService m
         registers.InterruptMasterEnable = true;
         registers.InterruptsJustEnabled = true;
         registers.ProgramCounter += 1;
+        clockService.Clock();
     }
 
     public void SetCarryFlag(ICpuRegistersService registers)
@@ -122,7 +123,7 @@ public class MiscellaneousInstructions(IClockService clockService, IMmuService m
         registers.ProgramCounter += 2;
         clockService.Clock();
     }
-    
+
     public void ExecuteInstruction(byte opCode, ICpuRegistersService registers)
     {
         switch (opCode)
@@ -170,5 +171,4 @@ public class MiscellaneousInstructions(IClockService clockService, IMmuService m
                 throw new NotImplementedException($"Opcode 0x{opCode:X2} not implemented in MiscellaneousInstructions.");
         }
     }
-
 }

@@ -2,8 +2,10 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Threading;
@@ -30,7 +32,9 @@ public partial class MainViewModel : ViewModelBase, INotifyPropertyChanged
     public WriteableBitmap FrameBitmap { get; set; }
     public string FrameCounterString { get; set; } = "";
     private int FrameCounter { get; set; }
-    private static Stopwatch Stopwatch { get; set; } = new();
+    private readonly ManualResetEventSlim _vblankEvent = new();
+    private const double TARGET_FRAME_TIME_MS = 16.67;
+    private DateTime _lastFrameTime = DateTime.UtcNow;
 
     public MainViewModel()
     {
@@ -45,7 +49,7 @@ public partial class MainViewModel : ViewModelBase, INotifyPropertyChanged
         JoyPadService = ServiceScope.ServiceProvider.GetRequiredService<IJoyPadService>();
         Cpu = ServiceScope.ServiceProvider.GetRequiredService<Cpu>();
         CpuRegistersService.Reset();
-        MmuService.LoadRom(Roms.GetRom("Tetris.gb"));
+        MmuService.LoadRom(Roms.GetRom("Super Mario Land.gb"));
 
 
         FrameBitmap = new WriteableBitmap(
@@ -57,9 +61,9 @@ public partial class MainViewModel : ViewModelBase, INotifyPropertyChanged
         // subscribe to VBlankStart
         EventService.VBlankStart += OnVBlank;
 
+
         Task.Run(() =>
         {
-            Stopwatch.Start();
             while (true)
             {
                 Cpu.Step();
@@ -69,8 +73,20 @@ public partial class MainViewModel : ViewModelBase, INotifyPropertyChanged
 
     private void OnVBlank(object sender, VBlankEventArgs e)
     {
+        _vblankEvent.Set();
         Dispatcher.UIThread.Post(() =>
         {
+            _vblankEvent.Reset();
+            var now = DateTime.UtcNow;
+            var elapsed = (now - _lastFrameTime).TotalMilliseconds;
+            _lastFrameTime = now;
+
+            double fps = 1000.0 / elapsed;
+            double percentage = TARGET_FRAME_TIME_MS / elapsed * 100;
+            FrameCounter++;
+            FrameCounterString = $"Frame {FrameCounter} - {fps:F1}FPS - {percentage:F1}%";
+            OnPropertyChanged(nameof(FrameCounterString));
+
             int w = ScreenDimensions.WIDTH;
             int h = ScreenDimensions.HEIGHT;
             var bmp = new WriteableBitmap(
@@ -101,38 +117,11 @@ public partial class MainViewModel : ViewModelBase, INotifyPropertyChanged
                     }
                 }
             }
+
             FrameBitmap = bmp;
             OnPropertyChanged(nameof(FrameBitmap));
-            FrameCounter++;
-            Stopwatch.Stop();
-            var elapsed = Stopwatch.Elapsed.TotalMilliseconds;
-            double fps = 0;
-            double percentage = 0;
-            if (elapsed > 0)
-            {
-                fps = 1000 / elapsed;
-                percentage = 16.72 / elapsed * 100;
-            }
-
-            FrameCounterString = $"Frame {FrameCounter} - {fps:F1}FPS - {percentage:F1}%";
-            Stopwatch.Reset();
-            Stopwatch.Start();
-            OnPropertyChanged(nameof(FrameCounterString));
         });
     }
-
-    // private void SetPixel(int y, int x, byte fbPixel, int stride, byte[] pixelData)
-    // {
-    //     byte intensity = (byte)(255 - fbPixel * 85);
-    //     int idx = y * stride + x * 4;
-    //
-    //     pixelData[idx + 0] = intensity;
-    //     pixelData[idx + 1] = intensity;
-    //     pixelData[idx + 2] = intensity;
-    //     pixelData[idx + 3] = 255;
-    // }
-
-    public bool Drawing { get; set; }
 
     protected void OnPropertyChanged(string name)
     {
