@@ -12,9 +12,10 @@ public class MmuServiceTests
         var byteUshortServiceMock = new Mock<IByteUshortService>();
         var timerServiceMock = new Mock<ITimerService>();
         var eventServiceMock = new Mock<IEventService>();
+        var joypadServiceMock = new Mock<JoyPadService>();
         byteUshortServiceMock.Setup(b => b.CombineBytes(0x00, 0xFF)).Returns(0x00FF);
 
-        mmuService = new MmuService(byteUshortServiceMock.Object, timerServiceMock.Object, eventServiceMock.Object)
+        mmuService = new MmuService(byteUshortServiceMock.Object, timerServiceMock.Object, eventServiceMock.Object, joypadServiceMock.Object)
         {
             MappedMemory =
             {

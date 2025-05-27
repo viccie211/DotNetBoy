@@ -30,18 +30,18 @@
         </Grid>
         <Grid HorizontalAlignment="Center" Row="1" ColumnDefinitions="Auto,Auto,Auto">
             <Grid Grid.Column="0" ColumnDefinitions="Auto,Auto,Auto" RowDefinitions="Auto,Auto,Auto">
-                <Button Grid.Row="0" Grid.Column="1" HotKey="Up" ClickMode="Press">⬆</Button>
-                <Button Grid.Row="1" Grid.Column="0" HotKey="Left">⬅</Button>
-                <Button Grid.Row="1" Grid.Column="2" HotKey="Right">➡</Button>
-                <Button Grid.Row="2" Grid.Column="1" HotKey="Down">⬇</Button>
+                <Button Grid.Row="0" Grid.Column="1" Name="Up" HotKey="Up">⬆</Button>
+                <Button Grid.Row="1" Grid.Column="0" Name="Left" HotKey="Left">⬅</Button>
+                <Button Grid.Row="1" Grid.Column="2" Name="Right" HotKey="Right">➡</Button>
+                <Button Grid.Row="2" Grid.Column="1" Name="Down" HotKey="Down">⬇</Button>
             </Grid>
             <Grid Grid.Column="1" ColumnDefinitions="Auto,Auto">
-                <Button Name="Start" Grid.Column="0" HotKey="Enter">Start</Button>
-                <Button Grid.Column="1" HotKey="RightShift">Select</Button>
+                <Button Grid.Column="0" Name="Start" HotKey="Enter">Start</Button>
+                <Button Grid.Column="1" Name="Select" HotKey="RightShift">Select</Button>
             </Grid>
             <Grid Grid.Column="2" ColumnDefinitions="Auto,Auto">
-                <Button Grid.Column="0" HotKey="S">B</Button>
-                <Button Name="A" Grid.Column="1" HotKey="D">A</Button>
+                <Button Grid.Column="0" Name="B" HotKey="S">B</Button>
+                <Button Grid.Column="1" Name="A" HotKey="D">A</Button>
             </Grid>
         </Grid>
     </Grid>

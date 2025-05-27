@@ -15,10 +15,10 @@ public class JoyPadRegister
     public static implicit operator byte(JoyPadRegister joyPadRegister)
     {
         byte result = 0x0F;
-        result = (byte)(!joyPadRegister.AOrRight ? 0b00000001 | result : result);
-        result = (byte)(!joyPadRegister.BOrLeft ? 0b00000010 | result : result);
-        result = (byte)(!joyPadRegister.SelectOrUp ? 0b00000100 | result : result);
-        result = (byte)(!joyPadRegister.StartOrDown ? 0b00001000 | result : result);
+        result = (byte)(joyPadRegister.AOrRight ? 0b00000001 ^ result : result);
+        result = (byte)(joyPadRegister.BOrLeft ? 0b00000010 ^ result : result);
+        result = (byte)(joyPadRegister.SelectOrUp ? 0b00000100 ^ result : result);
+        result = (byte)(joyPadRegister.StartOrDown ? 0b00001000 ^ result : result);
         result = (byte)(!joyPadRegister.SelectDPad ? 0b00010000 | result : result);
         result = (byte)(!joyPadRegister.SelectButtons ? 0b00100000 | result : result);
         result = (byte)(joyPadRegister.Bit6 ? 0b01000000 | result : result);

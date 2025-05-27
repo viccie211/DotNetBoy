@@ -18,18 +18,50 @@ public class JoyPadService(IEventService eventService) : IJoyPadService
         { EJoyPadButton.A, false }
     };
 
-    public bool SelectButtons { get; set; } = true;
+    public bool SelectButtons { get; set; } = false;
     public bool SelectDPad { get; set; } = false;
 
-    public JoyPadRegister Register => new()
+    public JoyPadRegister Register
     {
-        SelectButtons = SelectButtons,
-        SelectDPad = SelectDPad,
-        StartOrDown = (SelectButtons && Status[EJoyPadButton.Start]) || (SelectDPad && Status[EJoyPadButton.Down]),
-        SelectOrUp = (SelectButtons && Status[EJoyPadButton.Select]) || (SelectDPad && Status[EJoyPadButton.Up]),
-        BOrLeft = (SelectButtons && Status[EJoyPadButton.B]) || (SelectDPad && Status[EJoyPadButton.Left]),
-        AOrRight = (SelectButtons && Status[EJoyPadButton.A]) || (SelectDPad && Status[EJoyPadButton.Right])
-    };
+        get
+        {
+            var result = new JoyPadRegister()
+            {
+                SelectButtons = SelectButtons,
+                SelectDPad = SelectDPad,
+            };
+
+            // If both are selected the GameBoy ANDs the status of the buttons
+            if (SelectButtons && SelectDPad)
+            {
+                result.StartOrDown = Status[EJoyPadButton.Start] && Status[EJoyPadButton.Down];
+                result.SelectOrUp = Status[EJoyPadButton.Select] && Status[EJoyPadButton.Up];
+                result.AOrRight = Status[EJoyPadButton.A] && Status[EJoyPadButton.Right];
+                result.BOrLeft = Status[EJoyPadButton.B] && Status[EJoyPadButton.Left];
+                return result;
+            }
+
+            if (SelectButtons)
+            {
+                result.StartOrDown = Status[EJoyPadButton.Start];
+                result.SelectOrUp = Status[EJoyPadButton.Select];
+                result.AOrRight = Status[EJoyPadButton.A];
+                result.BOrLeft = Status[EJoyPadButton.B];
+                return result;
+            }
+
+            if (SelectDPad)
+            {
+                result.StartOrDown = Status[EJoyPadButton.Down];
+                result.SelectOrUp = Status[EJoyPadButton.Up];
+                result.AOrRight = Status[EJoyPadButton.Right];
+                result.BOrLeft = Status[EJoyPadButton.Left];
+                return result;
+            }
+
+            return result;
+        }
+    }
 
     public void PressButtons(params EJoyPadButton[] buttons)
     {

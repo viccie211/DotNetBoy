@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -11,15 +12,40 @@ public partial class MainView : UserControl
 {
     private readonly MainViewModel _dataContext;
 
+
     public MainView()
     {
         InitializeComponent();
         _dataContext = new MainViewModel();
         DataContext = _dataContext;
-        Start.AddHandler(InputElement.PointerPressedEvent, ButtonStartPressed, RoutingStrategies.Tunnel | RoutingStrategies.Bubble, handledEventsToo: true);
-        Start.AddHandler(InputElement.PointerReleasedEvent, ButtonStartReleased, RoutingStrategies.Tunnel | RoutingStrategies.Bubble, handledEventsToo: true);
-        A.AddHandler(InputElement.PointerPressedEvent, ButtonAPressed, RoutingStrategies.Tunnel | RoutingStrategies.Bubble, handledEventsToo: true);
-        A.AddHandler(InputElement.PointerReleasedEvent, ButtonAReleased, RoutingStrategies.Tunnel | RoutingStrategies.Bubble, handledEventsToo: true);
+        var buttonMappings = new Dictionary<EJoyPadButton, InputElement>
+        {
+            { EJoyPadButton.Up, Up },
+            { EJoyPadButton.Down, Down },
+            { EJoyPadButton.Left, Left },
+            { EJoyPadButton.Right, Right },
+            { EJoyPadButton.A, A },
+            { EJoyPadButton.B, B },
+            { EJoyPadButton.Select, Select },
+            { EJoyPadButton.Start, Start }
+        };
+
+        foreach (var (button, element) in buttonMappings)
+        {
+            element.AddHandler(
+                InputElement.PointerPressedEvent,
+                (_, _) => ButtonPressed(button),
+                RoutingStrategies.Tunnel | RoutingStrategies.Bubble,
+                handledEventsToo: true
+            );
+
+            element.AddHandler(
+                InputElement.PointerReleasedEvent,
+                (_, _) => ButtonReleased(button),
+                RoutingStrategies.Tunnel | RoutingStrategies.Bubble,
+                handledEventsToo: true
+            );
+        }
     }
 
     private void ButtonStartPressed(object? sender, RoutedEventArgs e)
