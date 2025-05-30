@@ -137,22 +137,9 @@ public class MmuService : IMmuService
     private EMbcType ReadMbcType(byte[] rom)
     {
         var mbcHeaderByte = rom[AddressConsts.CARTRIDGE_TYPE_HEADER_ADDRESS];
-        switch (mbcHeaderByte)
-        {
-            case 0x01:
-                return EMbcType.Mbc1;
-            case 0x02:
-                return EMbcType.Mbc1Ram;
-            case 0x03:
-                return EMbcType.Mbc1RamBattery;
-            case 0x05:
-                return EMbcType.Mbc2;
-            case 0x06:
-                return EMbcType.Mbc2Battery;
-            default:
-                //TODO: Implement more MBCs
-                return EMbcType.NoMbc;
-        }
+        if (Enum.IsDefined(typeof(EMbcType), mbcHeaderByte))
+            return (EMbcType)mbcHeaderByte;
+        return EMbcType.NoMbc;
     }
 
 

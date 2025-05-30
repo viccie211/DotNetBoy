@@ -3,15 +3,12 @@ using DotNetBoy.Emulator.Enums;
 
 namespace DotNetBoy.Emulator.Models.Cartridges;
 
-public class Mbc1Cartridge : ICartridge
+public class Mbc1Cartridge : CartridgeBase, ICartridge
 {
-    private List<byte[]> _romBanks;
-    private List<byte[]> _ramBanks;
-    private EMbcType _type;
     private int _activeRomBankLower5Bits = 1;
     private int _activeRamBankOrRomBankUpper2Bits = 0;
 
-    private int _activeRomBank
+    private int ActiveRomBank
     {
         get
         {
@@ -24,61 +21,44 @@ public class Mbc1Cartridge : ICartridge
         }
     }
 
-    private int _requiredNumberBits = 1;
+
     private bool _ramBankingMode = false;
     private bool _ramEnable = false;
 
-    public Mbc1Cartridge(byte[] rom, EMbcType type)
+    public Mbc1Cartridge(byte[] rom, EMbcType type) : base(rom, type)
     {
-        var bankCount = (rom.Length / ICartridge.BANK_SIZE) + (rom.Length % ICartridge.BANK_SIZE != 0 ? 1 : 0);
-        _romBanks = [];
-        for (int i = 0; i < bankCount; i++)
+        if (Type == EMbcType.Mbc1Ram || Type == EMbcType.Mbc1RamBattery)
         {
-            var baseAddress = i * AddressConsts.ROM_BANK_1_BASE_ADDRESS;
-            _romBanks.Add(new byte[ICartridge.BANK_SIZE]);
-            for (int j = 0; j < ICartridge.BANK_SIZE; j++)
-            {
-                _romBanks[i][j] = rom[baseAddress + j];
-            }
-        }
-
-        _type = type;
-        var romSize = 32 << rom[AddressConsts.CARTRIDGE_SIZE_HEADER_ADDRESS];
-        _requiredNumberBits = (romSize >> 4) - 1;
-        if (_type == EMbcType.Mbc1Ram || _type == EMbcType.Mbc1RamBattery)
-        {
-            _ramBanks = [new byte[0x2000], new byte[0x2000], new byte[0x2000]];
+            RamBanks = [new byte[0x2000], new byte[0x2000], new byte[0x2000]];
         }
     }
-
 
     public byte ReadByte(ushort address)
     {
         if (address <= AddressConsts.ROM_BANK_0_UPPER_ADDRESS && !_ramBankingMode)
         {
-            return _romBanks[0][address];
+            return RomBanks[0][address];
         }
-        
+
         if (address <= AddressConsts.ROM_BANK_0_UPPER_ADDRESS)
         {
-            return _romBanks[_activeRamBankOrRomBankUpper2Bits][address];
+            return RomBanks[_activeRamBankOrRomBankUpper2Bits][address];
         }
 
         if (address is >= AddressConsts.ROM_BANK_1_BASE_ADDRESS and <= AddressConsts.ROM_BANK_1_UPPER_ADDRESS)
         {
-            return _romBanks[_activeRomBank][address - AddressConsts.ROM_BANK_1_BASE_ADDRESS];
+            return RomBanks[ActiveRomBank][address - AddressConsts.ROM_BANK_1_BASE_ADDRESS];
         }
 
-        if (_type == EMbcType.Mbc1Ram || _type == EMbcType.Mbc1RamBattery && address is >= AddressConsts.CARTRIDGE_RAM_BASE_ADDRESS and <= AddressConsts.CARTRIDGE_RAM_UPPER_ADDRESS && _ramEnable)
+        if (Type == EMbcType.Mbc1Ram || Type == EMbcType.Mbc1RamBattery && address is >= AddressConsts.CARTRIDGE_RAM_BASE_ADDRESS and <= AddressConsts.CARTRIDGE_RAM_UPPER_ADDRESS && _ramEnable)
         {
+            if (RamBanks == null)
+                RamBanks = [];
+
             if (_ramBankingMode)
-            {
-                return _ramBanks[_activeRamBankOrRomBankUpper2Bits][address - AddressConsts.CARTRIDGE_RAM_BASE_ADDRESS];
-            }
-            else
-            {
-                return _ramBanks[0][address - AddressConsts.CARTRIDGE_RAM_BASE_ADDRESS];
-            }
+                return RamBanks[_activeRamBankOrRomBankUpper2Bits][address - AddressConsts.CARTRIDGE_RAM_BASE_ADDRESS];
+
+            return RamBanks[0][address - AddressConsts.CARTRIDGE_RAM_BASE_ADDRESS];
         }
 
         throw new NotImplementedException();
@@ -94,7 +74,7 @@ public class Mbc1Cartridge : ICartridge
         if (address is >= 0x2000 and <= AddressConsts.ROM_BANK_0_UPPER_ADDRESS)
         {
             var maskedValue = (byte)(value & 0x1F);
-            if (_requiredNumberBits < 5 && (maskedValue & 0x10) == 0x10)
+            if (RequiredNumberBits < 5 && (maskedValue & 0x10) == 0x10)
             {
                 _activeRomBankLower5Bits = 0;
             }
@@ -119,9 +99,9 @@ public class Mbc1Cartridge : ICartridge
             _ramBankingMode = (value & 0x01) == 0x01;
         }
 
-        if (_ramEnable && address is >= AddressConsts.CARTRIDGE_RAM_BASE_ADDRESS and <= AddressConsts.CARTRIDGE_RAM_UPPER_ADDRESS )
+        if (_ramEnable && address is >= AddressConsts.CARTRIDGE_RAM_BASE_ADDRESS and <= AddressConsts.CARTRIDGE_RAM_UPPER_ADDRESS)
         {
-            _ramBanks[_activeRamBankOrRomBankUpper2Bits][address-AddressConsts.CARTRIDGE_RAM_BASE_ADDRESS] = value;
+            RamBanks[_activeRamBankOrRomBankUpper2Bits][address - AddressConsts.CARTRIDGE_RAM_BASE_ADDRESS] = value;
         }
     }
 }
