@@ -38,10 +38,7 @@ while (dotNetBoyStatus == referenceEmulatorStatus)
     originalPc = cpuRegisters.ProgramCounter;
     cpu.Step();
     referenceEmulator.cpu.Execute();
-    if (!cpu.Prefixed && cpu.Instruction == 0xF0 && mmuService.ReadByte((ushort)(originalPc + 1)) == 0x44)
-    {
-        cpuRegisters.A = referenceEmulator.cpu.A;
-    }
+
 
     dotNetBoyStatus =
         $"{cpuRegisters} 0x{(cpu.Prefixed ? DotNetBoy.Emulator.Cpu.INSTRUCTION_PREFIX.ToString("x2") : "")}{cpu.Instruction.ToString("x2")} DivCounter: {timerService.DivCounter} TIMA:{mmuService.ReadByte(AddressConsts.TIMA_REGISTER)}";

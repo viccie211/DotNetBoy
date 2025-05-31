@@ -20,11 +20,8 @@ public abstract class CartridgeBase
         for (int i = 0; i < bankCount; i++)
         {
             var baseAddress = i * AddressConsts.ROM_BANK_1_BASE_ADDRESS;
-            RomBanks[i] = new byte[BANK_SIZE];
-            for (int j = 0; j < BANK_SIZE; j++)
-            {
-                RomBanks[i][j] = rom[baseAddress + j];
-            }
+            RomBanks[i] = rom[baseAddress..(baseAddress + BANK_SIZE)];
+
         }
 
         Type = type;

@@ -36,22 +36,36 @@ public class Mbc3Cartridge : CartridgeBase, ICartridge
             return RomBanks[ActiveRomBank][address - AddressConsts.ROM_BANK_1_BASE_ADDRESS];
         }
 
-        if (_ramEnable && Type is EMbcType.Mbc3Ram or EMbcType.Mbc3RamBattery or EMbcType.Mbc3TimerBattery &&
+        if (_ramEnable && Type is EMbcType.Mbc3Ram or EMbcType.Mbc3RamBattery or EMbcType.Mbc3TimerBattery or EMbcType.Mbc3TimerRamBattery &&
             address is >= AddressConsts.CARTRIDGE_RAM_BASE_ADDRESS and <= AddressConsts.CARTRIDGE_RAM_UPPER_ADDRESS)
         {
+            var timeSinceStart = DateTime.Now - _startDate;
             switch (_ramTimerState)
             {
-                case RamTimerState.Ram:
+                case RamTimerState.Ram when Type is EMbcType.Mbc3Ram or EMbcType.Mbc3RamBattery or EMbcType.Mbc3TimerRamBattery:
                     if (RamBanks != null) return RamBanks[_activeRamBank][address - AddressConsts.CARTRIDGE_RAM_BASE_ADDRESS];
                     break;
-                
-                
+                // case RamTimerState.Seconds when Type is EMbcType.Mbc3TimerBattery or EMbcType.Mbc3TimerRamBattery:
+                //     return (byte)timeSinceStart.Seconds;
+                // case RamTimerState.Minutes when Type is EMbcType.Mbc3TimerBattery or EMbcType.Mbc3TimerRamBattery:
+                //     return (byte)timeSinceStart.Minutes;
+                // case RamTimerState.Hours when Type is EMbcType.Mbc3TimerBattery or EMbcType.Mbc3TimerRamBattery:
+                //     return (byte)timeSinceStart.Hours;
+                // case RamTimerState.DaysLow when Type is EMbcType.Mbc3TimerBattery or EMbcType.Mbc3TimerRamBattery:
+                //     
             }
         }
+
+        return 0xFF;
     }
 
     public void WriteByte(ushort address, byte value)
     {
+        if (address <= 0x1FFF)
+        {
+            _ramEnable = (value & 0x0A) == 0x0A;
+        }
+
         if (address is >= 0x2000 and <= AddressConsts.ROM_BANK_0_UPPER_ADDRESS)
         {
             _activeRomBank = value & 0x7F;

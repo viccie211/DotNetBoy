@@ -125,10 +125,14 @@ public class MmuService : IMmuService
     public void LoadRom(byte[] rom)
     {
         MbcType = ReadMbcType(rom);
-        if (MbcType is EMbcType.Mbc1 or EMbcType.Mbc1Ram or EMbcType.Mbc1RamBattery)
+        switch (MbcType)
         {
-            Cartridge = new Mbc1Cartridge(rom, MbcType);
-            return;
+            case EMbcType.Mbc1 or EMbcType.Mbc1Ram or EMbcType.Mbc1RamBattery:
+                Cartridge = new Mbc1Cartridge(rom, MbcType);
+                break;
+            case EMbcType.Mbc3 or EMbcType.Mbc3Ram or EMbcType.Mbc3RamBattery or EMbcType.Mbc3TimerBattery or EMbcType.Mbc3TimerRamBattery:
+                Cartridge = new Mbc3Cartridge(rom, MbcType);
+                break;
         }
 
         Cartridge = new DefaultCartridge(rom);
